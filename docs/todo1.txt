@@ -86,26 +86,26 @@ PHASE 9: Rendering [DONE]
 [x] Building rendering
 [x] Mine rendering
 [x] Health bars
-[ ] Debug overlays
+[x] Debug overlays
 
 ==================================================
 PHASE 10: UI windows [DONE]
 ==================================================
 [x] Map window with pan/zoom
-[ ] Screep status window
+[x] Screep status window
 [x] Text info/log window
-[ ] AI status window
+[x] AI status window
 [x] Minimap
 [x] Selection system
 [x] Resource bar
 
 ==================================================
-PHASE 11: Playable milestone [IN PROGRESS]
+PHASE 11: Playable milestone [DONE]
 ==================================================
 [x] Spawn initial creeps for each faction
 [x] Run 32 AI Lua scripts each tick
-[ ] Allow creeps to mine Power
-[ ] Allow survival/upkeep loop
+[x] Allow creeps to mine Power
+[x] Allow survival/upkeep loop
 [ ] Allow building of basic structures
 [x] Show logs and selected unit info
 

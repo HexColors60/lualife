@@ -25,7 +25,7 @@ pub struct RenderPlugin;
 impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MapRendered>()
-            .add_systems(Startup, setup_render)
+            .add_systems(Startup, (setup_render, setup_debug_overlays))
             .add_systems(Update, (
                 spawn_room_sprites.run_if(resource_exists::<WorldMap>),
                 spawn_creep_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
@@ -36,6 +36,9 @@ impl Plugin for RenderPlugin {
                 update_mine_sprites,
                 update_building_sprites,
                 update_health_bars,
+                update_fps_display,
+                update_entity_count,
+                toggle_debug_overlays,
             ));
     }
 }

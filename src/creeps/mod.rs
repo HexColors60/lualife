@@ -1,4 +1,5 @@
 mod actions;
+mod autonomous_ai;
 mod bundle;
 mod combat;
 mod components;
@@ -10,6 +11,7 @@ mod stats;
 mod upkeep;
 
 pub use actions::*;
+pub use autonomous_ai::*;
 pub use bundle::*;
 pub use combat::*;
 pub use components::*;
@@ -28,7 +30,10 @@ impl Plugin for CreepsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CreepIdGenerator>()
             .add_event::<CreepEvent>()
-            .add_systems(Update, spawn_initial_creeps.run_if(resource_exists::<crate::world::WorldMap>));
+            .add_systems(Update, (
+                spawn_initial_creeps.run_if(resource_exists::<crate::world::WorldMap>),
+                autonomous_creep_ai,
+            ));
     }
 }
 

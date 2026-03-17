@@ -1,17 +1,21 @@
+mod ai_status;
 mod layout;
 mod log_panel;
 mod map_view;
 mod minimap;
 mod perf_panel;
+mod screep_status;
 mod selection;
 mod unit_panel;
 mod widgets;
 
+pub use ai_status::*;
 pub use layout::*;
 pub use log_panel::*;
 pub use map_view::*;
 pub use minimap::*;
 pub use perf_panel::*;
+pub use screep_status::*;
 pub use selection::*;
 pub use unit_panel::*;
 pub use widgets::*;
@@ -26,7 +30,13 @@ impl Plugin for UiPlugin {
             .init_resource::<GameLog>()
             .init_resource::<MinimapState>()
             .add_plugins(SelectionPlugin)
-            .add_systems(Startup, (setup_ui, setup_minimap, setup_resource_bar))
+            .add_systems(Startup, (
+                setup_ui,
+                setup_minimap,
+                setup_resource_bar,
+                setup_screep_status_panel,
+                setup_ai_status_panel,
+            ))
             .add_systems(Update, (
                 update_log_display,
                 update_unit_panel,
@@ -34,7 +44,11 @@ impl Plugin for UiPlugin {
                 update_minimap_indicator,
                 toggle_minimap,
             ))
-            .add_systems(Update, update_resource_bar);
+            .add_systems(Update, (
+                update_resource_bar,
+                update_screep_status,
+                update_ai_status,
+            ));
     }
 }
 
