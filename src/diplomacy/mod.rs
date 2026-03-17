@@ -73,6 +73,16 @@ impl DiplomacyState {
         Self::default()
     }
 
+    /// Get all alliances
+    pub fn get_alliances(&self) -> &HashMap<u32, Alliance> {
+        &self.alliances
+    }
+
+    /// Get alliance count
+    pub fn alliance_count(&self) -> usize {
+        self.alliances.len()
+    }
+
     /// Set the diplomatic stance between two factions
     pub fn set_stance(&mut self, faction1: FactionId, faction2: FactionId, stance: DiplomaticStance) {
         // Store both directions for easy lookup

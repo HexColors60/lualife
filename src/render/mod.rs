@@ -5,7 +5,9 @@ mod debug_render;
 mod healthbars;
 mod map_render;
 mod mine_render;
+mod path_visualization;
 mod room_overlay;
+mod tower_visualization;
 
 pub use building_render::*;
 pub use camera::*;
@@ -14,7 +16,9 @@ pub use debug_render::*;
 pub use healthbars::*;
 pub use map_render::*;
 pub use mine_render::*;
+pub use path_visualization::*;
 pub use room_overlay::*;
+pub use tower_visualization::*;
 
 use bevy::prelude::*;
 use crate::world::WorldMap;
@@ -39,6 +43,10 @@ impl Plugin for RenderPlugin {
                 update_fps_display,
                 update_entity_count,
                 toggle_debug_overlays,
+                toggle_path_visualization,
+                path_visualization_system,
+                toggle_tower_range_visualization,
+                tower_range_visualization_system,
             ));
     }
 }

@@ -170,3 +170,30 @@ PHASE 18: Advanced Features [DONE]
 [x] Implement creep spawning from Spawn building
 [x] Add creep body customization
 [x] Implement faction alliances
+
+==================================================
+PHASE 19: Visualizations [DONE]
+==================================================
+[x] Visualize paths in debug mode (F6)
+[x] Add tower attack range visualization (F7)
+[x] Add tech visualization UI (T)
+[x] Market UI panel (K)
+[x] Faction diplomacy UI (Shift+D)
+
+==================================================
+PHASE 20: Advanced Gameplay [TODO]
+==================================================
+[ ] Add trade routes and caravans
+[ ] Implement creep body customization UI
+[ ] Add faction reputation system
+[ ] Implement territory control
+[ ] Add victory conditions
+
+==================================================
+PHASE 21: Multiplayer [TODO]
+==================================================
+[ ] Add network infrastructure
+[ ] Implement client/server architecture
+[ ] Add player authentication
+[ ] Implement synchronized simulation
+[ ] Add chat system

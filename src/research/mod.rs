@@ -5,6 +5,28 @@ use serde::{Deserialize, Serialize};
 use crate::factions::FactionId;
 use crate::resources::ResourceType;
 
+/// Technology tier
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum TechTier {
+    #[default]
+    Tier1 = 1,
+    Tier2 = 2,
+    Tier3 = 3,
+    Tier4 = 4,
+}
+
+impl From<u32> for TechTier {
+    fn from(tier: u32) -> Self {
+        match tier {
+            1 => TechTier::Tier1,
+            2 => TechTier::Tier2,
+            3 => TechTier::Tier3,
+            4 => TechTier::Tier4,
+            _ => TechTier::Tier1,
+        }
+    }
+}
+
 /// A technology that can be researched
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum TechId {
@@ -46,6 +68,7 @@ pub struct Tech {
     pub research_time: u32, // in ticks
     pub prerequisites: Vec<TechId>,
     pub effects: Vec<TechEffect>,
+    pub unlocked_by_default: bool,
 }
 
 impl Tech {
@@ -59,6 +82,7 @@ impl Tech {
             research_time,
             prerequisites: Vec::new(),
             effects: Vec::new(),
+            unlocked_by_default: false,
         }
     }
 
@@ -74,6 +98,11 @@ impl Tech {
 
     pub fn with_effect(mut self, effect: TechEffect) -> Self {
         self.effects.push(effect);
+        self
+    }
+
+    pub fn unlocked_by_default(mut self) -> Self {
+        self.unlocked_by_default = true;
         self
     }
 }
@@ -169,6 +198,12 @@ impl TechRegistry {
 
     pub fn all(&self) -> impl Iterator<Item = &Tech> {
         self.techs.values()
+    }
+
+    pub fn get_techs_by_tier(&self, tier: TechTier) -> Vec<&Tech> {
+        self.techs.values()
+            .filter(|t| t.tier == tier as u32)
+            .collect()
     }
 
     fn register_default_techs(&mut self) {

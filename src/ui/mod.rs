@@ -1,22 +1,28 @@
 mod ai_status;
+mod diplomacy_ui;
 mod layout;
 mod log_panel;
 mod map_view;
+mod market_ui;
 mod minimap;
 mod perf_panel;
 mod screep_status;
 mod selection;
+mod tech_ui;
 mod unit_panel;
 mod widgets;
 
 pub use ai_status::*;
+pub use diplomacy_ui::*;
 pub use layout::*;
 pub use log_panel::*;
 pub use map_view::*;
+pub use market_ui::*;
 pub use minimap::*;
 pub use perf_panel::*;
 pub use screep_status::*;
 pub use selection::*;
+pub use tech_ui::*;
 pub use unit_panel::*;
 pub use widgets::*;
 
