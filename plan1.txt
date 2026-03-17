@@ -1,0 +1,1745 @@
+Project: bevy_screeps_lua
+Language: Rust
+Engine: Bevy
+Scripting: Lua
+Target: Desktop first
+Map size: 256 x 256 world tiles
+Room grid: 32 x 32 rooms
+Tiles per room: 8 x 8 world tiles
+Default players: 32 AI factions
+Default mode: GOD mode enabled
+Primary design goal: a Screeps-like autonomous simulation where units are controlled by Lua scripts loaded from per-AI directories, not by direct user-issued unit commands.
+
+==================================================
+1. HIGH LEVEL GAME SPEC
+==================================================
+
+1.1 Core concept
+
+This game is a persistent RTS/simulation sandbox inspired by Screeps.
+
+The player is not issuing direct move/attack/build orders to each unit.
+Instead, each faction runs Lua scripts that decide how its creeps behave.
+
+Each AI faction has:
+- its own Lua files
+- its own save/state namespace
+- its own units
+- its own buildings
+- its own resource stockpile
+- its own diplomacy/visibility state
+
+The simulation runs continuously in ticks.
+Lua logic is executed on scheduled hooks each tick.
+
+The default game world contains 32 AI factions, each with its own folder:
+- ai/ai_00/
+- ai/ai_01/
+- ...
+- ai/ai_31/
+
+Each folder contains Lua scripts such as:
+- main.lua
+- roles/harvester.lua
+- roles/builder.lua
+- roles/fighter.lua
+- config.lua
+
+The human user starts in GOD mode by default:
+- can inspect entire map
+- can inspect any unit
+- can inspect any room
+- can inspect any AI script status
+- can pause/resume/speed up simulation
+- can spawn units/resources/buildings for testing
+- can open debug windows and logs
+- can reload Lua scripts live
+
+The user is mainly a simulator operator, observer, debugger, or sandbox god, not a traditional RTS commander.
+
+1.2 World structure
+
+World dimensions:
+- 256 x 256 world tiles total
+
+Room structure:
+- 32 x 32 rooms total
+- each room is 8 x 8 world tiles
+
+Therefore:
+- world width = 32 rooms * 8 tiles = 256
+- world height = 32 rooms * 8 tiles = 256
+
+Each room stores:
+- terrain layout
+- mine nodes
+- building list
+- unit list
+- dropped resources
+- visibility state
+- room owner/controller state
+- room memory/debug metadata
+
+1.3 Mine system
+
+Each room contains 2 or 3 mine nodes.
+
+There are 10 mine types total:
+
+1. Power Mine
+   - the main life resource for creeps
+   - required for survival and upkeep
+   - used like energy/food/fuel hybrid
+   - consumed by creeps periodically
+
+2. Iron Mine
+   - used for basic metal structures
+   - used for armor, frames, melee parts
+
+3. Copper Mine
+   - used for wiring, circuits, simple electronics
+
+4. Silicon Mine
+   - used for compute structures and logic cores
+
+5. Crystal Mine
+   - used for sensors, optics, advanced buildings
+
+6. Carbon Mine
+   - used for lightweight components and fuel processing
+
+7. Stone Mine
+   - used for walls, foundations, simple defensive structures
+
+8. Sulfur Mine
+   - used for explosives, ammo, chemical warfare buildings
+
+9. Water Mine
+   - used for cooling, life support, bio processing
+
+10. Biomass Mine
+   - used for growth vats, food synthesis, creep organics
+
+Rules:
+- every room has 2 or 3 mine nodes
+- at least one nearby Power Mine should exist within reasonable expansion distance, but not every room must contain one
+- mine type distribution should encourage territorial expansion
+- some rooms may be strategically valuable because of rare combinations
+- mines regenerate over time
+- mines may have max extraction rate
+- mines may be exhausted temporarily and recover later
+
+1.4 Units
+
+Units are called screeps in this spec, but internal code may use the generic term creep.
+
+A screep is composed from components/parts.
+The available part families are:
+
+- Move
+- Work
+- Fight
+- Mine
+- Build
+- Eat
+- Transport
+
+Meaning:
+- Move: movement capability and speed
+- Work: general task execution capability
+- Fight: combat capability
+- Mine: extraction efficiency
+- Build: construction efficiency
+- Eat: metabolism/life support capacity
+- Transport: carry capacity
+
+Each screep must consume Power resource to stay alive.
+Without sufficient Power:
+- screep becomes weak
+- movement slows
+- task performance drops
+- eventually the screep dies
+
+Possible derived stats:
+- hp
+- speed
+- cargo capacity
+- upkeep cost
+- mining rate
+- build rate
+- melee damage
+- ranged damage if later added
+- repair rate
+- sensor range if later added
+
+Screeps are autonomous.
+They do not execute direct user commands.
+Instead:
+- user may inspect
+- user may override in GOD mode for debugging
+- AI Lua decides normal behavior
+
+1.5 Buildings
+
+Initial building ideas:
+- Base Core
+- Spawn Building
+- Storage
+- Power Depot
+- Mine Extractor
+- Refinery
+- Workshop
+- Wall
+- Tower
+- Road
+- Script Relay / Logic Tower
+- Scanner
+- Repair Bay
+- Factory
+- Lab
+- Barracks
+
+Buildings consume materials from mines.
+Power is commonly needed for operation.
+
+Some buildings produce intermediate materials from raw resources.
+
+1.6 AI / Lua model
+
+Every faction has its own Lua VM context or sandboxed environment.
+It loads scripts from its own directory.
+
+Example:
+- ai/ai_00/main.lua
+- ai/ai_00/roles/harvester.lua
+- ai/ai_00/roles/builder.lua
+
+Lua is responsible for:
+- deciding unit roles
+- deciding target mines
+- deciding when to build
+- deciding when to fight
+- deciding logistics priorities
+- deciding where to expand
+- reacting to world observations
+
+Lua is not allowed to directly mutate raw ECS state.
+Instead it uses Rust-exposed API handles and commands, for example:
+- get_owned_units()
+- get_visible_rooms()
+- issue_move(unit_id, x, y)
+- issue_mine(unit_id, mine_id)
+- issue_build(unit_id, blueprint, x, y)
+- get_stockpile(resource_type)
+
+The command model should be:
+- Lua reads a safe snapshot or query interface
+- Lua produces intents/commands
+- Rust validates and applies them during simulation steps
+
+1.7 Tick model
+
+Simulation proceeds in discrete ticks.
+
+Example phases per tick:
+1. input/debug actions
+2. script scheduling
+3. Lua AI execution
+4. command validation
+5. movement
+6. mining
+7. transport
+8. building
+9. combat
+10. upkeep and power consumption
+11. regeneration and economy
+12. event log flush
+13. UI refresh
+
+Each AI may run every tick or on a staggered schedule for performance.
+Possible default:
+- every AI gets a budget
+- heavy logic may be split across ticks
+- Lua instruction count limit to prevent one AI from freezing game
+
+1.8 GOD mode
+
+Default on.
+
+Capabilities:
+- full-map vision
+- inspect any object
+- spawn resources
+- delete resources
+- create units
+- delete units
+- create buildings
+- change ownership
+- force room reveal
+- hot reload Lua
+- pause/resume
+- set sim speed
+- open script error window
+- open room debug overlay
+- open path overlay
+- teleport camera
+- run one tick / N ticks
+- export map snapshot/logs
+
+1.9 UI windows
+
+Required default windows:
+- main map window
+- room/mini-map navigation window
+- screep status window
+- text info / event log window
+- AI status window
+- selected target details window
+- script error window
+- performance / tick timing window
+- resource graph window
+
+Main map window:
+- shows 256x256 tile world
+- supports pan/zoom
+- shows room borders
+- shows ownership
+- shows mines
+- shows buildings
+- shows units
+- shows paths optionally
+- selectable entities
+
+Screep status window:
+- selected screep basic info
+- owner
+- role from Lua memory
+- hp
+- cargo
+- power reserve
+- current task
+- target id
+- recent actions
+- current Lua state key-values if exposed
+
+Text info window:
+- general logs
+- AI logs
+- combat logs
+- system logs
+- script errors
+- warnings
+
+1.10 Win/lose and sandbox
+
+Initial version can be sandbox-first.
+No hard win condition required.
+
+Optional later modes:
+- domination
+- score by room control
+- score by tech
+- survival timed mode
+- scenario mode
+
+==================================================
+2. NON-FUNCTIONAL GOALS
+==================================================
+
+- modular Rust code
+- small focused files
+- ECS-friendly design
+- hot-reload friendly Lua integration
+- append-only tracking file for progress
+- deterministic mode possible later
+- debug-first architecture
+- headless simulation mode possible later
+- save/load possible later
+- bevy-friendly plugin separation
+
+==================================================
+3. RUST ARCHITECTURE SPEC
+==================================================
+
+3.1 Main crates
+
+Start with one crate first:
+- bevy_screeps_lua
+
+Later optional workspace split:
+- game_core
+- game_render
+- game_lua
+- game_tools
+
+For now, one crate is simpler.
+
+3.2 Recommended dependencies
+
+Cargo.toml approximate dependencies:
+- bevy
+- mlua or rhai? Use mlua because user asked Lua
+- serde
+- serde_json
+- ron
+- anyhow
+- thiserror
+- rand
+- tracing
+- tracing-subscriber
+- indexmap
+- smallvec
+- parking_lot
+
+Suggested Lua crate:
+- mlua with vendored Lua or LuaJIT option depending platform goals
+
+3.3 Top-level directory layout
+
+bevy_screeps_lua/
+├─ Cargo.toml
+├─ assets/
+│  ├─ fonts/
+│  ├─ textures/
+│  ├─ ui/
+│  └─ shaders/
+├─ ai/
+│  ├─ ai_00/
+│  │  ├─ main.lua
+│  │  ├─ config.lua
+│  │  └─ roles/
+│  │     ├─ harvester.lua
+│  │     ├─ builder.lua
+│  │     └─ fighter.lua
+│  ├─ ai_01/
+│  └─ ...
+├─ config/
+│  ├─ game.ron
+│  ├─ worldgen.ron
+│  ├─ ui.ron
+│  └─ ai.ron
+├─ docs/
+│  ├─ todo1.txt
+│  └─ track1.txt
+└─ src/
+   ├─ main.rs
+   ├─ app.rs
+   ├─ prelude.rs
+   ├─ consts.rs
+   ├─ error.rs
+   ├─ config/
+   │  ├─ mod.rs
+   │  ├─ game_config.rs
+   │  ├─ worldgen_config.rs
+   │  ├─ ai_config.rs
+   │  └─ ui_config.rs
+   ├─ core/
+   │  ├─ mod.rs
+   │  ├─ game_state.rs
+   │  ├─ tick.rs
+   │  ├─ sim_clock.rs
+   │  ├─ scheduler.rs
+   │  └─ rng.rs
+   ├─ world/
+   │  ├─ mod.rs
+   │  ├─ world_map.rs
+   │  ├─ room.rs
+   │  ├─ tile.rs
+   │  ├─ terrain.rs
+   │  ├─ coordinates.rs
+   │  ├─ ownership.rs
+   │  ├─ visibility.rs
+   │  ├─ room_index.rs
+   │  └─ world_builder.rs
+   ├─ worldgen/
+   │  ├─ mod.rs
+   │  ├─ generator.rs
+   │  ├─ terrain_gen.rs
+   │  ├─ room_layout_gen.rs
+   │  ├─ mine_distribution.rs
+   │  ├─ faction_spawn_gen.rs
+   │  └─ seeds.rs
+   ├─ resources/
+   │  ├─ mod.rs
+   │  ├─ resource_type.rs
+   │  ├─ stockpile.rs
+   │  ├─ dropped_resource.rs
+   │  ├─ recipes.rs
+   │  └─ economy.rs
+   ├─ mines/
+   │  ├─ mod.rs
+   │  ├─ mine_type.rs
+   │  ├─ mine_node.rs
+   │  ├─ mining_logic.rs
+   │  └─ regeneration.rs
+   ├─ creeps/
+   │  ├─ mod.rs
+   │  ├─ components.rs
+   │  ├─ bundle.rs
+   │  ├─ stats.rs
+   │  ├─ upkeep.rs
+   │  ├─ role.rs
+   │  ├─ inventory.rs
+   │  ├─ actions.rs
+   │  ├─ movement.rs
+   │  ├─ combat.rs
+   │  ├─ building.rs
+   │  ├─ mining.rs
+   │  ├─ transport.rs
+   │  ├─ spawning.rs
+   │  └─ sensing.rs
+   ├─ buildings/
+   │  ├─ mod.rs
+   │  ├─ building_type.rs
+   │  ├─ bundle.rs
+   │  ├─ storage.rs
+   │  ├─ spawn.rs
+   │  ├─ refinery.rs
+   │  ├─ defense.rs
+   │  ├─ roads.rs
+   │  ├─ construction.rs
+   │  ├─ repair.rs
+   │  └─ production.rs
+   ├─ factions/
+   │  ├─ mod.rs
+   │  ├─ faction.rs
+   │  ├─ diplomacy.rs
+   │  ├─ memory.rs
+   │  ├─ spawn_logic.rs
+   │  └─ ai_registry.rs
+   ├─ lua/
+   │  ├─ mod.rs
+   │  ├─ vm.rs
+   │  ├─ sandbox.rs
+   │  ├─ loader.rs
+   │  ├─ hooks.rs
+   │  ├─ api/
+   │  │  ├─ mod.rs
+   │  │  ├─ world_api.rs
+   │  │  ├─ unit_api.rs
+   │  │  ├─ room_api.rs
+   │  │  ├─ economy_api.rs
+   │  │  ├─ build_api.rs
+   │  │  ├─ combat_api.rs
+   │  │  ├─ debug_api.rs
+   │  │  └─ log_api.rs
+   │  ├─ commands/
+   │  │  ├─ mod.rs
+   │  │  ├─ command_buffer.rs
+   │  │  ├─ unit_command.rs
+   │  │  ├─ build_command.rs
+   │  │  ├─ spawn_command.rs
+   │  │  └─ validation.rs
+   │  ├─ memory/
+   │  │  ├─ mod.rs
+   │  │  ├─ faction_memory.rs
+   │  │  └─ unit_memory.rs
+   │  └─ hot_reload.rs
+   ├─ sim/
+   │  ├─ mod.rs
+   │  ├─ phases.rs
+   │  ├─ command_apply.rs
+   │  ├─ upkeep_phase.rs
+   │  ├─ movement_phase.rs
+   │  ├─ mining_phase.rs
+   │  ├─ transport_phase.rs
+   │  ├─ build_phase.rs
+   │  ├─ combat_phase.rs
+   │  ├─ economy_phase.rs
+   │  └─ death_phase.rs
+   ├─ path/
+   │  ├─ mod.rs
+   │  ├─ astar.rs
+   │  ├─ flow_field.rs
+   │  ├─ cost_map.rs
+   │  ├─ room_graph.rs
+   │  └─ path_cache.rs
+   ├─ events/
+   │  ├─ mod.rs
+   │  ├─ game_events.rs
+   │  ├─ combat_events.rs
+   │  ├─ ui_events.rs
+   │  ├─ debug_events.rs
+   │  └─ script_events.rs
+   ├─ save/
+   │  ├─ mod.rs
+   │  ├─ snapshot.rs
+   │  ├─ save_game.rs
+   │  ├─ load_game.rs
+   │  └─ versioning.rs
+   ├─ debug/
+   │  ├─ mod.rs
+   │  ├─ god_mode.rs
+   │  ├─ inspector.rs
+   │  ├─ overlays.rs
+   │  ├─ console.rs
+   │  ├─ perf.rs
+   │  └─ script_errors.rs
+   ├─ ui/
+   │  ├─ mod.rs
+   │  ├─ theme.rs
+   │  ├─ layout.rs
+   │  ├─ map_view.rs
+   │  ├─ room_view.rs
+   │  ├─ unit_panel.rs
+   │  ├─ building_panel.rs
+   │  ├─ faction_panel.rs
+   │  ├─ log_panel.rs
+   │  ├─ perf_panel.rs
+   │  ├─ minimap.rs
+   │  ├─ selection.rs
+   │  └─ widgets/
+   │     ├─ mod.rs
+   │     ├─ table.rs
+   │     ├─ tabs.rs
+   │     ├─ resource_bar.rs
+   │     └─ status_line.rs
+   ├─ render/
+   │  ├─ mod.rs
+   │  ├─ camera.rs
+   │  ├─ map_render.rs
+   │  ├─ room_overlay.rs
+   │  ├─ creep_render.rs
+   │  ├─ building_render.rs
+   │  ├─ mine_render.rs
+   │  ├─ healthbars.rs
+   │  └─ debug_render.rs
+   └─ tools/
+      ├─ mod.rs
+      ├─ file_watcher.rs
+      ├─ append_log.rs
+      ├─ ids.rs
+      └─ time.rs
+
+==================================================
+4. FILE-BY-FILE PURPOSE AND API
+==================================================
+
+4.1 Entry and app setup
+
+main.rs
+Purpose:
+- program entry point
+- initialize logging
+- load config
+- build Bevy app
+- add plugins
+
+Main API:
+- fn main()
+- fn build_app() -> App
+
+app.rs
+Purpose:
+- central app/plugin registration
+- plugin ordering
+- resources initialization
+
+Main API:
+- pub fn create_app() -> App
+- pub struct GameAppPlugin;
+- impl Plugin for GameAppPlugin
+
+prelude.rs
+Purpose:
+- common re-exports
+- reduce repetitive imports
+
+consts.rs
+Purpose:
+- all global constants
+- room sizes, world sizes, defaults
+
+Example constants:
+- pub const WORLD_TILES_X: u32 = 256;
+- pub const WORLD_TILES_Y: u32 = 256;
+- pub const ROOM_GRID_X: u32 = 32;
+- pub const ROOM_GRID_Y: u32 = 32;
+- pub const ROOM_TILE_SIZE: u32 = 8;
+- pub const DEFAULT_AI_COUNT: usize = 32;
+
+error.rs
+Purpose:
+- common error type definitions
+
+Main API:
+- pub enum GameError
+- pub type GameResult<T> = Result<T, GameError>
+
+4.2 Config
+
+config/game_config.rs
+Purpose:
+- overall game settings
+Fields:
+- tick rate
+- god mode default
+- ai count
+- autosave interval
+- sim speed
+- Lua instruction budget
+
+config/worldgen_config.rs
+Purpose:
+- mine frequency
+- faction spacing
+- terrain distribution
+- seed options
+
+config/ai_config.rs
+Purpose:
+- AI folder path pattern
+- script names
+- tick budget
+- hot reload flags
+
+config/ui_config.rs
+Purpose:
+- initial panel sizes
+- theme values
+- debug overlay defaults
+
+4.3 Core simulation
+
+core/game_state.rs
+Purpose:
+- high-level game mode/state enum
+Examples:
+- Loading
+- Running
+- Paused
+- SingleStep
+- GameOver
+
+core/tick.rs
+Purpose:
+- tick counter resource
+API:
+- pub struct TickNumber(pub u64);
+
+core/sim_clock.rs
+Purpose:
+- sim speed scaling
+- paused vs running logic
+
+core/scheduler.rs
+Purpose:
+- high-level scheduling helpers
+- AI staggering
+
+core/rng.rs
+Purpose:
+- seeded RNG resource for deterministic generation
+
+4.4 World
+
+world/coordinates.rs
+Purpose:
+- coordinate types
+Types:
+- WorldPos
+- RoomPos
+- TilePos
+- RoomCoord
+
+API:
+- fn world_to_room(...)
+- fn room_to_world(...)
+- fn clamp_world_pos(...)
+
+world/world_map.rs
+Purpose:
+- container for world tiles/rooms
+API:
+- pub struct WorldMap
+- fn get_room(&self, coord: RoomCoord) -> Option<&RoomData>
+- fn get_room_mut(...)
+- fn is_walkable(...)
+
+world/room.rs
+Purpose:
+- room-level data model
+Fields:
+- terrain
+- mine ids
+- building ids
+- unit ids
+- owner
+- visibility
+
+world/tile.rs
+Purpose:
+- tile type and occupancy data
+
+world/terrain.rs
+Purpose:
+- terrain enum and movement costs
+
+world/ownership.rs
+Purpose:
+- room owner/controller state
+
+world/visibility.rs
+Purpose:
+- visibility and fog-of-war state
+Note:
+- GOD mode ignores fog for display
+
+world/room_index.rs
+Purpose:
+- fast lookup indices for room contents
+
+world/world_builder.rs
+Purpose:
+- convert generated data into ECS entities/resources
+
+4.5 World generation
+
+worldgen/generator.rs
+Purpose:
+- top-level world generation orchestration
+API:
+- pub fn generate_world(cfg: &WorldgenConfig, seed: u64) -> GeneratedWorld
+
+worldgen/terrain_gen.rs
+Purpose:
+- terrain layout per room
+
+worldgen/room_layout_gen.rs
+Purpose:
+- room structure and internal placement
+
+worldgen/mine_distribution.rs
+Purpose:
+- place 2 or 3 mines per room
+- ensure strategic distribution
+API:
+- fn assign_room_mines(...)
+- fn choose_mine_types(...)
+
+worldgen/faction_spawn_gen.rs
+Purpose:
+- starting positions for 32 AI factions
+- fairness and spacing
+
+worldgen/seeds.rs
+Purpose:
+- seed helpers and reproducibility
+
+4.6 Resources and economy
+
+resources/resource_type.rs
+Purpose:
+- 10 mine/resource types enum
+API:
+- pub enum ResourceType { Power, Iron, Copper, Silicon, Crystal, Carbon, Stone, Sulfur, Water, Biomass }
+
+resources/stockpile.rs
+Purpose:
+- per faction resource storage map
+
+resources/dropped_resource.rs
+Purpose:
+- ECS dropped resource entities
+
+resources/recipes.rs
+Purpose:
+- define crafting/build recipes
+
+resources/economy.rs
+Purpose:
+- helper systems for transfers, refinement, consumption
+
+4.7 Mines
+
+mines/mine_type.rs
+Purpose:
+- mine metadata
+Fields:
+- regen rate
+- extraction hardness
+- rarity
+- color/icon id
+
+mines/mine_node.rs
+Purpose:
+- ECS mine node components
+Fields:
+- resource type
+- amount current
+- amount max
+- regen timer
+
+mines/mining_logic.rs
+Purpose:
+- extraction calculations
+
+mines/regeneration.rs
+Purpose:
+- mine recovery systems
+
+4.8 Creeps
+
+creeps/components.rs
+Purpose:
+- ECS components for creeps
+Examples:
+- CreepId
+- OwnerFaction
+- HitPoints
+- EnergyReserve or PowerReserve
+- CurrentTask
+- Carrying
+- BodyParts
+- ScriptRoleTag
+
+creeps/bundle.rs
+Purpose:
+- Bevy bundle for creep spawn
+
+creeps/stats.rs
+Purpose:
+- derive combat/build/move/mining stats from body parts
+
+creeps/upkeep.rs
+Purpose:
+- consume Power over time
+- death from starvation
+
+creeps/role.rs
+Purpose:
+- role tags and script-visible role metadata
+
+creeps/inventory.rs
+Purpose:
+- carried resources
+
+creeps/actions.rs
+Purpose:
+- action enums and common action validation
+
+creeps/movement.rs
+Purpose:
+- movement resolution
+
+creeps/combat.rs
+Purpose:
+- combat calculations
+
+creeps/building.rs
+Purpose:
+- build and repair action resolution
+
+creeps/mining.rs
+Purpose:
+- mining action resolution
+
+creeps/transport.rs
+Purpose:
+- withdraw/deposit/drop/pickup actions
+
+creeps/spawning.rs
+Purpose:
+- create new creeps from spawn buildings
+
+creeps/sensing.rs
+Purpose:
+- visible nearby entities, script query support
+
+4.9 Buildings
+
+buildings/building_type.rs
+Purpose:
+- enum for building kinds
+
+buildings/bundle.rs
+Purpose:
+- ECS spawn bundle
+
+buildings/storage.rs
+Purpose:
+- storage logic
+
+buildings/spawn.rs
+Purpose:
+- unit spawn logic
+
+buildings/refinery.rs
+Purpose:
+- convert resources to processed materials
+
+buildings/defense.rs
+Purpose:
+- towers and static defense
+
+buildings/roads.rs
+Purpose:
+- road effects on movement cost
+
+buildings/construction.rs
+Purpose:
+- construction sites and completion rules
+
+buildings/repair.rs
+Purpose:
+- repair systems
+
+buildings/production.rs
+Purpose:
+- factories and component production
+
+4.10 Factions
+
+factions/faction.rs
+Purpose:
+- faction identity and metadata
+Fields:
+- id
+- name
+- ai path
+- color
+- stockpile
+- state
+
+factions/diplomacy.rs
+Purpose:
+- hostility/alliance settings
+Can start simple: everyone hostile
+
+factions/memory.rs
+Purpose:
+- Rust-side faction memory metadata
+
+factions/spawn_logic.rs
+Purpose:
+- initial faction base spawning
+
+factions/ai_registry.rs
+Purpose:
+- mapping faction id to AI script runtime
+
+4.11 Lua system
+
+lua/vm.rs
+Purpose:
+- wrapper around mlua state for one faction
+
+Main API:
+- pub struct LuaVm
+- fn new_for_faction(...)
+- fn call_tick(...)
+- fn call_hook(...)
+- fn set_budget(...)
+
+lua/sandbox.rs
+Purpose:
+- sandbox rules
+- disable unsafe standard library parts if desired
+- instruction/time limit hooks
+
+lua/loader.rs
+Purpose:
+- load faction scripts from ai/ai_xx/
+API:
+- fn load_faction_scripts(faction_id: FactionId, path: &Path) -> GameResult<LuaVm>
+
+lua/hooks.rs
+Purpose:
+- standard Lua hook names
+Examples:
+- on_init
+- on_tick
+- on_room_seen
+- on_unit_spawned
+- on_unit_died
+
+lua/api/world_api.rs
+Purpose:
+- world query functions exposed to Lua
+
+Suggested Lua functions:
+- world.get_tick()
+- world.get_room(x, y)
+- world.get_visible_rooms()
+- world.get_owned_rooms()
+
+lua/api/unit_api.rs
+Purpose:
+- unit query and command functions
+Suggested Lua functions:
+- units.list_owned()
+- units.get(id)
+- units.move_to(id, x, y)
+- units.mine(id, mine_id)
+- units.attack(id, target_id)
+- units.transfer(id, target_id, resource, amount)
+
+lua/api/room_api.rs
+Purpose:
+- room query helpers
+Suggested Lua functions:
+- rooms.get_mines(room_id)
+- rooms.get_buildings(room_id)
+- rooms.get_units(room_id)
+
+lua/api/economy_api.rs
+Purpose:
+- faction stockpile and recipes queries
+
+lua/api/build_api.rs
+Purpose:
+- create construction intents
+Suggested Lua functions:
+- build.place_construction(unit_id, building_type, x, y)
+
+lua/api/combat_api.rs
+Purpose:
+- combat queries and tactical commands
+
+lua/api/debug_api.rs
+Purpose:
+- debug-only utilities
+Only allowed if debug mode enabled
+
+lua/api/log_api.rs
+Purpose:
+- log text to AI log pane
+Suggested Lua functions:
+- log.info(...)
+- log.warn(...)
+- log.error(...)
+
+lua/commands/command_buffer.rs
+Purpose:
+- per-faction buffered command storage
+
+lua/commands/unit_command.rs
+Purpose:
+- enums for move, mine, build, attack, transfer, etc.
+
+lua/commands/build_command.rs
+Purpose:
+- building construction intents
+
+lua/commands/spawn_command.rs
+Purpose:
+- spawn new creep intents
+
+lua/commands/validation.rs
+Purpose:
+- Rust-side validation before apply
+
+lua/memory/faction_memory.rs
+Purpose:
+- per-faction persistent Lua memory blob or key/value state
+
+lua/memory/unit_memory.rs
+Purpose:
+- per-unit custom script memory if desired
+
+lua/hot_reload.rs
+Purpose:
+- watch Lua files and reload on demand or automatically
+
+4.12 Simulation phases
+
+sim/phases.rs
+Purpose:
+- register and order sim systems
+
+sim/command_apply.rs
+Purpose:
+- apply validated Lua command buffers to ECS intentions
+
+sim/upkeep_phase.rs
+Purpose:
+- consume power
+- handle starvation/degradation
+
+sim/movement_phase.rs
+Purpose:
+- resolve movement and collision
+
+sim/mining_phase.rs
+Purpose:
+- resolve mine extraction
+
+sim/transport_phase.rs
+Purpose:
+- handle resource transfers
+
+sim/build_phase.rs
+Purpose:
+- construction progress and repair
+
+sim/combat_phase.rs
+Purpose:
+- damage, death, target validation
+
+sim/economy_phase.rs
+Purpose:
+- building production, stockpile aggregation, regen timers
+
+sim/death_phase.rs
+Purpose:
+- cleanup dead entities and emit events
+
+4.13 Pathfinding
+
+path/astar.rs
+Purpose:
+- tactical local pathing
+
+path/flow_field.rs
+Purpose:
+- optional group movement optimization
+
+path/cost_map.rs
+Purpose:
+- movement cost calculation
+
+path/room_graph.rs
+Purpose:
+- inter-room path graph
+
+path/path_cache.rs
+Purpose:
+- cache paths to avoid recalculation
+
+4.14 Events
+
+events/game_events.rs
+Purpose:
+- high-level sim events
+
+events/combat_events.rs
+Purpose:
+- combat logs and listeners
+
+events/ui_events.rs
+Purpose:
+- selection changes, panel actions, toggle overlays
+
+events/debug_events.rs
+Purpose:
+- god actions, reload requests, stepping controls
+
+events/script_events.rs
+Purpose:
+- Lua errors, hook triggers, reload events
+
+4.15 Save/load
+
+save/snapshot.rs
+Purpose:
+- full serializable game snapshot model
+
+save/save_game.rs
+Purpose:
+- write save files
+
+save/load_game.rs
+Purpose:
+- load save files
+
+save/versioning.rs
+Purpose:
+- save format versions
+
+4.16 Debug tools
+
+debug/god_mode.rs
+Purpose:
+- implement god commands and state
+
+debug/inspector.rs
+Purpose:
+- selected entity inspection helper
+
+debug/overlays.rs
+Purpose:
+- map overlays for paths, ownership, danger, mine richness
+
+debug/console.rs
+Purpose:
+- debug command console
+
+debug/perf.rs
+Purpose:
+- tick timings, script timings, entity counts
+
+debug/script_errors.rs
+Purpose:
+- collect and display Lua failures cleanly
+
+4.17 UI
+
+ui/layout.rs
+Purpose:
+- window layout definitions
+
+ui/map_view.rs
+Purpose:
+- main map interaction and rendering hooks
+
+ui/room_view.rs
+Purpose:
+- focused room details
+
+ui/unit_panel.rs
+Purpose:
+- selected unit details
+
+ui/building_panel.rs
+Purpose:
+- selected building details
+
+ui/faction_panel.rs
+Purpose:
+- selected faction details
+
+ui/log_panel.rs
+Purpose:
+- text info window
+
+ui/perf_panel.rs
+Purpose:
+- performance panel
+
+ui/minimap.rs
+Purpose:
+- global world map navigation
+
+ui/selection.rs
+Purpose:
+- selection state and click handling
+
+4.18 Rendering
+
+render/camera.rs
+Purpose:
+- camera movement, zoom, bounds
+
+render/map_render.rs
+Purpose:
+- tile map rendering
+
+render/room_overlay.rs
+Purpose:
+- room border overlays
+
+render/creep_render.rs
+Purpose:
+- creep sprites/icons/status markers
+
+render/building_render.rs
+Purpose:
+- building rendering
+
+render/mine_render.rs
+Purpose:
+- mine visuals
+
+render/healthbars.rs
+Purpose:
+- hp/power/cargo indicators
+
+render/debug_render.rs
+Purpose:
+- debug overlays and gizmos
+
+==================================================
+5. ECS DATA MODEL SUMMARY
+==================================================
+
+Entities:
+- Creep
+- Building
+- MineNode
+- DroppedResource
+- ConstructionSite
+- Projectile later if needed
+
+Resources:
+- GameConfig
+- WorldgenConfig
+- UiConfig
+- TickNumber
+- SimClock
+- WorldMap
+- FactionRegistry
+- LuaRegistry
+- SelectionState
+- DebugState
+- PerfMetrics
+- EventLog
+
+Important components:
+- Position
+- OwnerFaction
+- Health
+- PowerReserve
+- Inventory
+- BodyParts
+- CurrentAction
+- TargetEntity
+- VisionRange
+- BuildingKind
+- MineKind
+- ResourcePile
+- ConstructionProgress
+
+==================================================
+6. LUA SCRIPT SPEC
+==================================================
+
+6.1 Standard AI folder layout
+
+ai/ai_00/
+├─ main.lua
+├─ config.lua
+├─ roles/
+│  ├─ harvester.lua
+│  ├─ builder.lua
+│  ├─ fighter.lua
+│  ├─ hauler.lua
+│  └─ scout.lua
+└─ libs/
+   └─ util.lua
+
+6.2 main.lua expected interface
+
+The Rust side should look for these optional functions:
+- on_init()
+- on_tick()
+- on_unit_spawned(unit_id)
+- on_unit_died(unit_id)
+- on_room_visible(room_id)
+
+Minimal required:
+- on_tick()
+
+6.3 Example Lua behavior model
+
+on_tick():
+- read stockpile
+- count units by role
+- if power income too low, spawn more harvesters
+- send miners to power mines
+- send haulers to depots
+- if storage high enough, spawn builders
+- if enemy nearby, spawn fighters
+
+6.4 Lua limitations
+
+- no direct filesystem access except its own allowed files if enabled
+- no OS command execution
+- no raw network access
+- instruction budget per tick
+- safe Rust API only
+- errors isolated per faction
+
+==================================================
+7. INITIAL API DESIGN EXAMPLE
+==================================================
+
+Rust-side key types:
+
+pub type FactionId = u16;
+pub type CreepId = u32;
+pub type BuildingId = u32;
+pub type MineId = u32;
+
+pub struct WorldPos {
+    pub x: i32,
+    pub y: i32,
+}
+
+pub enum ResourceType {
+    Power,
+    Iron,
+    Copper,
+    Silicon,
+    Crystal,
+    Carbon,
+    Stone,
+    Sulfur,
+    Water,
+    Biomass,
+}
+
+pub enum UnitCommand {
+    MoveTo { creep_id: CreepId, x: i32, y: i32 },
+    Mine { creep_id: CreepId, mine_id: MineId },
+    Build { creep_id: CreepId, building: BuildingType, x: i32, y: i32 },
+    Attack { creep_id: CreepId, target_id: u32 },
+    Transfer { creep_id: CreepId, target_id: u32, resource: ResourceType, amount: u32 },
+    EatPower { creep_id: CreepId },
+    Pickup { creep_id: CreepId, entity_id: u32 },
+}
+
+pub trait ScriptHost {
+    fn get_owned_creeps(&self, faction_id: FactionId) -> Vec<CreepView>;
+    fn get_visible_rooms(&self, faction_id: FactionId) -> Vec<RoomView>;
+    fn push_command(&mut self, faction_id: FactionId, cmd: UnitCommand) -> GameResult<()>;
+}
+
+==================================================
+8. PERFORMANCE / SCALING NOTES
+==================================================
+
+Since there are 32 AIs by default:
+- avoid huge monolithic systems
+- separate querying from execution
+- use command buffers
+- stagger expensive Lua execution if needed
+- cache paths
+- store room-local indices
+- do not keep giant functions in one file
+
+Recommended later optimizations:
+- room-based simulation partitions
+- script budget accounting
+- optional lower-frequency AI update hooks
+- headless server mode
+- render culling
+- compact views passed to Lua
+
+==================================================
+9. todo1.txt CONTENT
+==================================================
+
+File: docs/todo1.txt
+
+[TODO] Project bootstrap
+- Create Rust Bevy project skeleton
+- Add mlua integration
+- Add config loading
+- Add logging and error types
+- Add base plugin structure
+
+[TODO] World foundation
+- Implement coordinate types
+- Implement 256x256 world map
+- Implement 32x32 room grid
+- Implement room/tile data structures
+- Implement terrain and ownership models
+
+[TODO] World generation
+- Generate room terrain
+- Generate 2 or 3 mines per room
+- Add 10 mine types
+- Ensure power mine strategic distribution
+- Spawn 32 default AI factions fairly
+
+[TODO] Faction and economy
+- Implement faction registry
+- Implement stockpile system
+- Implement resource type enum
+- Implement dropped resources
+- Implement basic recipes
+
+[TODO] Creep system
+- Implement creep components and bundle
+- Implement body part model: move/work/fight/mine/build/eat/transport
+- Implement power upkeep
+- Implement inventory
+- Implement spawn logic
+
+[TODO] Building system
+- Implement base core
+- Implement spawn building
+- Implement storage
+- Implement mine extractor
+- Implement wall/tower/road basics
+
+[TODO] Lua integration
+- Create one Lua VM per faction
+- Load scripts from ai/ai_xx/
+- Expose safe query API
+- Expose command buffer API
+- Add on_tick hook
+- Add script error collection
+- Add hot reload
+
+[TODO] Simulation phases
+- Add tick counter
+- Add command validation
+- Add movement phase
+- Add mining phase
+- Add transport phase
+- Add build phase
+- Add combat phase
+- Add upkeep phase
+- Add economy phase
+- Add death cleanup
+
+[TODO] UI and debug
+- Add map window
+- Add screep status window
+- Add text info/log window
+- Add AI status window
+- Add minimap
+- Add selection system
+- Add GOD mode actions
+- Add performance panel
+
+[TODO] Tooling and files
+- Create docs/todo1.txt
+- Create docs/track1.txt in append-only format
+- Add AI sample Lua files
+- Add config/*.ron defaults
+
+[TODO] Initial playable milestone
+- Load generated world
+- Show map
+- Run 32 AI Lua scripts
+- Spawn creeps
+- Allow creeps to mine Power
+- Allow survival/upkeep loop
+- Allow building of basic structures
+- Show logs and selected unit info
+
+==================================================
+10. track1.txt CONTENT
+==================================================
+
+File: docs/track1.txt
+
+[TRACK APPEND ONLY]
+2026-03-17 Project spec created for bevy_screeps_lua.
+2026-03-17 Core requirements captured: Rust + Bevy + Lua, 256x256 world, 32x32 rooms, 10 mine types, 32 default AI factions.
+2026-03-17 Architecture expanded into many small Rust files to avoid oversized functions and overly large source files.
+2026-03-17 Initial required UI windows recorded: map view, screep status, text info/log, AI status, minimap, debug/perf panels.
+2026-03-17 GOD mode default enabled and treated as first-class debug/sandbox feature.
+2026-03-17 Next implementation target: bootstrap crate, config loading, world coordinates, world generation, and minimal map rendering.
+
+Append-only rule:
+- Never edit previous lines
+- Only add new dated lines at the end
+- Use one line per tracked event or milestone
+- Keep facts concise and implementation-focused
+
+==================================================
+11. IMPLEMENTATION ORDER
+==================================================
+
+Recommended order:
+
+Phase 1
+- main.rs
+- app.rs
+- consts.rs
+- error.rs
+- config/*
+- core/game_state.rs
+- core/tick.rs
+
+Phase 2
+- world/coordinates.rs
+- world/tile.rs
+- world/room.rs
+- world/world_map.rs
+- worldgen/generator.rs
+- worldgen/mine_distribution.rs
+
+Phase 3
+- resources/resource_type.rs
+- mines/mine_type.rs
+- mines/mine_node.rs
+- factions/faction.rs
+- factions/ai_registry.rs
+
+Phase 4
+- creeps/components.rs
+- creeps/bundle.rs
+- creeps/stats.rs
+- creeps/upkeep.rs
+- creeps/spawning.rs
+
+Phase 5
+- lua/vm.rs
+- lua/loader.rs
+- lua/api/*
+- lua/commands/*
+- lua/hot_reload.rs
+
+Phase 6
+- sim/phases.rs
+- sim/movement_phase.rs
+- sim/mining_phase.rs
+- sim/upkeep_phase.rs
+- sim/economy_phase.rs
+
+Phase 7
+- render/camera.rs
+- render/map_render.rs
+- render/creep_render.rs
+- ui/map_view.rs
+- ui/unit_panel.rs
+- ui/log_panel.rs
+- ui/minimap.rs
+
+Phase 8
+- buildings/*
+- combat/path/debug/save systems
+- more advanced Lua hooks
+- optimization
+
+==================================================
+12. MVP DEFINITION
+==================================================
+
+The first MVP is successful when:
+- app launches into Bevy window
+- generated 256x256 world is visible
+- room borders are shown
+- 32 AI factions load their Lua scripts
+- each faction can spawn at least one creep
+- creeps consume Power to stay alive
+- creeps can mine Power Mines
+- creeps can return resources to storage
+- basic log window shows script/system activity
+- selecting a creep opens screep status panel
+- GOD mode allows full-map inspection
+- track1.txt workflow is defined as append-only
+
+==================================================
+13. NOTES FOR FILE SIZE CONTROL
+==================================================
+
+To avoid huge files:
+- keep one subsystem concern per file
+- split actions by domain: movement, mining, combat, building
+- split Lua API by topic
+- split UI panels into separate files
+- keep worldgen split into terrain, mines, and faction spawn logic
+- keep building logic split by structure family
+- keep debug tools isolated from core sim
+- keep save/load isolated from runtime systems
+
+Do not place all creep logic into one giant creeps.rs.
+Do not place all Lua bindings into one giant lua.rs.
+Do not place all UI into one giant ui.rs.
+
+==================================================
+14. OPTIONAL FUTURE EXPANSIONS
+==================================================
+
+- multiplayer observer mode
+- remote script upload
+- replay system
+- deterministic lockstep mode
+- headless dedicated server
+- tech tree
+- diplomacy
+- fog-of-war for non-god mode
+- blueprint export/import
+- richer combat
+- terrain hazards
+- rare neutral monsters
+- room controller levels
+- market/trading
+- script CPU budget economy like Screeps-inspired metagame
+
+End of spec.
