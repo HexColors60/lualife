@@ -15,7 +15,17 @@ pub struct GameAppPlugin;
 impl Plugin for GameAppPlugin {
     fn build(&self, app: &mut App) {
         // Add Bevy default plugins first (includes Time, Window, etc.)
-        app.add_plugins(DefaultPlugins);
+        app.add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "bevy_screeps_lua".to_string(),
+                resolution: (1024.0, 768.0).into(),
+                ..default()
+            }),
+            ..default()
+        }));
+
+        // Set clear color (dark background)
+        app.insert_resource(ClearColor(Color::srgb(0.05, 0.05, 0.1)));
 
         // Add game plugins
         app.add_plugins((
