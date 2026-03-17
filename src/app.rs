@@ -14,6 +14,7 @@ use crate::diplomacy::DiplomacyPlugin;
 use crate::events::EventsPlugin;
 use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
+use crate::localization::LocalizationPlugin;
 use crate::market::MarketPlugin;
 use crate::modding::ModdingPlugin;
 use crate::network::NetworkPlugin;
@@ -81,12 +82,13 @@ impl Plugin for GameAppPlugin {
             ModdingPlugin,
             PerformancePlugin,
             AccessibilityPlugin,
+            LocalizationPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
             UiPlugin,
-            DebugPlugin,
         ));
+        app.add_plugins(DebugPlugin);
     }
 }
 

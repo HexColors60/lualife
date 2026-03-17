@@ -16,6 +16,7 @@ pub mod error;
 pub mod events;
 pub mod events_world;
 pub mod factions;
+pub mod localization;
 pub mod lua;
 pub mod market;
 pub mod mines;
