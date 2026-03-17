@@ -35,3 +35,8 @@
 2026-03-17 Upkeep phase: creeps consume power each tick, take damage if starving.
 2026-03-17 Economy phase: mine resources regenerate over time.
 2026-03-17 Death cleanup: dead creeps are despawned, logged to GameLog.
+2026-03-17 Building rendering: spawn_building_sprites, update_building_sprites with type-based colors.
+2026-03-17 Mine rendering: spawn_mine_sprites, update_mine_sprites with resource-type colors and size based on fill ratio.
+2026-03-17 Health bars: HP bar (green/yellow/red) and power bar (blue) above creeps.
+2026-03-17 Minimap UI: MinimapPanel, MinimapCameraIndicator, toggle with M key.
+2026-03-17 Resource bar: displays faction resource info at top-center.

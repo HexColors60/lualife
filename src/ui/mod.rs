@@ -24,13 +24,17 @@ impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<UiState>()
             .init_resource::<GameLog>()
+            .init_resource::<MinimapState>()
             .add_plugins(SelectionPlugin)
-            .add_systems(Startup, setup_ui)
+            .add_systems(Startup, (setup_ui, setup_minimap, setup_resource_bar))
             .add_systems(Update, (
                 update_log_display,
                 update_unit_panel,
                 update_tick_display,
-            ));
+                update_minimap_indicator,
+                toggle_minimap,
+            ))
+            .add_systems(Update, update_resource_bar);
     }
 }
 

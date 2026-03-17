@@ -1,3 +1,4 @@
+mod building_render;
 mod camera;
 mod creep_render;
 mod debug_render;
@@ -6,6 +7,7 @@ mod map_render;
 mod mine_render;
 mod room_overlay;
 
+pub use building_render::*;
 pub use camera::*;
 pub use creep_render::*;
 pub use debug_render::*;
@@ -27,7 +29,13 @@ impl Plugin for RenderPlugin {
             .add_systems(Update, (
                 spawn_room_sprites.run_if(resource_exists::<WorldMap>),
                 spawn_creep_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
+                spawn_mine_sprites,
+                spawn_building_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
+                spawn_health_bars,
                 update_creep_sprites,
+                update_mine_sprites,
+                update_building_sprites,
+                update_health_bars,
             ));
     }
 }

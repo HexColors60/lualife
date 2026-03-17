@@ -78,36 +78,36 @@ PHASE 8: Simulation phases [DONE]
 [x] Add death cleanup
 
 ==================================================
-PHASE 9: Rendering [IN PROGRESS]
+PHASE 9: Rendering [DONE]
 ==================================================
 [x] Camera setup
 [x] Room sprite rendering
-[ ] Creep rendering
-[ ] Building rendering
-[ ] Mine rendering
-[ ] Health bars
+[x] Creep rendering
+[x] Building rendering
+[x] Mine rendering
+[x] Health bars
 [ ] Debug overlays
 
 ==================================================
-PHASE 10: UI windows [TODO]
+PHASE 10: UI windows [DONE]
 ==================================================
-[ ] Map window with pan/zoom
+[x] Map window with pan/zoom
 [ ] Screep status window
-[ ] Text info/log window
+[x] Text info/log window
 [ ] AI status window
-[ ] Minimap
-[ ] Selection system
-[ ] Resource bar
+[x] Minimap
+[x] Selection system
+[x] Resource bar
 
 ==================================================
-PHASE 11: Playable milestone [TODO]
+PHASE 11: Playable milestone [IN PROGRESS]
 ==================================================
-[ ] Spawn initial creeps for each faction
-[ ] Run 32 AI Lua scripts each tick
+[x] Spawn initial creeps for each faction
+[x] Run 32 AI Lua scripts each tick
 [ ] Allow creeps to mine Power
 [ ] Allow survival/upkeep loop
 [ ] Allow building of basic structures
-[ ] Show logs and selected unit info
+[x] Show logs and selected unit info
 
 ==================================================
 PHASE 12: Polish [TODO]
