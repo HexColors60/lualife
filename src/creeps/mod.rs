@@ -26,7 +26,9 @@ pub struct CreepsPlugin;
 
 impl Plugin for CreepsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<CreepEvent>();
+        app.init_resource::<CreepIdGenerator>()
+            .add_event::<CreepEvent>()
+            .add_systems(Update, spawn_initial_creeps.run_if(resource_exists::<crate::world::WorldMap>));
     }
 }
 

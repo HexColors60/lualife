@@ -18,15 +18,14 @@ pub use widgets::*;
 
 use bevy::prelude::*;
 
-use crate::config::UiConfig;
-
 pub struct UiPlugin;
 
 impl Plugin for UiPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<UiState>();
-
-        app.add_systems(Startup, setup_ui);
+        app.init_resource::<UiState>()
+            .init_resource::<GameLog>()
+            .add_systems(Startup, setup_ui)
+            .add_systems(Update, update_log_display);
     }
 }
 
@@ -38,11 +37,105 @@ pub struct UiState {
     pub show_unit_panel: bool,
 }
 
-fn setup_ui(mut commands: Commands, config: Res<UiConfig>) {
-    commands.insert_resource(UiState {
-        show_minimap: config.show_minimap,
-        show_log_panel: config.show_log_panel,
-        show_perf_panel: config.show_perf_panel,
-        show_unit_panel: false,
+/// Game log for displaying messages
+#[derive(Resource, Debug, Clone, Default)]
+pub struct GameLog {
+    pub messages: Vec<String>,
+}
+
+impl GameLog {
+    pub fn add(&mut self, message: impl Into<String>) {
+        let msg = message.into();
+        tracing::info!("GameLog: {}", msg);
+        self.messages.push(msg);
+        // Keep only last 100 messages
+        if self.messages.len() > 100 {
+            self.messages.remove(0);
+        }
+    }
+}
+
+/// Marker for the log text entity
+#[derive(Component)]
+pub struct LogText;
+
+fn setup_ui(mut commands: Commands, game_log: Res<GameLog>) {
+    // Spawn UI camera
+    commands.spawn(Camera2dBundle {
+        camera: Camera {
+            order: 1,
+            ..default()
+        },
+        transform: Transform::from_xyz(0.0, 0.0, 1000.0),
+        ..default()
     });
+
+    // Log panel at bottom
+    let log_text = commands.spawn((
+        TextBundle {
+            text: Text::from_section(
+                "Game started...\n",
+                TextStyle {
+                    font_size: 14.0,
+                    color: Color::srgb(0.8, 0.8, 0.8),
+                    ..default()
+                },
+            ),
+            style: Style {
+                position_type: PositionType::Absolute,
+                bottom: Val::Px(10.0),
+                left: Val::Px(10.0),
+                width: Val::Px(400.0),
+                max_height: Val::Px(150.0),
+                ..default()
+            },
+            background_color: BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.7)),
+            ..default()
+        },
+        LogText,
+    )).id();
+
+    // Info panel at top
+    commands.spawn((
+        TextBundle {
+            text: Text::from_section(
+                "bevy_screeps_lua - 32 AI factions - Press ESC to exit",
+                TextStyle {
+                    font_size: 16.0,
+                    color: Color::srgb(1.0, 1.0, 1.0),
+                    ..default()
+                },
+            ),
+            style: Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(10.0),
+                left: Val::Px(10.0),
+                ..default()
+            },
+            background_color: BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.7)),
+            ..default()
+        },
+    ));
+
+    tracing::info!("UI initialized");
+}
+
+fn update_log_display(
+    game_log: Res<GameLog>,
+    mut query: Query<&mut Text, With<LogText>>,
+) {
+    if game_log.is_changed() {
+        for mut text in query.iter_mut() {
+            // Show last 10 messages
+            let display_text = game_log.messages
+                .iter()
+                .rev()
+                .take(10)
+                .rev()
+                .cloned()
+                .collect::<Vec<_>>()
+                .join("\n");
+            text.sections[0].value = display_text;
+        }
+    }
 }

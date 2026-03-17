@@ -1,56 +1,72 @@
-[TODO] Project bootstrap
+[TODO] bevy_screeps_lua - Screeps-like autonomous simulation game
+
+==================================================
+PHASE 1: Project bootstrap [DONE]
+==================================================
 [x] Create Rust Bevy project skeleton
 [x] Add mlua integration
-[x] Add config loading
+[x] Add config loading (RON format)
 [x] Add logging and error types
 [x] Add base plugin structure
 
-[TODO] World foundation
-[x] Implement coordinate types
+==================================================
+PHASE 2: World foundation [DONE]
+==================================================
+[x] Implement coordinate types (WorldPos, RoomCoord, RoomPos)
 [x] Implement 256x256 world map
-[x] Implement 32x32 room grid
+[x] Implement 32x32 room grid (8x8 tiles per room)
 [x] Implement room/tile data structures
-[x] Implement terrain and ownership models
+[x] Implement terrain types (Plains, Forest, Mountain, Water, Swamp)
+[x] Implement ownership and visibility models
 
-[TODO] World generation
-[x] Generate room terrain
+==================================================
+PHASE 3: World generation [DONE]
+==================================================
+[x] Generate room terrain with seeded RNG
 [x] Generate 2 or 3 mines per room
-[x] Add 10 mine types
-[x] Ensure power mine strategic distribution
-[x] Spawn 32 default AI factions fairly
+[x] Add 10 mine types (Power, Iron, Copper, Silicon, Crystal, Carbon, Stone, Sulfur, Water, Biomass)
+[x] Spawn 32 default AI factions
 
-[TODO] Faction and economy
-[x] Implement faction registry
-[x] Implement stockpile system
-[x] Implement resource type enum
+==================================================
+PHASE 4: Resources and economy [DONE]
+==================================================
+[x] Implement ResourceType enum (10 types)
+[x] Implement Stockpile per faction
 [x] Implement dropped resources
 [x] Implement basic recipes
 
-[TODO] Creep system
-[x] Implement creep components and bundle
-[x] Implement body part model: move/work/fight/mine/build/eat/transport
-[x] Implement power upkeep
+==================================================
+PHASE 5: Creep system [DONE]
+==================================================
+[x] Implement creep components (Creep, OwnerFaction, HitPoints, etc.)
+[x] Implement body parts: Move, Work, Fight, Mine, Build, Eat, Transport
+[x] Implement power upkeep system
 [x] Implement inventory
 [x] Implement spawn logic
 
-[TODO] Building system
-[x] Implement base core
-[x] Implement spawn building
-[x] Implement storage
-[x] Implement mine extractor
-[x] Implement wall/tower/road basics
+==================================================
+PHASE 6: Building system [DONE]
+==================================================
+[x] Implement 16 building types
+[x] Implement building bundle
+[x] Implement construction system
+[x] Implement storage, spawn, refinery, defense, roads
 
-[TODO] Lua integration
-[x] Create one Lua VM per faction
+==================================================
+PHASE 7: Lua integration [DONE]
+==================================================
+[x] Create Lua VM infrastructure
 [x] Load scripts from ai/ai_xx/
-[x] Expose safe query API
+[x] Expose safe query API (world, unit, room, economy, build, combat, debug, log)
 [x] Expose command buffer API
 [x] Add on_tick hook
 [x] Add script error collection
-[x] Add hot reload
+[x] Add hot reload support
 
-[TODO] Simulation phases
-[x] Add tick counter
+==================================================
+PHASE 8: Simulation phases [DONE]
+==================================================
+[x] Add tick counter and sim clock
 [x] Add command validation
 [x] Add movement phase
 [x] Add mining phase
@@ -61,28 +77,42 @@
 [x] Add economy phase
 [x] Add death cleanup
 
-[TODO] UI and debug
-[ ] Add map window
-[ ] Add screep status window
-[ ] Add text info/log window
-[ ] Add AI status window
-[ ] Add minimap
-[ ] Add selection system
-[x] Add GOD mode actions
-[x] Add performance panel
+==================================================
+PHASE 9: Rendering [IN PROGRESS]
+==================================================
+[x] Camera setup
+[x] Room sprite rendering
+[ ] Creep rendering
+[ ] Building rendering
+[ ] Mine rendering
+[ ] Health bars
+[ ] Debug overlays
 
-[TODO] Tooling and files
-[x] Create docs/todo1.txt
-[x] Create docs/track1.txt in append-only format
-[ ] Add AI sample Lua files
-[ ] Add config/*.ron defaults
+==================================================
+PHASE 10: UI windows [TODO]
+==================================================
+[ ] Map window with pan/zoom
+[ ] Screep status window
+[ ] Text info/log window
+[ ] AI status window
+[ ] Minimap
+[ ] Selection system
+[ ] Resource bar
 
-[TODO] Initial playable milestone
-[ ] Load generated world
-[ ] Show map
-[ ] Run 32 AI Lua scripts
-[ ] Spawn creeps
+==================================================
+PHASE 11: Playable milestone [TODO]
+==================================================
+[ ] Spawn initial creeps for each faction
+[ ] Run 32 AI Lua scripts each tick
 [ ] Allow creeps to mine Power
 [ ] Allow survival/upkeep loop
 [ ] Allow building of basic structures
 [ ] Show logs and selected unit info
+
+==================================================
+PHASE 12: Polish [TODO]
+==================================================
+[ ] Save/load game
+[ ] Performance optimization
+[ ] Better AI sample scripts
+[ ] Documentation

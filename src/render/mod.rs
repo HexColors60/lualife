@@ -24,7 +24,11 @@ impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MapRendered>()
             .add_systems(Startup, setup_render)
-            .add_systems(Update, spawn_room_sprites.run_if(resource_exists::<WorldMap>));
+            .add_systems(Update, (
+                spawn_room_sprites.run_if(resource_exists::<WorldMap>),
+                spawn_creep_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
+                update_creep_sprites,
+            ));
     }
 }
 

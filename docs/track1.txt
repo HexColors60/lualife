@@ -15,3 +15,11 @@
 2026-03-17 Project compiles successfully with all 8 phases implemented.
 2026-03-17 Sample AI Lua scripts created in ai/ai_00/ with main.lua, config.lua, and role scripts.
 2026-03-17 Config files created: game.ron, worldgen.ron, ai.ron, ui.ron.
+2026-03-17 Fixed runtime issues: added DefaultPlugins, fixed Time resource panic.
+2026-03-17 Fixed black screen: proper camera setup, room sprite positioning centered at origin.
+2026-03-17 Map rendering working: 1024 room sprites displayed with terrain-based colors.
+2026-03-17 Implemented creep spawning: CreepIdGenerator resource, spawn_initial_creeps system.
+2026-03-17 Implemented creep rendering: spawn_creep_sprites, update_creep_sprites systems.
+2026-03-17 Implemented basic UI: GameLog resource, log panel, info panel.
+2026-03-17 Faction initialization: initialize_factions system spawns 32 default factions.
+2026-03-17 Creeps spawn for each faction with harvester body, displayed with faction colors.

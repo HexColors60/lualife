@@ -12,17 +12,24 @@ pub use spawn_logic::*;
 
 use bevy::prelude::*;
 
-use crate::config::AiConfig;
-use crate::resources::Stockpile;
-
 pub struct FactionsPlugin;
 
 impl Plugin for FactionsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<FactionRegistry>()
-            .init_resource::<DiplomacyState>();
-        app.add_event::<FactionEvent>();
+            .init_resource::<DiplomacyState>()
+            .add_event::<FactionEvent>()
+            .add_systems(Startup, initialize_factions);
     }
+}
+
+fn initialize_factions(
+    mut registry: ResMut<FactionRegistry>,
+    config: Res<crate::config::GameConfig>,
+) {
+    let count = config.ai_count;
+    registry.initialize_default_factions(count);
+    tracing::info!("Initialized {} factions", registry.count());
 }
 
 #[derive(Event, Debug, Clone)]

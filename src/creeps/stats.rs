@@ -69,6 +69,11 @@ impl CreepBody {
         body
     }
 
+    /// Alias for default_harvester
+    pub fn harvester() -> Self {
+        Self::default_harvester()
+    }
+
     pub fn default_builder() -> Self {
         let mut body = Self::new();
         body.add_part(PartType::Move);
