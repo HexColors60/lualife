@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::ai::AdvancedAiPlugin;
 use crate::audio::AudioPlugin;
 use crate::auth::AuthPlugin;
 use crate::buildings::BuildingsPlugin;
@@ -69,6 +70,7 @@ impl Plugin for GameAppPlugin {
             AuthPlugin,
             ChatPlugin,
             SyncPlugin,
+            AdvancedAiPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
