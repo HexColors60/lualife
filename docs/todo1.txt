@@ -106,13 +106,13 @@ PHASE 11: Playable milestone [DONE]
 [x] Run 32 AI Lua scripts each tick
 [x] Allow creeps to mine Power
 [x] Allow survival/upkeep loop
-[ ] Allow building of basic structures
+[x] Allow building of basic structures
 [x] Show logs and selected unit info
 
 ==================================================
-PHASE 12: Polish [TODO]
+PHASE 12: Polish [DONE]
 ==================================================
-[ ] Save/load game
-[ ] Performance optimization
-[ ] Better AI sample scripts
-[ ] Documentation
+[x] Save/load game
+[x] Performance optimization
+[x] Better AI sample scripts
+[x] Documentation

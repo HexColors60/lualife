@@ -45,3 +45,14 @@
 2026-03-17 AI status panel: shows Lua VM status and controls help.
 2026-03-17 Autonomous AI: creeps automatically find and mine Power when idle or starving.
 2026-03-17 Survival loop: creeps mine Power to survive, upkeep system drains power.
+2026-03-17 Build phase: creeps with Build action contribute to construction sites.
+2026-03-17 Initial buildings: spawn_initial_buildings creates BaseCore for each faction.
+2026-03-17 BuildingsPlugin added to app.rs for building management.
+2026-03-17 Save/load system: F5 quick save, F9 quick load with RON format.
+2026-03-17 SavePlugin added with keyboard input handlers.
+2026-03-17 Performance metrics: PerfMetrics resource tracks FPS, frame time, tick times.
+2026-03-17 Performance display: F4 toggles FPS, frame time, entity counts overlay.
+2026-03-17 Advanced AI script: ai_00/main.lua with survival priority, resource mining, exploration.
+2026-03-17 Aggressive AI script: ai_01/main.lua with combat focus and patrol behavior.
+2026-03-17 README.md created with project overview, controls, structure, and Lua API documentation.
+2026-03-17 Phase 11 and 12 completed: all todo items done.

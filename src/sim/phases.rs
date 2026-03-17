@@ -229,3 +229,62 @@ pub fn economy_phase(
         }
     }
 }
+
+/// Build phase system - handles construction
+pub fn build_phase(
+    mut creeps: Query<&mut Creep>,
+    mut construction_sites: Query<(Entity, &mut crate::buildings::ConstructionSite, &Transform)>,
+    mut commands: Commands,
+    game_state: Res<GameState>,
+    mut game_log: ResMut<crate::ui::GameLog>,
+) {
+    if *game_state != GameState::Running {
+        return;
+    }
+
+    for mut creep in creeps.iter_mut() {
+        if let Some(ref action) = creep.current_action {
+            if let CreepAction::Build { building_id } = action.action {
+                // Find the construction site
+                for (entity, mut site, transform) in construction_sites.iter_mut() {
+                    if entity.index() as u32 == building_id {
+                        // Check if creep is close enough
+                        let site_pos = crate::world::WorldPos::new(
+                            (transform.translation.x + 128.0) as i32,
+                            (transform.translation.y + 128.0) as i32,
+                        );
+                        let dx = (creep.position.x - site_pos.x) as f32;
+                        let dy = (creep.position.y - site_pos.y) as f32;
+                        let distance = (dx * dx + dy * dy).sqrt();
+
+                        if distance <= 3.0 {
+                            // Add construction progress
+                            let build_power = creep.body.build_efficiency();
+                            site.add_progress(build_power * 10.0);
+
+                            // Check if construction is complete
+                            if site.is_complete() {
+                                // Convert construction site to building
+                                let building = crate::buildings::Building::new(
+                                    0, // Will be assigned by building system
+                                    site.building_type,
+                                    site.faction_id,
+                                    site_pos,
+                                );
+
+                                commands.entity(entity).despawn();
+                                commands.spawn(building);
+
+                                game_log.add(format!(
+                                    "Building {:?} completed for faction {:?}",
+                                    site.building_type, site.faction_id
+                                ));
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -14,6 +14,7 @@ impl Plugin for SimPlugin {
             .add_systems(Update, (
                 movement_phase,
                 mining_phase,
+                build_phase,
                 combat_phase,
                 upkeep_phase,
                 economy_phase,

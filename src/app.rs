@@ -1,11 +1,13 @@
 use bevy::prelude::*;
 
+use crate::buildings::BuildingsPlugin;
 use crate::config::GameConfigPlugin;
 use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
 use crate::events::EventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::render::RenderPlugin;
+use crate::save::SavePlugin;
 use crate::sim::SimPlugin;
 use crate::ui::UiPlugin;
 use crate::world::WorldPlugin;
@@ -36,7 +38,9 @@ impl Plugin for GameAppPlugin {
             FactionsPlugin,
             WorldPlugin,
             WorldgenPlugin,
+            BuildingsPlugin,
             SimPlugin,
+            SavePlugin,
             RenderPlugin,
             UiPlugin,
             DebugPlugin,
