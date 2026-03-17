@@ -56,3 +56,6 @@
 2026-03-17 Aggressive AI script: ai_01/main.lua with combat focus and patrol behavior.
 2026-03-17 README.md created with project overview, controls, structure, and Lua API documentation.
 2026-03-17 Phase 11 and 12 completed: all todo items done.
+2026-03-17 Phase 13 pathfinding: integrated AStar with movement_phase, added PathPlugin.
+2026-03-17 Phase 14 tower defense: tower_attack_system with auto-targeting, energy consumption.
+2026-03-17 Phase 15 tech tree: TechRegistry, ResearchProgress, ResearchLab, 16 techs across 4 tiers.

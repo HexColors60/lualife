@@ -28,7 +28,10 @@ impl Plugin for BuildingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<BuildingIdGenerator>()
             .add_event::<BuildingEvent>()
-            .add_systems(Update, spawn_initial_buildings.run_if(resource_exists::<crate::factions::FactionRegistry>));
+            .add_systems(Update, (
+                spawn_initial_buildings.run_if(resource_exists::<crate::factions::FactionRegistry>),
+                tower_attack_system,
+            ));
     }
 }
 

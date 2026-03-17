@@ -13,6 +13,7 @@ pub mod mines;
 pub mod path;
 pub mod prelude;
 pub mod render;
+pub mod research;
 pub mod resources;
 pub mod save;
 pub mod sim;

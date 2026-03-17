@@ -116,3 +116,57 @@ PHASE 12: Polish [DONE]
 [x] Performance optimization
 [x] Better AI sample scripts
 [x] Documentation
+
+==================================================
+PHASE 13: Pathfinding [DONE]
+==================================================
+[x] Implement A* pathfinding algorithm
+[x] Add PathfindingCache resource
+[x] Integrate pathfinding with movement commands
+[x] Handle terrain costs (roads faster, swamp slower)
+[ ] Visualize paths in debug mode
+
+==================================================
+PHASE 14: Tower Defense [DONE]
+==================================================
+[x] Implement Tower building type
+[ ] Add tower attack range visualization
+[x] Implement auto-targeting for towers
+[x] Add tower energy consumption
+[x] Balance tower damage and range
+
+==================================================
+PHASE 15: Tech Tree [DONE]
+==================================================
+[x] Design tech tree structure
+[x] Implement ResearchLab building
+[x] Add research progress tracking
+[x] Unlock new abilities per tech level
+[ ] Add tech visualization UI
+
+==================================================
+PHASE 16: Market & Trading [TODO]
+==================================================
+[ ] Implement Market building
+[ ] Add resource trading between factions
+[ ] Implement dynamic pricing
+[ ] Add trade routes and caravans
+[ ] Market UI panel
+
+==================================================
+PHASE 17: Audio [TODO]
+==================================================
+[ ] Add background music
+[ ] Add UI sound effects (click, select)
+[ ] Add game sound effects (mining, combat)
+[ ] Add ambient sounds
+[ ] Volume controls in settings
+
+==================================================
+PHASE 18: Advanced Features [TODO]
+==================================================
+[ ] Implement roads with movement speed bonus
+[ ] Add walls for defense
+[ ] Implement creep spawning from Spawn building
+[ ] Add creep body customization
+[ ] Implement faction alliances

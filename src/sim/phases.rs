@@ -5,6 +5,7 @@ use crate::core::{GameState, TickNumber};
 use crate::world::WorldMap;
 use crate::mines::MineNode;
 use crate::resources::ResourceType;
+use crate::path::{AStar, PathCache};
 
 /// Simulation phase ordering
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -46,10 +47,11 @@ impl SimPhase {
     }
 }
 
-/// Movement phase system - handles creep movement
+/// Movement phase system - handles creep movement with pathfinding
 pub fn movement_phase(
     mut creeps: Query<&mut Creep>,
     world_map: Res<WorldMap>,
+    mut path_cache: ResMut<PathCache>,
     game_state: Res<GameState>,
 ) {
     if *game_state != GameState::Running {
@@ -65,25 +67,47 @@ pub fn movement_phase(
                     continue;
                 }
 
-                // Simple movement towards target
-                let dx = (target.x as f32 - creep.position.x as f32).signum();
-                let dy = (target.y as f32 - creep.position.y as f32).signum();
-
-                let new_x = (creep.position.x as f32 + dx * speed) as i32;
-                let new_y = (creep.position.y as f32 + dy * speed) as i32;
-
-                // Check if target reached
-                if (new_x - target.x).abs() <= 1 && (new_y - target.y).abs() <= 1 {
-                    creep.position.x = target.x;
-                    creep.position.y = target.y;
-                    creep.current_action = None;
+                // Try to get cached path or compute new one
+                let path = if let Some(cached) = path_cache.get(creep.position, target) {
+                    cached.clone()
                 } else {
-                    // Check walkability
-                    let new_pos = crate::world::WorldPos::new(new_x, new_y);
-                    if world_map.is_walkable(new_pos) {
-                        creep.position.x = new_x;
-                        creep.position.y = new_y;
+                    if let Some(new_path) = AStar::find_path(&world_map, creep.position, target) {
+                        path_cache.insert(creep.position, target, new_path.clone());
+                        new_path
+                    } else {
+                        // No path found, cancel action
+                        creep.current_action = None;
+                        continue;
                     }
+                };
+
+                // Find next waypoint
+                if let Some(&next_pos) = path.iter().find(|&&pos| {
+                    pos.x != creep.position.x || pos.y != creep.position.y
+                }) {
+                    // Move towards next waypoint
+                    let dx = (next_pos.x - creep.position.x).signum();
+                    let dy = (next_pos.y - creep.position.y).signum();
+
+                    let new_x = creep.position.x + dx;
+                    let new_y = creep.position.y + dy;
+
+                    // Check if target reached
+                    if new_x == target.x && new_y == target.y {
+                        creep.position.x = target.x;
+                        creep.position.y = target.y;
+                        creep.current_action = None;
+                    } else {
+                        // Move to next position
+                        let new_pos = crate::world::WorldPos::new(new_x, new_y);
+                        if world_map.is_walkable(new_pos) {
+                            creep.position.x = new_x;
+                            creep.position.y = new_y;
+                        }
+                    }
+                } else {
+                    // Already at target
+                    creep.current_action = None;
                 }
             }
         }
