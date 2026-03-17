@@ -14,6 +14,10 @@ pub struct GameAppPlugin;
 
 impl Plugin for GameAppPlugin {
     fn build(&self, app: &mut App) {
+        // Add Bevy default plugins first (includes Time, Window, etc.)
+        app.add_plugins(DefaultPlugins);
+
+        // Add game plugins
         app.add_plugins((
             GameConfigPlugin,
             CorePlugin,

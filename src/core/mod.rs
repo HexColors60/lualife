@@ -25,7 +25,7 @@ impl Plugin for CorePlugin {
             .init_resource::<Scheduler>();
 
         app.add_systems(Startup, setup_core);
-        app.add_systems(Update, update_tick);
+        app.add_systems(Update, update_tick.run_if(resource_exists::<Time>));
     }
 }
 
