@@ -4,6 +4,7 @@ use crate::config::GameConfigPlugin;
 use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
 use crate::events::EventsPlugin;
+use crate::factions::FactionsPlugin;
 use crate::render::RenderPlugin;
 use crate::sim::SimPlugin;
 use crate::ui::UiPlugin;
@@ -32,6 +33,7 @@ impl Plugin for GameAppPlugin {
             GameConfigPlugin,
             CorePlugin,
             EventsPlugin,
+            FactionsPlugin,
             WorldPlugin,
             WorldgenPlugin,
             SimPlugin,

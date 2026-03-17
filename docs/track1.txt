@@ -9,7 +9,7 @@
 2026-03-17 Phase 3 implementation completed: resources, mines, factions modules.
 2026-03-17 Phase 4 implementation completed: creeps module with components, body parts, inventory, actions.
 2026-03-17 Phase 5 implementation completed: lua module with VM, sandbox, loader, API.
-2026-03-17 Phase 6 implementation completed: sim module with phases and command buffer.
+2026-03-17 Phase 6 implementation started: sim module with phases and command buffer.
 2026-03-17 Phase 7 implementation started: render and ui modules with basic structure.
 2026-03-17 Phase 8 implementation completed: buildings, path, debug, save modules.
 2026-03-17 Project compiles successfully with all 8 phases implemented.
@@ -25,3 +25,13 @@
 2026-03-17 Creeps spawn for each faction with harvester body, displayed with faction colors.
 2026-03-17 Lua AI execution: LuaRegistry as NonSend resource, initialize_lua_vms, run_lua_ticks systems.
 2026-03-17 Lua scripts loaded from ai/ai_XX/main.lua, on_init and on_tick hooks called.
+2026-03-17 Selection system: mouse click detection, SelectionState resource, keyboard deselection (ESC).
+2026-03-17 Unit panel: displays selected creep info (ID, faction, role, HP, power, action, position).
+2026-03-17 Tick counter: displays current tick number in bottom-right corner.
+2026-03-17 Simulation phases implemented: movement, mining, combat, upkeep, economy, death_cleanup.
+2026-03-17 Movement phase: creeps with MoveTo action move towards target, check walkability.
+2026-03-17 Mining phase: creeps with Mine action extract resources from MineNode, add to inventory.
+2026-03-17 Combat phase: creeps with Attack action deal damage to enemy faction creeps.
+2026-03-17 Upkeep phase: creeps consume power each tick, take damage if starving.
+2026-03-17 Economy phase: mine resources regenerate over time.
+2026-03-17 Death cleanup: dead creeps are despawned, logged to GameLog.
