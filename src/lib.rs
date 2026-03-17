@@ -18,6 +18,7 @@ pub mod factions;
 pub mod lua;
 pub mod market;
 pub mod mines;
+pub mod modding;
 pub mod network;
 pub mod path;
 pub mod prelude;

@@ -14,6 +14,7 @@ use crate::events::EventsPlugin;
 use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::market::MarketPlugin;
+use crate::modding::ModdingPlugin;
 use crate::network::NetworkPlugin;
 use crate::path::PathPlugin;
 use crate::render::RenderPlugin;
@@ -75,6 +76,7 @@ impl Plugin for GameAppPlugin {
             AdvancedAiPlugin,
             WorldEventsPlugin,
             AchievementsPlugin,
+            ModdingPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,

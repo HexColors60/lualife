@@ -226,10 +226,10 @@ PHASE 24: Achievements & Statistics [DONE]
 [x] Implement milestone rewards
 
 ==================================================
-PHASE 25: Modding Support [TODO]
+PHASE 25: Modding Support [DONE]
 ==================================================
-[ ] Add custom building types via config
-[ ] Implement custom resource types
-[ ] Add custom creep body parts
-[ ] Implement custom tech tree modifications
-[ ] Add workshop support for sharing mods
+[x] Add custom building types via config
+[x] Implement custom resource types
+[x] Add custom creep body parts
+[x] Implement custom tech tree modifications
+[x] Add workshop support for sharing mods
