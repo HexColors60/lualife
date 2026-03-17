@@ -9,6 +9,7 @@ pub mod error;
 pub mod events;
 pub mod factions;
 pub mod lua;
+pub mod market;
 pub mod mines;
 pub mod path;
 pub mod prelude;

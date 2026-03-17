@@ -59,3 +59,4 @@
 2026-03-17 Phase 13 pathfinding: integrated AStar with movement_phase, added PathPlugin.
 2026-03-17 Phase 14 tower defense: tower_attack_system with auto-targeting, energy consumption.
 2026-03-17 Phase 15 tech tree: TechRegistry, ResearchProgress, ResearchLab, 16 techs across 4 tiers.
+2026-03-17 Phase 16 market: MarketOrder, MarketPrices with supply/demand pricing, market_system.

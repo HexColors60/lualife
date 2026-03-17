@@ -145,11 +145,11 @@ PHASE 15: Tech Tree [DONE]
 [ ] Add tech visualization UI
 
 ==================================================
-PHASE 16: Market & Trading [TODO]
+PHASE 16: Market & Trading [DONE]
 ==================================================
-[ ] Implement Market building
-[ ] Add resource trading between factions
-[ ] Implement dynamic pricing
+[x] Implement Market building
+[x] Add resource trading between factions
+[x] Implement dynamic pricing
 [ ] Add trade routes and caravans
 [ ] Market UI panel
 

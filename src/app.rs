@@ -6,6 +6,7 @@ use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
 use crate::events::EventsPlugin;
 use crate::factions::FactionsPlugin;
+use crate::market::MarketPlugin;
 use crate::path::PathPlugin;
 use crate::render::RenderPlugin;
 use crate::research::ResearchPlugin;
@@ -43,6 +44,7 @@ impl Plugin for GameAppPlugin {
             BuildingsPlugin,
             PathPlugin,
             ResearchPlugin,
+            MarketPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
