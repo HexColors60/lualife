@@ -1,10 +1,12 @@
 pub mod app;
+pub mod audio;
 pub mod buildings;
 pub mod config;
 pub mod consts;
 pub mod core;
 pub mod creeps;
 pub mod debug;
+pub mod diplomacy;
 pub mod error;
 pub mod events;
 pub mod factions;

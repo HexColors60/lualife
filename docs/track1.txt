@@ -60,3 +60,6 @@
 2026-03-17 Phase 14 tower defense: tower_attack_system with auto-targeting, energy consumption.
 2026-03-17 Phase 15 tech tree: TechRegistry, ResearchProgress, ResearchLab, 16 techs across 4 tiers.
 2026-03-17 Phase 16 market: MarketOrder, MarketPrices with supply/demand pricing, market_system.
+2026-03-17 Phase 17 audio: AudioSettings, SfxId, MusicId, PlaySfx/ChangeMusic events, AudioPlugin.
+2026-03-17 Phase 18 advanced: Road speed bonus, SpawnBuilding creep spawning, DiplomacyState alliances.
+2026-03-17 All 18 phases completed!

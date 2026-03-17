@@ -154,19 +154,19 @@ PHASE 16: Market & Trading [DONE]
 [ ] Market UI panel
 
 ==================================================
-PHASE 17: Audio [TODO]
+PHASE 17: Audio [DONE]
 ==================================================
-[ ] Add background music
-[ ] Add UI sound effects (click, select)
-[ ] Add game sound effects (mining, combat)
-[ ] Add ambient sounds
-[ ] Volume controls in settings
+[x] Add background music
+[x] Add UI sound effects (click, select)
+[x] Add game sound effects (mining, combat)
+[x] Add ambient sounds
+[x] Volume controls in settings
 
 ==================================================
-PHASE 18: Advanced Features [TODO]
+PHASE 18: Advanced Features [DONE]
 ==================================================
-[ ] Implement roads with movement speed bonus
-[ ] Add walls for defense
-[ ] Implement creep spawning from Spawn building
-[ ] Add creep body customization
-[ ] Implement faction alliances
+[x] Implement roads with movement speed bonus
+[x] Add walls for defense
+[x] Implement creep spawning from Spawn building
+[x] Add creep body customization
+[x] Implement faction alliances

@@ -1,9 +1,11 @@
 use bevy::prelude::*;
 
+use crate::audio::AudioPlugin;
 use crate::buildings::BuildingsPlugin;
 use crate::config::GameConfigPlugin;
 use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
+use crate::diplomacy::DiplomacyPlugin;
 use crate::events::EventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::market::MarketPlugin;
@@ -43,8 +45,12 @@ impl Plugin for GameAppPlugin {
             WorldgenPlugin,
             BuildingsPlugin,
             PathPlugin,
+        ));
+        app.add_plugins((
             ResearchPlugin,
             MarketPlugin,
+            AudioPlugin,
+            DiplomacyPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
