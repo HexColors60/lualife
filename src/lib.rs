@@ -1,3 +1,4 @@
+pub mod accessibility;
 pub mod achievements;
 pub mod ai;
 pub mod app;

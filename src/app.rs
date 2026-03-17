@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::accessibility::AccessibilityPlugin;
 use crate::achievements::AchievementsPlugin;
 use crate::ai::AdvancedAiPlugin;
 use crate::audio::AudioPlugin;
@@ -79,6 +80,7 @@ impl Plugin for GameAppPlugin {
             AchievementsPlugin,
             ModdingPlugin,
             PerformancePlugin,
+            AccessibilityPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
