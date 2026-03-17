@@ -1,0 +1,13 @@
+use rust and bevy
+write todo on todo1.txt, write track on track1.txt, track1.txt is the append only mode.
+
+write a screeps-like game in rust, and it use lua script, default 256x256 big area
+each area have 32x32 rooms, have two or three diff. mines.
+give 10 mines type, the one for screep to live is the power mine. other mine is for make building or make screep component.
+screep is work/fight/move/mine/build/eat/transport by the lua script it load, not by the order directly from user command.
+default 32 AI with their own ai .lua files in their own path.
+The GOD mode is default on, have the view map window, screep status window, text info window, etc. 
+
+give me the detailed english spec. in english in a copy-able text box.
+give me the rust filename.rs and api and layout in the same text box.
+extended more filename.rs so make the each func. dont too huge inside one file.
