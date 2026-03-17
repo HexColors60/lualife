@@ -12,6 +12,7 @@ pub mod debug;
 pub mod diplomacy;
 pub mod error;
 pub mod events;
+pub mod events_world;
 pub mod factions;
 pub mod lua;
 pub mod market;

@@ -10,6 +10,7 @@ use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
 use crate::diplomacy::DiplomacyPlugin;
 use crate::events::EventsPlugin;
+use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::market::MarketPlugin;
 use crate::network::NetworkPlugin;
@@ -71,6 +72,7 @@ impl Plugin for GameAppPlugin {
             ChatPlugin,
             SyncPlugin,
             AdvancedAiPlugin,
+            WorldEventsPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,

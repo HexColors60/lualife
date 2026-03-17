@@ -208,13 +208,13 @@ PHASE 22: Advanced AI [DONE]
 [x] Implement AI retreat and surrender logic
 
 ==================================================
-PHASE 23: World Events [TODO]
+PHASE 23: World Events [DONE]
 ==================================================
-[ ] Add random world events (meteor strikes, resource booms)
-[ ] Implement seasonal changes
-[ ] Add natural disasters (earthquakes, floods)
-[ ] Implement NPC invasions
-[ ] Add special resource deposits
+[x] Add random world events (meteor strikes, resource booms)
+[x] Implement seasonal changes
+[x] Add natural disasters (earthquakes, floods)
+[x] Implement NPC invasions
+[x] Add special resource deposits
 
 ==================================================
 PHASE 24: Achievements & Statistics [TODO]
