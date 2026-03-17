@@ -1,9 +1,9 @@
 use indexmap::IndexSet;
 use serde::{Deserialize, Serialize};
 
-use super::{RoomCoord, Tile, TerrainType};
 use super::ownership::RoomOwner;
 use super::visibility::VisibilityState;
+use super::{RoomCoord, TerrainType, Tile};
 use crate::consts::ROOM_TILE_SIZE;
 
 /// Room data structure
@@ -39,7 +39,9 @@ impl Room {
     }
 
     pub fn get_tile_mut(&mut self, local_x: usize, local_y: usize) -> Option<&mut Tile> {
-        self.tiles.get_mut(local_y).and_then(|row| row.get_mut(local_x))
+        self.tiles
+            .get_mut(local_y)
+            .and_then(|row| row.get_mut(local_x))
     }
 
     pub fn set_terrain(&mut self, local_x: usize, local_y: usize, terrain: TerrainType) {

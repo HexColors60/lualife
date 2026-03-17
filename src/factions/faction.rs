@@ -4,7 +4,9 @@ use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
 /// Unique identifier for a faction
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize, PartialOrd, Ord,
+)]
 pub struct FactionId(pub u16);
 
 impl std::fmt::Display for FactionId {
@@ -122,11 +124,7 @@ impl FactionRegistry {
     pub fn initialize_default_factions(&mut self, count: usize) {
         for i in 0..count {
             let id = FactionId(i as u16);
-            let faction = Faction::new(
-                id,
-                Faction::default_name(id),
-                Faction::default_path(id),
-            );
+            let faction = Faction::new(id, Faction::default_name(id), Faction::default_path(id));
             self.factions.insert(id, faction);
         }
         self.next_id = count as u16;

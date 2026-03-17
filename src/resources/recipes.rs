@@ -61,14 +61,14 @@ impl RecipeRegistry {
             Recipe::new("refine_iron")
                 .input(ResourceType::Iron, 10)
                 .output(ResourceType::Iron, 5) // Refined iron (could be a separate type)
-                .time(20)
+                .time(20),
         );
 
         self.register(
             Recipe::new("refine_copper")
                 .input(ResourceType::Copper, 10)
                 .output(ResourceType::Copper, 5)
-                .time(15)
+                .time(15),
         );
     }
 

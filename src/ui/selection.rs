@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
-use crate::debug::SelectionState;
 use crate::creeps::Creep;
+use crate::debug::SelectionState;
 use crate::render::CreepSprite;
 use crate::render::MainCamera;
 
@@ -10,10 +10,7 @@ pub struct SelectionPlugin;
 
 impl Plugin for SelectionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (
-            mouse_click_selection,
-            keyboard_deselect,
-        ));
+        app.add_systems(Update, (mouse_click_selection, keyboard_deselect));
     }
 }
 
@@ -45,7 +42,8 @@ fn mouse_click_selection(
     };
 
     // Convert screen position to world position
-    let Some(world_position) = camera.viewport_to_world_2d(camera_transform, cursor_position) else {
+    let Some(world_position) = camera.viewport_to_world_2d(camera_transform, cursor_position)
+    else {
         return;
     };
 
@@ -87,10 +85,7 @@ fn mouse_click_selection(
 }
 
 /// System to handle keyboard deselection
-fn keyboard_deselect(
-    mut selection: ResMut<SelectionState>,
-    keyboard: Res<ButtonInput<KeyCode>>,
-) {
+fn keyboard_deselect(mut selection: ResMut<SelectionState>, keyboard: Res<ButtonInput<KeyCode>>) {
     if keyboard.just_pressed(KeyCode::Escape) {
         selection.deselect();
     }

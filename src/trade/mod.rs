@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
+use std::collections::HashMap;
 
 use crate::factions::FactionId;
 use crate::resources::ResourceType;
@@ -55,7 +55,7 @@ pub struct Caravan {
     pub quantity: u32,
     pub position: WorldPos,
     pub target: WorldPos,
-    pub progress: u32, // ticks traveled
+    pub progress: u32,   // ticks traveled
     pub total_time: u32, // total travel time
     pub returning: bool, // true if returning to start
 }
@@ -187,7 +187,11 @@ pub fn caravan_movement_system(
                 direction,
                 caravan.quantity,
                 caravan.resource_type.name(),
-                if caravan.returning { "home" } else { "to destination" }
+                if caravan.returning {
+                    "home"
+                } else {
+                    "to destination"
+                }
             ));
         }
     }

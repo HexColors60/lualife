@@ -10,8 +10,9 @@ pub struct SimPlugin;
 
 impl Plugin for SimPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CommandBuffer>()
-            .add_systems(Update, (
+        app.init_resource::<CommandBuffer>().add_systems(
+            Update,
+            (
                 movement_phase,
                 mining_phase,
                 build_phase,
@@ -19,6 +20,9 @@ impl Plugin for SimPlugin {
                 upkeep_phase,
                 economy_phase,
                 death_cleanup_phase,
-            ).chain().run_if(resource_exists::<crate::world::WorldMap>));
+            )
+                .chain()
+                .run_if(resource_exists::<crate::world::WorldMap>),
+        );
     }
 }

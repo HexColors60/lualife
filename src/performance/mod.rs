@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
+use std::collections::HashMap;
 
-use crate::world::WorldPos;
 use crate::consts::{WORLD_TILES_X, WORLD_TILES_Y};
+use crate::world::WorldPos;
 
 /// Grid cell size for spatial partitioning
 pub const CELL_SIZE: u32 = 16;
@@ -33,7 +33,7 @@ impl SpatialGrid {
     /// Insert entity into grid
     pub fn insert(&mut self, entity: Entity, pos: &WorldPos) {
         let cell = Self::pos_to_cell(pos);
-        
+
         // Remove from old cell if exists
         if let Some(&old_cell) = self.entity_cells.get(&entity) {
             if old_cell != cell {
@@ -71,20 +71,24 @@ impl SpatialGrid {
     pub fn get_in_radius(&self, pos: &WorldPos, radius: i32) -> Vec<Entity> {
         let center_cell = Self::pos_to_cell(pos);
         let cell_radius = (radius as u32 / CELL_SIZE + 1) as i32;
-        
+
         let mut result = Vec::new();
-        
+
         for dx in -cell_radius..=cell_radius {
             for dy in -cell_radius..=cell_radius {
                 let cell = (center_cell.0 + dx, center_cell.1 + dy);
-                if cell.0 >= 0 && cell.0 < GRID_WIDTH as i32 && cell.1 >= 0 && cell.1 < GRID_HEIGHT as i32 {
+                if cell.0 >= 0
+                    && cell.0 < GRID_WIDTH as i32
+                    && cell.1 >= 0
+                    && cell.1 < GRID_HEIGHT as i32
+                {
                     if let Some(entities) = self.cells.get(&cell) {
                         result.extend(entities.iter().copied());
                     }
                 }
             }
         }
-        
+
         result
     }
 
@@ -92,9 +96,9 @@ impl SpatialGrid {
     pub fn get_in_rect(&self, min_pos: &WorldPos, max_pos: &WorldPos) -> Vec<Entity> {
         let min_cell = Self::pos_to_cell(min_pos);
         let max_cell = Self::pos_to_cell(max_pos);
-        
+
         let mut result = Vec::new();
-        
+
         for x in min_cell.0..=max_cell.0 {
             for y in min_cell.1..=max_cell.1 {
                 if let Some(entities) = self.cells.get(&(x, y)) {
@@ -102,7 +106,7 @@ impl SpatialGrid {
                 }
             }
         }
-        
+
         result
     }
 
@@ -133,7 +137,7 @@ impl<T: Clone> ObjectPool<T> {
         for _ in 0..initial_size {
             available.push(create_fn());
         }
-        
+
         Self {
             available,
             in_use: Vec::new(),
@@ -157,7 +161,8 @@ impl<T: Clone> ObjectPool<T> {
     }
 
     pub fn release(&mut self, obj: T) {
-        self.in_use.retain(|o| std::ptr::addr_of!(*o) != std::ptr::addr_of!(obj));
+        self.in_use
+            .retain(|o| std::ptr::addr_of!(*o) != std::ptr::addr_of!(obj));
         self.available.push(obj);
     }
 
@@ -250,13 +255,16 @@ impl HierarchicalPathMap {
     }
 
     pub fn is_chunk_traversable(&self, chunk: (i32, i32)) -> bool {
-        self.chunks.get(&chunk).map(|c| c.traversable).unwrap_or(false)
+        self.chunks
+            .get(&chunk)
+            .map(|c| c.traversable)
+            .unwrap_or(false)
     }
 
     pub fn find_path_chunks(&self, start: &WorldPos, end: &WorldPos) -> Vec<(i32, i32)> {
         let start_chunk = self.pos_to_chunk(start);
         let end_chunk = self.pos_to_chunk(end);
-        
+
         if start_chunk == end_chunk {
             return vec![start_chunk];
         }
@@ -264,7 +272,7 @@ impl HierarchicalPathMap {
         // Simple BFS on chunk graph
         let mut visited = vec![start_chunk];
         let mut queue = vec![(start_chunk, vec![start_chunk])];
-        
+
         while let Some((current, path)) = queue.pop() {
             if let Some(neighbors) = self.chunk_graph.get(&current) {
                 for &neighbor in neighbors {
@@ -282,7 +290,7 @@ impl HierarchicalPathMap {
                 }
             }
         }
-        
+
         vec![]
     }
 }
@@ -290,10 +298,10 @@ impl HierarchicalPathMap {
 /// LOD level for rendering
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum LodLevel {
-    High,    // Full detail
-    Medium,  // Reduced detail
-    Low,     // Minimal detail
-    Culled,  // Not rendered
+    High,   // Full detail
+    Medium, // Reduced detail
+    Low,    // Minimal detail
+    Culled, // Not rendered
 }
 
 impl LodLevel {

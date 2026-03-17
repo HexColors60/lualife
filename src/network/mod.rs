@@ -1,10 +1,10 @@
-use std::collections::HashMap;
-use std::net::SocketAddr;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::net::SocketAddr;
 
-use crate::factions::FactionId;
 use crate::core::TickNumber;
+use crate::factions::FactionId;
 
 /// Network mode: single player, server, or client
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -57,24 +57,49 @@ pub struct PlayerInfo {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum NetworkMessage {
     // Connection
-    Connect { name: String },
-    Disconnect { client_id: u64 },
-    Connected { client_id: u64, tick: TickNumber },
-    
+    Connect {
+        name: String,
+    },
+    Disconnect {
+        client_id: u64,
+    },
+    Connected {
+        client_id: u64,
+        tick: TickNumber,
+    },
+
     // Game state
-    GameStateSync { tick: TickNumber, data: Vec<u8> },
-    TickUpdate { tick: TickNumber, commands: Vec<ClientCommand> },
-    
+    GameStateSync {
+        tick: TickNumber,
+        data: Vec<u8>,
+    },
+    TickUpdate {
+        tick: TickNumber,
+        commands: Vec<ClientCommand>,
+    },
+
     // Chat
-    ChatMessage { client_id: u64, message: String },
-    
+    ChatMessage {
+        client_id: u64,
+        message: String,
+    },
+
     // Player management
-    PlayerJoined { player: PlayerInfo },
-    PlayerLeft { client_id: u64 },
-    PlayerReady { client_id: u64, ready: bool },
-    
+    PlayerJoined {
+        player: PlayerInfo,
+    },
+    PlayerLeft {
+        client_id: u64,
+    },
+    PlayerReady {
+        client_id: u64,
+        ready: bool,
+    },
+
     // Errors
-    Error { message: String },
+    Error {
+        message: String,
+    },
 }
 
 /// Command from client to server
@@ -88,11 +113,26 @@ pub struct ClientCommand {
 /// Types of commands clients can send
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum CommandType {
-    MoveCreep { creep_id: u32, target_x: i32, target_y: i32 },
-    AttackCreep { attacker_id: u32, target_id: u32 },
-    BuildStructure { building_type: u8, x: i32, y: i32 },
-    SpawnCreep { body_parts: Vec<u8> },
-    SendMessage { message: String },
+    MoveCreep {
+        creep_id: u32,
+        target_x: i32,
+        target_y: i32,
+    },
+    AttackCreep {
+        attacker_id: u32,
+        target_id: u32,
+    },
+    BuildStructure {
+        building_type: u8,
+        x: i32,
+        y: i32,
+    },
+    SpawnCreep {
+        body_parts: Vec<u8>,
+    },
+    SendMessage {
+        message: String,
+    },
 }
 
 /// Event for network messages

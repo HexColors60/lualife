@@ -28,10 +28,14 @@ impl Plugin for BuildingsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<BuildingIdGenerator>()
             .add_event::<BuildingEvent>()
-            .add_systems(Update, (
-                spawn_initial_buildings.run_if(resource_exists::<crate::factions::FactionRegistry>),
-                tower_attack_system,
-            ));
+            .add_systems(
+                Update,
+                (
+                    spawn_initial_buildings
+                        .run_if(resource_exists::<crate::factions::FactionRegistry>),
+                    tower_attack_system,
+                ),
+            );
     }
 }
 
@@ -85,7 +89,14 @@ fn spawn_initial_buildings(
 
 #[derive(Event, Debug, Clone)]
 pub enum BuildingEvent {
-    BuildingPlaced { entity: Entity, building_type: BuildingType },
-    BuildingCompleted { entity: Entity },
-    BuildingDestroyed { entity: Entity },
+    BuildingPlaced {
+        entity: Entity,
+        building_type: BuildingType,
+    },
+    BuildingCompleted {
+        entity: Entity,
+    },
+    BuildingDestroyed {
+        entity: Entity,
+    },
 }

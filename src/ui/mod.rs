@@ -38,25 +38,30 @@ impl Plugin for UiPlugin {
             .init_resource::<GameLog>()
             .init_resource::<MinimapState>()
             .add_plugins(SelectionPlugin)
-            .add_systems(Startup, (
-                setup_ui,
-                setup_minimap,
-                setup_resource_bar,
-                setup_screep_status_panel,
-                setup_ai_status_panel,
-            ))
-            .add_systems(Update, (
-                update_log_display,
-                update_unit_panel,
-                update_tick_display,
-                update_minimap_indicator,
-                toggle_minimap,
-            ))
-            .add_systems(Update, (
-                update_resource_bar,
-                update_screep_status,
-                update_ai_status,
-            ));
+            .add_systems(
+                Startup,
+                (
+                    setup_ui,
+                    setup_minimap,
+                    setup_resource_bar,
+                    setup_screep_status_panel,
+                    setup_ai_status_panel,
+                ),
+            )
+            .add_systems(
+                Update,
+                (
+                    update_log_display,
+                    update_unit_panel,
+                    update_tick_display,
+                    update_minimap_indicator,
+                    toggle_minimap,
+                ),
+            )
+            .add_systems(
+                Update,
+                (update_resource_bar, update_screep_status, update_ai_status),
+            );
     }
 }
 
@@ -214,14 +219,12 @@ pub fn update_tick_display(
     }
 }
 
-fn update_log_display(
-    game_log: Res<GameLog>,
-    mut query: Query<&mut Text, With<LogText>>,
-) {
+fn update_log_display(game_log: Res<GameLog>, mut query: Query<&mut Text, With<LogText>>) {
     if game_log.is_changed() {
         for mut text in query.iter_mut() {
             // Show last 10 messages
-            let display_text = game_log.messages
+            let display_text = game_log
+                .messages
                 .iter()
                 .rev()
                 .take(10)

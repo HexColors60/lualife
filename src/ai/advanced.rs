@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::factions::FactionId;
 
@@ -57,11 +57,11 @@ impl AiDifficulty {
 pub enum AiPersonality {
     #[default]
     Balanced,
-    Aggressive,   // Focus on military and expansion
-    Defensive,    // Focus on fortifications and defense
-    Economic,     // Focus on resource gathering and trading
-    Scientific,   // Focus on research and tech
-    Diplomatic,   // Focus on alliances and trade agreements
+    Aggressive, // Focus on military and expansion
+    Defensive,  // Focus on fortifications and defense
+    Economic,   // Focus on resource gathering and trading
+    Scientific, // Focus on research and tech
+    Diplomatic, // Focus on alliances and trade agreements
 }
 
 impl AiPersonality {
@@ -122,9 +122,9 @@ pub struct FactionAiConfig {
     pub faction_id: FactionId,
     pub difficulty: AiDifficulty,
     pub personality: AiPersonality,
-    pub retreat_threshold: f32,    // HP % below which retreat
-    pub surrender_threshold: f32,  // Territory % below which surrender
-    pub expansion_desire: f32,     // How aggressively to expand
+    pub retreat_threshold: f32,   // HP % below which retreat
+    pub surrender_threshold: f32, // Territory % below which surrender
+    pub expansion_desire: f32,    // How aggressively to expand
 }
 
 impl Default for FactionAiConfig {
@@ -141,7 +141,11 @@ impl Default for FactionAiConfig {
 }
 
 impl FactionAiConfig {
-    pub fn new(faction_id: FactionId, difficulty: AiDifficulty, personality: AiPersonality) -> Self {
+    pub fn new(
+        faction_id: FactionId,
+        difficulty: AiDifficulty,
+        personality: AiPersonality,
+    ) -> Self {
         Self {
             faction_id,
             difficulty,
@@ -268,10 +272,21 @@ pub struct IntelligenceReport {
 /// Types of intelligence
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum IntelType {
-    MilitaryStrength { estimated_units: u32 },
-    ResourceStockpile { resource_type: u8, estimated_amount: u32 },
-    BuildingLocation { building_type: u8, position: (i32, i32) },
-    PlannedAttack { target_faction: FactionId, estimated_tick: u64 },
+    MilitaryStrength {
+        estimated_units: u32,
+    },
+    ResourceStockpile {
+        resource_type: u8,
+        estimated_amount: u32,
+    },
+    BuildingLocation {
+        building_type: u8,
+        position: (i32, i32),
+    },
+    PlannedAttack {
+        target_faction: FactionId,
+        estimated_tick: u64,
+    },
 }
 
 /// Plugin for advanced AI

@@ -18,7 +18,9 @@ impl EconomySystem {
     }
 
     pub fn can_afford(stockpile: &Stockpile, costs: &[(ResourceType, u32)]) -> bool {
-        costs.iter().all(|(resource, amount)| stockpile.has(*resource, *amount))
+        costs
+            .iter()
+            .all(|(resource, amount)| stockpile.has(*resource, *amount))
     }
 
     pub fn spend(stockpile: &mut Stockpile, costs: &[(ResourceType, u32)]) -> bool {

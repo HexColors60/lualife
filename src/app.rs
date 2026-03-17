@@ -28,6 +28,7 @@ use crate::sim::SimPlugin;
 use crate::sync::SyncPlugin;
 use crate::territory::TerritoryPlugin;
 use crate::trade::TradePlugin;
+use crate::tutorial::TutorialPlugin;
 use crate::ui::UiPlugin;
 use crate::victory::VictoryPlugin;
 use crate::world::WorldPlugin;
@@ -80,6 +81,8 @@ impl Plugin for GameAppPlugin {
             WorldEventsPlugin,
             AchievementsPlugin,
             ModdingPlugin,
+        ));
+        app.add_plugins((
             PerformancePlugin,
             AccessibilityPlugin,
             LocalizationPlugin,
@@ -87,6 +90,7 @@ impl Plugin for GameAppPlugin {
             SavePlugin,
             RenderPlugin,
             UiPlugin,
+            TutorialPlugin,
         ));
         app.add_plugins(DebugPlugin);
     }

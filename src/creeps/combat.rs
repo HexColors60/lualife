@@ -3,16 +3,15 @@ use bevy::prelude::*;
 use super::{Creep, CreepAction};
 use crate::factions::DiplomacyState;
 
-pub fn creep_combat_system(
-    mut creeps: Query<&mut Creep>,
-    diplomacy: Res<DiplomacyState>,
-) {
+pub fn creep_combat_system(mut creeps: Query<&mut Creep>, diplomacy: Res<DiplomacyState>) {
     // Simple combat: creeps attack enemies in range
     // Collect attacker info first
     let attackers: Vec<_> = creeps
         .iter()
         .filter_map(|c| {
-            if let Some(CreepAction::Attack { target_id }) = c.current_action.as_ref().map(|a| &a.action) {
+            if let Some(CreepAction::Attack { target_id }) =
+                c.current_action.as_ref().map(|a| &a.action)
+            {
                 Some((c.id, c.position, c.faction_id, *target_id))
             } else {
                 None

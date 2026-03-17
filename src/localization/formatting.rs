@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{DateFormat, NumberFormat, DecimalSeparator, ThousandsSeparator, CurrencyPosition};
+use super::{CurrencyPosition, DateFormat, DecimalSeparator, NumberFormat, ThousandsSeparator};
 
 /// Format a number according to locale settings
 pub fn format_number(value: f64, format: &NumberFormat) -> String {
@@ -19,7 +19,7 @@ pub fn format_number(value: f64, format: &NumberFormat) -> String {
 
     let abs_value = value.abs();
     let sign = if value < 0.0 { "-" } else { "" };
-    
+
     // Split into integer and decimal parts
     let rounded = (abs_value * 10f64.powi(format.decimal_places as i32)).round();
     let integer_part = (rounded / 10f64.powi(format.decimal_places as i32)) as u64;
@@ -38,8 +38,15 @@ pub fn format_number(value: f64, format: &NumberFormat) -> String {
 
     // Combine parts
     if format.decimal_places > 0 {
-        let decimal_formatted = format!("{:0>width$}", decimal_part, width = format.decimal_places as usize);
-        format!("{}{}{}{}", sign, formatted_int, decimal_str, decimal_formatted)
+        let decimal_formatted = format!(
+            "{:0>width$}",
+            decimal_part,
+            width = format.decimal_places as usize
+        );
+        format!(
+            "{}{}{}{}",
+            sign, formatted_int, decimal_str, decimal_formatted
+        )
     } else {
         format!("{}{}", sign, formatted_int)
     }
@@ -47,16 +54,19 @@ pub fn format_number(value: f64, format: &NumberFormat) -> String {
 
 /// Format an integer according to locale settings
 pub fn format_integer(value: i64, format: &NumberFormat) -> String {
-    format_number(value as f64, &NumberFormat {
-        decimal_places: 0,
-        ..*format
-    })
+    format_number(
+        value as f64,
+        &NumberFormat {
+            decimal_places: 0,
+            ..*format
+        },
+    )
 }
 
 /// Format currency according to locale settings
 pub fn format_currency(value: f64, currency_symbol: &str, format: &NumberFormat) -> String {
     let number = format_number(value, format);
-    
+
     match format.currency_position {
         CurrencyPosition::Before => format!("{}{}", currency_symbol, number),
         CurrencyPosition::After => format!("{}{}", number, currency_symbol),
@@ -97,7 +107,13 @@ pub fn format_time(hour: u32, minute: u32, second: u32, use_24h: bool) -> String
         format!("{:02}:{:02}:{:02}", hour, minute, second)
     } else {
         let period = if hour >= 12 { "PM" } else { "AM" };
-        let display_hour = if hour == 0 { 12 } else if hour > 12 { hour - 12 } else { hour };
+        let display_hour = if hour == 0 {
+            12
+        } else if hour > 12 {
+            hour - 12
+        } else {
+            hour
+        };
         format!("{:02}:{:02}:{:02} {}", display_hour, minute, second, period)
     }
 }
@@ -179,7 +195,7 @@ fn day_name_full(year: i32, month: u32, day: u32) -> &'static str {
     let k = y % 100;
     let j = y / 100;
     let h = (day as i32 + (13 * (m as i32 + 1)) / 5 + k + k / 4 + j / 4 + 5 * j) % 7;
-    
+
     match h {
         0 => "Saturday",
         1 => "Sunday",
@@ -193,9 +209,7 @@ fn day_name_full(year: i32, month: u32, day: u32) -> &'static str {
 }
 
 /// System to format numbers in UI
-pub fn format_numbers_system(
-    _settings: Res<super::LocalizationSettings>,
-) {
+pub fn format_numbers_system(_settings: Res<super::LocalizationSettings>) {
     // This system would be used to update UI elements with formatted numbers
     // Implementation depends on how numbers are displayed in the UI
 }
@@ -204,26 +218,26 @@ pub fn format_numbers_system(
 pub fn get_locale_number_format(language: super::Language) -> NumberFormat {
     match language {
         // European formats (comma as decimal, dot as thousands)
-        super::Language::German | 
-        super::Language::French | 
-        super::Language::Italian | 
-        super::Language::Spanish | 
-        super::Language::Portuguese | 
-        super::Language::Dutch | 
-        super::Language::Polish | 
-        super::Language::Czech | 
-        super::Language::Hungarian | 
-        super::Language::Romanian | 
-        super::Language::Greek | 
-        super::Language::Russian | 
-        super::Language::Ukrainian | 
-        super::Language::Turkish => NumberFormat {
+        super::Language::German
+        | super::Language::French
+        | super::Language::Italian
+        | super::Language::Spanish
+        | super::Language::Portuguese
+        | super::Language::Dutch
+        | super::Language::Polish
+        | super::Language::Czech
+        | super::Language::Hungarian
+        | super::Language::Romanian
+        | super::Language::Greek
+        | super::Language::Russian
+        | super::Language::Ukrainian
+        | super::Language::Turkish => NumberFormat {
             decimal_separator: DecimalSeparator::Comma,
             thousands_separator: ThousandsSeparator::Dot,
             currency_position: CurrencyPosition::After,
             decimal_places: 2,
         },
-        
+
         // Swiss format (dot as decimal, apostrophe as thousands)
         _ if matches!(language, super::Language::German) => NumberFormat {
             decimal_separator: DecimalSeparator::Dot,
@@ -231,7 +245,7 @@ pub fn get_locale_number_format(language: super::Language) -> NumberFormat {
             currency_position: CurrencyPosition::BeforeSpace,
             decimal_places: 2,
         },
-        
+
         // English format (dot as decimal, comma as thousands)
         super::Language::English => NumberFormat {
             decimal_separator: DecimalSeparator::Dot,
@@ -239,27 +253,26 @@ pub fn get_locale_number_format(language: super::Language) -> NumberFormat {
             currency_position: CurrencyPosition::Before,
             decimal_places: 2,
         },
-        
+
         // Chinese/Japanese format (dot as decimal, no thousands separator)
-        super::Language::ChineseSimplified | 
-        super::Language::ChineseTraditional | 
-        super::Language::Japanese | 
-        super::Language::Korean => NumberFormat {
+        super::Language::ChineseSimplified
+        | super::Language::ChineseTraditional
+        | super::Language::Japanese
+        | super::Language::Korean => NumberFormat {
             decimal_separator: DecimalSeparator::Dot,
             thousands_separator: ThousandsSeparator::None,
             currency_position: CurrencyPosition::Before,
             decimal_places: 2,
         },
-        
+
         // Indian format (dot as decimal, comma for lakhs/crores)
-        super::Language::Hindi | 
-        super::Language::Bengali => NumberFormat {
+        super::Language::Hindi | super::Language::Bengali => NumberFormat {
             decimal_separator: DecimalSeparator::Dot,
             thousands_separator: ThousandsSeparator::Comma,
             currency_position: CurrencyPosition::Before,
             decimal_places: 2,
         },
-        
+
         // Arabic format (varies by region)
         super::Language::Arabic => NumberFormat {
             decimal_separator: DecimalSeparator::Dot,
@@ -267,7 +280,7 @@ pub fn get_locale_number_format(language: super::Language) -> NumberFormat {
             currency_position: CurrencyPosition::AfterSpace,
             decimal_places: 2,
         },
-        
+
         // Default to English format
         _ => NumberFormat::default(),
     }

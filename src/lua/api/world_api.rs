@@ -15,10 +15,7 @@ impl WorldApi {
         )?;
 
         // world.get_time() -> number
-        world.set(
-            "get_time",
-            lua.create_function(|_, ()| Ok(0u64))?,
-        )?;
+        world.set("get_time", lua.create_function(|_, ()| Ok(0u64))?)?;
 
         Ok(())
     }

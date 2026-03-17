@@ -1,8 +1,8 @@
 use crate::config::WorldgenConfig;
+use crate::consts::{DEFAULT_AI_COUNT, ROOM_GRID_X, ROOM_GRID_Y};
 use crate::core::GameRng;
 use crate::factions::FactionId;
 use crate::world::RoomCoord;
-use crate::consts::{DEFAULT_AI_COUNT, ROOM_GRID_X, ROOM_GRID_Y};
 
 #[derive(Debug, Clone)]
 pub struct FactionSpawn {
@@ -13,10 +13,7 @@ pub struct FactionSpawn {
 pub struct FactionSpawnGenerator;
 
 impl FactionSpawnGenerator {
-    pub fn generate_spawns(
-        _config: &WorldgenConfig,
-        rng: &mut GameRng,
-    ) -> Vec<FactionSpawn> {
+    pub fn generate_spawns(_config: &WorldgenConfig, rng: &mut GameRng) -> Vec<FactionSpawn> {
         let mut spawns = Vec::new();
         let faction_count = DEFAULT_AI_COUNT;
 

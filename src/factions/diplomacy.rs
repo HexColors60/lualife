@@ -22,7 +22,12 @@ impl DiplomacyState {
         Self::default()
     }
 
-    pub fn set_relation(&mut self, faction_a: FactionId, faction_b: FactionId, relation: RelationType) {
+    pub fn set_relation(
+        &mut self,
+        faction_a: FactionId,
+        faction_b: FactionId,
+        relation: RelationType,
+    ) {
         self.relations.insert((faction_a, faction_b), relation);
         self.relations.insert((faction_b, faction_a), relation);
     }

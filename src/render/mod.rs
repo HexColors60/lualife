@@ -20,9 +20,9 @@ pub use path_visualization::*;
 pub use room_overlay::*;
 pub use tower_visualization::*;
 
-use bevy::prelude::*;
-use crate::world::WorldMap;
 use crate::consts::ROOM_TILE_SIZE;
+use crate::world::WorldMap;
+use bevy::prelude::*;
 
 pub struct RenderPlugin;
 
@@ -30,24 +30,28 @@ impl Plugin for RenderPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<MapRendered>()
             .add_systems(Startup, (setup_render, setup_debug_overlays))
-            .add_systems(Update, (
-                spawn_room_sprites.run_if(resource_exists::<WorldMap>),
-                spawn_creep_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
-                spawn_mine_sprites,
-                spawn_building_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
-                spawn_health_bars,
-                update_creep_sprites,
-                update_mine_sprites,
-                update_building_sprites,
-                update_health_bars,
-                update_fps_display,
-                update_entity_count,
-                toggle_debug_overlays,
-                toggle_path_visualization,
-                path_visualization_system,
-                toggle_tower_range_visualization,
-                tower_range_visualization_system,
-            ));
+            .add_systems(
+                Update,
+                (
+                    spawn_room_sprites.run_if(resource_exists::<WorldMap>),
+                    spawn_creep_sprites.run_if(resource_exists::<crate::factions::FactionRegistry>),
+                    spawn_mine_sprites,
+                    spawn_building_sprites
+                        .run_if(resource_exists::<crate::factions::FactionRegistry>),
+                    spawn_health_bars,
+                    update_creep_sprites,
+                    update_mine_sprites,
+                    update_building_sprites,
+                    update_health_bars,
+                    update_fps_display,
+                    update_entity_count,
+                    toggle_debug_overlays,
+                    toggle_path_visualization,
+                    path_visualization_system,
+                    toggle_tower_range_visualization,
+                    tower_range_visualization_system,
+                ),
+            );
     }
 }
 
@@ -116,7 +120,10 @@ fn spawn_room_sprites(
         if first_room {
             tracing::info!(
                 "First room: coord=({}, {}), pos=({:.1}, {:.1}), color=({:.2}, {:.2}, {:.2})",
-                room.coord.x, room.coord.y, x, y,
+                room.coord.x,
+                room.coord.y,
+                x,
+                y,
                 (r / count) as f32 / 255.0,
                 (g / count) as f32 / 255.0,
                 (b / count) as f32 / 255.0

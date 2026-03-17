@@ -23,12 +23,12 @@ pub fn process_rtl_text(text: &str, direction: TextDirection) -> String {
             // Note: This is a simplified implementation
             // A full implementation would use a proper bidi algorithm
             let mut result = String::new();
-            
+
             // Add RTL mark
             result.push('\u{202E}'); // RIGHT-TO-LEFT OVERRIDE
             result.push_str(text);
             result.push('\u{202C}'); // POP DIRECTIONAL FORMATTING
-            
+
             result
         }
     }
@@ -54,7 +54,7 @@ pub fn detect_text_direction(text: &str) -> TextDirection {
             return TextDirection::RightToLeft;
         }
     }
-    
+
     TextDirection::LeftToRight
 }
 
@@ -80,8 +80,8 @@ pub enum TextAlignment {
     Left,
     Center,
     Right,
-    Start,  // Align to start of text direction
-    End,    // Align to end of text direction
+    Start, // Align to start of text direction
+    End,   // Align to end of text direction
 }
 
 impl TextAlignment {
@@ -122,7 +122,7 @@ pub fn apply_rtl_layout_system(
 
     for (mut mirror, mut style) in query.iter_mut() {
         mirror.mirror_horizontal = is_rtl;
-        
+
         // Mirror flex direction for RTL
         if is_rtl {
             if let FlexDirection::Row = style.flex_direction {

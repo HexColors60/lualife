@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
+use std::collections::HashMap;
 
 use crate::factions::FactionId;
 use crate::world::RoomCoord;
@@ -90,10 +90,7 @@ impl TerritoryManager {
     }
 
     pub fn total_claimed(&self) -> usize {
-        self.territories
-            .values()
-            .filter(|t| t.is_claimed())
-            .count()
+        self.territories.values().filter(|t| t.is_claimed()).count()
     }
 }
 

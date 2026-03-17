@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 
 use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y, ROOM_TILE_SIZE, WORLD_TILES_X, WORLD_TILES_Y};
-use crate::world::WorldMap;
 use crate::render::MainCamera;
+use crate::world::WorldMap;
 
 #[derive(Resource, Debug, Clone)]
 pub struct MinimapState {

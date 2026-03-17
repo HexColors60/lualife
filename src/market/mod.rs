@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::factions::FactionId;
 use crate::resources::ResourceType;
@@ -56,7 +56,7 @@ impl MarketOrder {
 /// Market building component
 #[derive(Debug, Clone, Component)]
 pub struct Market {
-    pub fee_rate: f32, // Transaction fee (0.0 to 1.0)
+    pub fee_rate: f32,    // Transaction fee (0.0 to 1.0)
     pub orders: Vec<u32>, // Order IDs
 }
 
@@ -155,7 +155,11 @@ impl ResourcePrice {
 
     fn update(&mut self, demand: f32, supply: f32) {
         // Simple supply/demand pricing
-        let ratio = if supply > 0.0 { demand / supply } else { demand };
+        let ratio = if supply > 0.0 {
+            demand / supply
+        } else {
+            demand
+        };
         let adjustment = (ratio - 1.0) * 0.1; // 10% adjustment per unit ratio difference
         self.current = (self.base * (1.0 + adjustment)).max(0.1);
         self.history.push(self.current);
@@ -197,10 +201,18 @@ pub fn market_system(
     }
 
     // Sort buy orders by price (highest first)
-    buy_orders.sort_by(|a, b| b.1.price.partial_cmp(&a.1.price).unwrap_or(std::cmp::Ordering::Equal));
+    buy_orders.sort_by(|a, b| {
+        b.1.price
+            .partial_cmp(&a.1.price)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     // Sort sell orders by price (lowest first)
-    sell_orders.sort_by(|a, b| a.1.price.partial_cmp(&b.1.price).unwrap_or(std::cmp::Ordering::Equal));
+    sell_orders.sort_by(|a, b| {
+        a.1.price
+            .partial_cmp(&b.1.price)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     // Match orders
     for (buy_entity, buy_order) in &buy_orders {

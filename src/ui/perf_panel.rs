@@ -2,10 +2,7 @@ use bevy::prelude::*;
 
 use crate::debug::PerfMetrics;
 
-pub fn perf_panel_system(
-    perf: Res<PerfMetrics>,
-    time: Res<Time>,
-) {
+pub fn perf_panel_system(perf: Res<PerfMetrics>, time: Res<Time>) {
     // Update FPS calculation
     let fps = 1.0 / time.delta_seconds();
     tracing::debug!(

@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::VecDeque;
 
 use crate::factions::FactionId;
 
@@ -18,10 +18,10 @@ pub struct ChatMessage {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub enum ChatChannel {
     #[default]
-    Global,      // Everyone
-    Team,        // Team/faction members only
-    Whisper,     // Private message
-    System,      // System messages
+    Global, // Everyone
+    Team,    // Team/faction members only
+    Whisper, // Private message
+    System,  // System messages
 }
 
 /// Chat history
@@ -51,7 +51,10 @@ impl ChatHistory {
     }
 
     pub fn get_by_channel(&self, channel: ChatChannel) -> Vec<&ChatMessage> {
-        self.messages.iter().filter(|m| m.channel == channel).collect()
+        self.messages
+            .iter()
+            .filter(|m| m.channel == channel)
+            .collect()
     }
 }
 
@@ -122,14 +125,22 @@ pub enum ChatCommand {
 impl ChatCommand {
     pub fn parse(input: &str) -> Option<Self> {
         let input = input.trim();
-        
+
         if input.starts_with("/g ") {
             Some(Self::Global(input[3..].to_string()))
         } else if input.starts_with("/t ") || input.starts_with("/team ") {
-            let msg = if input.starts_with("/t ") { &input[3..] } else { &input[6..] };
+            let msg = if input.starts_with("/t ") {
+                &input[3..]
+            } else {
+                &input[6..]
+            };
             Some(Self::Team(msg.to_string()))
         } else if input.starts_with("/w ") || input.starts_with("/whisper ") {
-            let rest = if input.starts_with("/w ") { &input[3..] } else { &input[9..] };
+            let rest = if input.starts_with("/w ") {
+                &input[3..]
+            } else {
+                &input[9..]
+            };
             let parts: Vec<&str> = rest.splitn(2, ' ').collect();
             if parts.len() == 2 {
                 if let Ok(target_id) = parts[0].parse::<u64>() {
@@ -157,8 +168,15 @@ impl ChatCommand {
 /// Chat events
 #[derive(Event, Debug, Clone)]
 pub enum ChatEvent {
-    SendMessage { sender_id: u64, sender_name: String, content: String, channel: ChatChannel },
-    ReceiveMessage { message: ChatMessage },
+    SendMessage {
+        sender_id: u64,
+        sender_name: String,
+        content: String,
+        channel: ChatChannel,
+    },
+    ReceiveMessage {
+        message: ChatMessage,
+    },
 }
 
 /// System to process chat events
@@ -171,15 +189,18 @@ pub fn chat_event_system(
         match event {
             ChatEvent::ReceiveMessage { message } => {
                 chat_history.add(message.clone());
-                
+
                 let channel_prefix = match message.channel {
                     ChatChannel::Global => "[Global]",
                     ChatChannel::Team => "[Team]",
                     ChatChannel::Whisper => "[Whisper]",
                     ChatChannel::System => "[System]",
                 };
-                
-                game_log.add(format!("{} {}: {}", channel_prefix, message.sender_name, message.content));
+
+                game_log.add(format!(
+                    "{} {}: {}",
+                    channel_prefix, message.sender_name, message.content
+                ));
             }
             _ => {}
         }
@@ -187,10 +208,7 @@ pub fn chat_event_system(
 }
 
 /// System to toggle chat input
-pub fn chat_input_system(
-    keyboard: Res<ButtonInput<KeyCode>>,
-    mut chat_input: ResMut<ChatInput>,
-) {
+pub fn chat_input_system(keyboard: Res<ButtonInput<KeyCode>>, mut chat_input: ResMut<ChatInput>) {
     if keyboard.just_pressed(KeyCode::Enter) {
         chat_input.toggle();
     }
@@ -204,9 +222,6 @@ impl Plugin for ChatPlugin {
         app.init_resource::<ChatHistory>()
             .init_resource::<ChatInput>()
             .add_event::<ChatEvent>()
-            .add_systems(Update, (
-                chat_event_system,
-                chat_input_system,
-            ));
+            .add_systems(Update, (chat_event_system, chat_input_system));
     }
 }

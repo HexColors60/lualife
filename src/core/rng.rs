@@ -16,11 +16,7 @@ impl Default for GameRng {
 
 impl GameRng {
     pub fn new(seed: u64) -> Self {
-        let seed = if seed == 0 {
-            rand::random()
-        } else {
-            seed
-        };
+        let seed = if seed == 0 { rand::random() } else { seed };
         Self {
             rng: StdRng::seed_from_u64(seed),
             seed,

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use crate::research::{TechRegistry, ResearchProgress, TechTier};
 use crate::factions::FactionId;
+use crate::research::{ResearchProgress, TechRegistry, TechTier};
 use crate::ui::GameLog;
 
 /// Tech tree UI state
@@ -13,10 +13,7 @@ pub struct TechTreeUI {
 }
 
 /// System to toggle tech tree UI
-pub fn toggle_tech_tree_ui(
-    keyboard: Res<ButtonInput<KeyCode>>,
-    mut tech_ui: ResMut<TechTreeUI>,
-) {
+pub fn toggle_tech_tree_ui(keyboard: Res<ButtonInput<KeyCode>>, mut tech_ui: ResMut<TechTreeUI>) {
     if keyboard.just_pressed(KeyCode::KeyT) {
         tech_ui.visible = !tech_ui.visible;
     }
@@ -37,7 +34,12 @@ pub fn tech_tree_ui_system(
     if tech_ui.is_changed() && tech_ui.visible {
         game_log.add("=== Tech Tree ===".to_string());
 
-        for tier in [TechTier::Tier1, TechTier::Tier2, TechTier::Tier3, TechTier::Tier4] {
+        for tier in [
+            TechTier::Tier1,
+            TechTier::Tier2,
+            TechTier::Tier3,
+            TechTier::Tier4,
+        ] {
             game_log.add(format!("--- {:?} ---", tier));
 
             for tech in tech_registry.get_techs_by_tier(tier) {
@@ -60,9 +62,6 @@ pub struct TechTreeUIPlugin;
 impl Plugin for TechTreeUIPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<TechTreeUI>()
-            .add_systems(Update, (
-                toggle_tech_tree_ui,
-                tech_tree_ui_system,
-            ));
+            .add_systems(Update, (toggle_tech_tree_ui, tech_tree_ui_system));
     }
 }

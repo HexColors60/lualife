@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
+use crate::core::GameState;
 use crate::creeps::{Creep, CreepAction};
 use crate::mines::MineNode;
-use crate::core::GameState;
 use crate::resources::ResourceType;
 
 /// Simple autonomous AI for creeps
@@ -36,7 +36,9 @@ pub fn autonomous_creep_ai(
                 } else {
                     // Move towards mine
                     creep.current_action = Some(crate::creeps::components::CurrentAction {
-                        action: CreepAction::MoveTo { target: mine.position },
+                        action: CreepAction::MoveTo {
+                            target: mine.position,
+                        },
                         target_id: None,
                         progress: 0.0,
                     });
@@ -59,7 +61,9 @@ pub fn autonomous_creep_ai(
             } else {
                 // Move towards mine
                 creep.current_action = Some(crate::creeps::components::CurrentAction {
-                    action: CreepAction::MoveTo { target: mine.position },
+                    action: CreepAction::MoveTo {
+                        target: mine.position,
+                    },
                     target_id: None,
                     progress: 0.0,
                 });

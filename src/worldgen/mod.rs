@@ -16,8 +16,8 @@ use bevy::prelude::*;
 
 use crate::config::WorldgenConfig;
 use crate::core::GameRng;
-use crate::world::WorldMap;
 use crate::world::WorldBuilder;
+use crate::world::WorldMap;
 
 pub struct WorldgenPlugin;
 
@@ -41,7 +41,10 @@ fn generate_world_system(
     tracing::info!(
         "World generated: {} rooms, {} mines",
         world_map.room_count(),
-        world_map.all_rooms().map(|r| r.mine_ids.len()).sum::<usize>()
+        world_map
+            .all_rooms()
+            .map(|r| r.mine_ids.len())
+            .sum::<usize>()
     );
 
     commands.insert_resource(world_map);

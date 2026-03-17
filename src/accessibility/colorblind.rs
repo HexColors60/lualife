@@ -44,11 +44,7 @@ impl Default for ColorblindSettings {
 /// These are 3x3 matrices that transform RGB colors
 pub fn get_colorblind_matrix(mode: ColorblindMode) -> [[f32; 3]; 3] {
     match mode {
-        ColorblindMode::None => [
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ],
+        ColorblindMode::None => [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
         // Protanopia simulation
         ColorblindMode::Protanopia => [
             [0.567, 0.433, 0.0],
@@ -56,17 +52,9 @@ pub fn get_colorblind_matrix(mode: ColorblindMode) -> [[f32; 3]; 3] {
             [0.0, 0.242, 0.758],
         ],
         // Deuteranopia simulation
-        ColorblindMode::Deuteranopia => [
-            [0.625, 0.375, 0.0],
-            [0.7, 0.3, 0.0],
-            [0.0, 0.3, 0.7],
-        ],
+        ColorblindMode::Deuteranopia => [[0.625, 0.375, 0.0], [0.7, 0.3, 0.0], [0.0, 0.3, 0.7]],
         // Tritanopia simulation
-        ColorblindMode::Tritanopia => [
-            [0.95, 0.05, 0.0],
-            [0.0, 0.433, 0.567],
-            [0.0, 0.475, 0.525],
-        ],
+        ColorblindMode::Tritanopia => [[0.95, 0.05, 0.0], [0.0, 0.433, 0.567], [0.0, 0.475, 0.525]],
         // Achromatopsia (grayscale)
         ColorblindMode::Achromatopsia => [
             [0.299, 0.587, 0.114],
@@ -79,36 +67,20 @@ pub fn get_colorblind_matrix(mode: ColorblindMode) -> [[f32; 3]; 3] {
 /// Daltonization correction matrices (help colorblind users distinguish colors)
 pub fn get_daltonization_matrix(mode: ColorblindMode) -> [[f32; 3]; 3] {
     match mode {
-        ColorblindMode::None => [
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ],
-        ColorblindMode::Protanopia => [
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-            [0.0, 0.0, 1.0],
-        ],
-        ColorblindMode::Deuteranopia => [
-            [0.0, 0.0, 1.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ],
-        ColorblindMode::Tritanopia => [
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [1.0, 0.0, 0.0],
-        ],
-        ColorblindMode::Achromatopsia => [
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-        ],
+        ColorblindMode::None => [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+        ColorblindMode::Protanopia => [[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0]],
+        ColorblindMode::Deuteranopia => [[0.0, 0.0, 1.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+        ColorblindMode::Tritanopia => [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]],
+        ColorblindMode::Achromatopsia => [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
     }
 }
 
 /// Apply colorblind filter to a color
-pub fn apply_colorblind_filter_to_color(color: Color, mode: ColorblindMode, intensity: f32) -> Color {
+pub fn apply_colorblind_filter_to_color(
+    color: Color,
+    mode: ColorblindMode,
+    intensity: f32,
+) -> Color {
     if mode == ColorblindMode::None || intensity <= 0.0 {
         return color;
     }
@@ -154,11 +126,8 @@ pub fn apply_colorblind_filter(
 
     // Apply to color materials (2D)
     for (_, material) in color_materials.iter_mut() {
-        material.color = apply_colorblind_filter_to_color(
-            material.color,
-            settings.mode,
-            settings.intensity,
-        );
+        material.color =
+            apply_colorblind_filter_to_color(material.color, settings.mode, settings.intensity);
     }
 }
 
@@ -177,11 +146,9 @@ impl ColorblindPalette {
     pub fn get_faction_colors(&self, faction_id: u16) -> Color {
         // Use distinct patterns and colors that work for colorblind users
         let hue = (faction_id as f32 * 137.5) % 360.0; // Golden angle distribution
-        
+
         match self {
-            ColorblindPalette::Default => {
-                Color::hsl(hue, 0.7, 0.5)
-            }
+            ColorblindPalette::Default => Color::hsl(hue, 0.7, 0.5),
             ColorblindPalette::ProtanopiaFriendly => {
                 // Avoid red-green confusion, use blue-orange spectrum
                 let adjusted_hue = if hue > 60.0 && hue < 180.0 {
@@ -213,14 +180,14 @@ impl ColorblindPalette {
             ColorblindPalette::HighContrast => {
                 // Use high contrast colors with distinct patterns
                 let colors = [
-                    Color::srgb(0.0, 0.0, 0.0),      // Black
-                    Color::srgb(1.0, 1.0, 1.0),      // White
-                    Color::srgb(0.0, 0.0, 1.0),      // Blue
-                    Color::srgb(1.0, 0.5, 0.0),      // Orange
-                    Color::srgb(0.5, 0.0, 0.5),      // Purple
-                    Color::srgb(0.0, 0.5, 0.5),      // Teal
-                    Color::srgb(1.0, 1.0, 0.0),      // Yellow
-                    Color::srgb(0.5, 0.25, 0.0),     // Brown
+                    Color::srgb(0.0, 0.0, 0.0),  // Black
+                    Color::srgb(1.0, 1.0, 1.0),  // White
+                    Color::srgb(0.0, 0.0, 1.0),  // Blue
+                    Color::srgb(1.0, 0.5, 0.0),  // Orange
+                    Color::srgb(0.5, 0.0, 0.5),  // Purple
+                    Color::srgb(0.0, 0.5, 0.5),  // Teal
+                    Color::srgb(1.0, 1.0, 0.0),  // Yellow
+                    Color::srgb(0.5, 0.25, 0.0), // Brown
                 ];
                 colors[faction_id as usize % colors.len()]
             }
@@ -232,64 +199,63 @@ impl ColorblindPalette {
         match self {
             ColorblindPalette::Default => {
                 let colors = [
-                    Color::srgb(1.0, 1.0, 0.0),   // Power - Yellow
-                    Color::srgb(0.7, 0.4, 0.2),   // Iron - Brown
-                    Color::srgb(0.8, 0.5, 0.2),   // Copper - Copper
-                    Color::srgb(0.9, 0.9, 0.9),   // Silicon - Light gray
-                    Color::srgb(0.5, 0.8, 1.0),   // Crystal - Light blue
-                    Color::srgb(0.3, 0.3, 0.3),   // Carbon - Dark gray
-                    Color::srgb(0.6, 0.6, 0.6),   // Stone - Gray
-                    Color::srgb(1.0, 1.0, 0.3),   // Sulfur - Bright yellow
-                    Color::srgb(0.3, 0.5, 0.8),   // Water - Blue
-                    Color::srgb(0.3, 0.7, 0.3),   // Biomass - Green
+                    Color::srgb(1.0, 1.0, 0.0), // Power - Yellow
+                    Color::srgb(0.7, 0.4, 0.2), // Iron - Brown
+                    Color::srgb(0.8, 0.5, 0.2), // Copper - Copper
+                    Color::srgb(0.9, 0.9, 0.9), // Silicon - Light gray
+                    Color::srgb(0.5, 0.8, 1.0), // Crystal - Light blue
+                    Color::srgb(0.3, 0.3, 0.3), // Carbon - Dark gray
+                    Color::srgb(0.6, 0.6, 0.6), // Stone - Gray
+                    Color::srgb(1.0, 1.0, 0.3), // Sulfur - Bright yellow
+                    Color::srgb(0.3, 0.5, 0.8), // Water - Blue
+                    Color::srgb(0.3, 0.7, 0.3), // Biomass - Green
                 ];
                 colors[resource_type as usize % colors.len()]
             }
-            ColorblindPalette::ProtanopiaFriendly |
-            ColorblindPalette::DeuteranopiaFriendly => {
+            ColorblindPalette::ProtanopiaFriendly | ColorblindPalette::DeuteranopiaFriendly => {
                 // Use blue-orange spectrum with patterns
                 let colors = [
-                    Color::srgb(1.0, 0.6, 0.0),   // Power - Orange
-                    Color::srgb(0.2, 0.2, 0.8),   // Iron - Blue
-                    Color::srgb(0.0, 0.6, 0.8),   // Copper - Cyan
-                    Color::srgb(0.9, 0.9, 0.9),   // Silicon - Light gray
-                    Color::srgb(0.0, 0.4, 0.8),   // Crystal - Medium blue
-                    Color::srgb(0.3, 0.3, 0.3),   // Carbon - Dark gray
-                    Color::srgb(0.6, 0.6, 0.6),   // Stone - Gray
-                    Color::srgb(1.0, 0.8, 0.0),   // Sulfur - Gold
-                    Color::srgb(0.2, 0.5, 0.9),   // Water - Light blue
-                    Color::srgb(0.0, 0.7, 0.7),   // Biomass - Teal
+                    Color::srgb(1.0, 0.6, 0.0), // Power - Orange
+                    Color::srgb(0.2, 0.2, 0.8), // Iron - Blue
+                    Color::srgb(0.0, 0.6, 0.8), // Copper - Cyan
+                    Color::srgb(0.9, 0.9, 0.9), // Silicon - Light gray
+                    Color::srgb(0.0, 0.4, 0.8), // Crystal - Medium blue
+                    Color::srgb(0.3, 0.3, 0.3), // Carbon - Dark gray
+                    Color::srgb(0.6, 0.6, 0.6), // Stone - Gray
+                    Color::srgb(1.0, 0.8, 0.0), // Sulfur - Gold
+                    Color::srgb(0.2, 0.5, 0.9), // Water - Light blue
+                    Color::srgb(0.0, 0.7, 0.7), // Biomass - Teal
                 ];
                 colors[resource_type as usize % colors.len()]
             }
             ColorblindPalette::TritanopiaFriendly => {
                 // Avoid blue-yellow confusion
                 let colors = [
-                    Color::srgb(1.0, 0.0, 0.5),   // Power - Magenta
-                    Color::srgb(0.6, 0.3, 0.0),   // Iron - Brown
-                    Color::srgb(0.8, 0.4, 0.0),   // Copper - Orange
-                    Color::srgb(0.9, 0.9, 0.9),   // Silicon - Light gray
-                    Color::srgb(0.7, 0.0, 0.7),   // Crystal - Purple
-                    Color::srgb(0.3, 0.3, 0.3),   // Carbon - Dark gray
-                    Color::srgb(0.6, 0.6, 0.6),   // Stone - Gray
-                    Color::srgb(1.0, 0.5, 0.0),   // Sulfur - Orange
-                    Color::srgb(0.0, 0.6, 0.6),   // Water - Teal
-                    Color::srgb(0.0, 0.8, 0.4),   // Biomass - Green
+                    Color::srgb(1.0, 0.0, 0.5), // Power - Magenta
+                    Color::srgb(0.6, 0.3, 0.0), // Iron - Brown
+                    Color::srgb(0.8, 0.4, 0.0), // Copper - Orange
+                    Color::srgb(0.9, 0.9, 0.9), // Silicon - Light gray
+                    Color::srgb(0.7, 0.0, 0.7), // Crystal - Purple
+                    Color::srgb(0.3, 0.3, 0.3), // Carbon - Dark gray
+                    Color::srgb(0.6, 0.6, 0.6), // Stone - Gray
+                    Color::srgb(1.0, 0.5, 0.0), // Sulfur - Orange
+                    Color::srgb(0.0, 0.6, 0.6), // Water - Teal
+                    Color::srgb(0.0, 0.8, 0.4), // Biomass - Green
                 ];
                 colors[resource_type as usize % colors.len()]
             }
             ColorblindPalette::HighContrast => {
                 let colors = [
-                    Color::srgb(1.0, 1.0, 0.0),   // Power - Yellow
-                    Color::srgb(0.0, 0.0, 1.0),   // Iron - Blue
-                    Color::srgb(1.0, 0.5, 0.0),   // Copper - Orange
-                    Color::srgb(1.0, 1.0, 1.0),   // Silicon - White
-                    Color::srgb(0.5, 0.0, 0.5),   // Crystal - Purple
-                    Color::srgb(0.3, 0.3, 0.3),   // Carbon - Dark gray
-                    Color::srgb(0.6, 0.6, 0.6),   // Stone - Gray
-                    Color::srgb(1.0, 0.8, 0.0),   // Sulfur - Gold
-                    Color::srgb(0.0, 0.5, 1.0),   // Water - Light blue
-                    Color::srgb(0.0, 0.8, 0.0),   // Biomass - Green
+                    Color::srgb(1.0, 1.0, 0.0), // Power - Yellow
+                    Color::srgb(0.0, 0.0, 1.0), // Iron - Blue
+                    Color::srgb(1.0, 0.5, 0.0), // Copper - Orange
+                    Color::srgb(1.0, 1.0, 1.0), // Silicon - White
+                    Color::srgb(0.5, 0.0, 0.5), // Crystal - Purple
+                    Color::srgb(0.3, 0.3, 0.3), // Carbon - Dark gray
+                    Color::srgb(0.6, 0.6, 0.6), // Stone - Gray
+                    Color::srgb(1.0, 0.8, 0.0), // Sulfur - Gold
+                    Color::srgb(0.0, 0.5, 1.0), // Water - Light blue
+                    Color::srgb(0.0, 0.8, 0.0), // Biomass - Green
                 ];
                 colors[resource_type as usize % colors.len()]
             }

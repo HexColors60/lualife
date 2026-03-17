@@ -79,10 +79,7 @@ pub fn toggle_creep_customization_ui(
 }
 
 /// System to display creep customization UI
-pub fn creep_customization_ui_system(
-    ui: Res<CreepCustomizationUI>,
-    mut game_log: ResMut<GameLog>,
-) {
+pub fn creep_customization_ui_system(ui: Res<CreepCustomizationUI>, mut game_log: ResMut<GameLog>) {
     if !ui.visible {
         return;
     }
@@ -126,11 +123,13 @@ pub struct CreepCustomizationPlugin;
 
 impl Plugin for CreepCustomizationPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<CreepCustomizationUI>()
-            .add_systems(Update, (
+        app.init_resource::<CreepCustomizationUI>().add_systems(
+            Update,
+            (
                 toggle_creep_customization_ui,
                 creep_customization_ui_system,
                 creep_preset_input_system,
-            ));
+            ),
+        );
     }
 }

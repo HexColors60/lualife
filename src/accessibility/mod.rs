@@ -1,14 +1,14 @@
 mod colorblind;
+mod high_contrast;
 mod keybindings;
 mod screen_reader;
 mod ui_scaling;
-mod high_contrast;
 
 pub use colorblind::*;
+pub use high_contrast::*;
 pub use keybindings::*;
 pub use screen_reader::*;
 pub use ui_scaling::*;
-pub use high_contrast::*;
 
 use bevy::prelude::*;
 
@@ -23,15 +23,15 @@ impl Plugin for AccessibilityPlugin {
             .init_resource::<UIScalingSettings>()
             .init_resource::<HighContrastSettings>()
             .init_resource::<ColorblindSettings>()
-            .add_systems(PreUpdate, (
-                apply_colorblind_filter,
-                apply_high_contrast,
-            ))
-            .add_systems(Update, (
-                handle_keybinding_input,
-                update_ui_scaling,
-                screen_reader_announce,
-            ));
+            .add_systems(PreUpdate, (apply_colorblind_filter, apply_high_contrast))
+            .add_systems(
+                Update,
+                (
+                    handle_keybinding_input,
+                    update_ui_scaling,
+                    screen_reader_announce,
+                ),
+            );
     }
 }
 

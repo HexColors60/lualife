@@ -6,10 +6,7 @@ pub struct Tabs {
 
 impl Tabs {
     pub fn new(tabs: Vec<String>) -> Self {
-        Self {
-            tabs,
-            active: 0,
-        }
+        Self { tabs, active: 0 }
     }
 
     pub fn select(&mut self, index: usize) {

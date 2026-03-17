@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use crate::creeps::Creep;
 use crate::buildings::Building;
+use crate::creeps::Creep;
 
 #[derive(Debug, Clone, Component)]
 pub struct Tower {

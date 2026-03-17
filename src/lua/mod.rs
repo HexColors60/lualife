@@ -74,9 +74,7 @@ impl LuaRegistry {
     }
 }
 
-fn initialize_lua_vms(
-    world: &mut World,
-) {
+fn initialize_lua_vms(world: &mut World) {
     let faction_count = {
         let registry = world.resource::<crate::factions::FactionRegistry>();
         registry.count()
@@ -88,7 +86,10 @@ fn initialize_lua_vms(
     // Get faction info
     let factions: Vec<(crate::factions::FactionId, String, String)> = {
         let registry = world.resource::<crate::factions::FactionRegistry>();
-        registry.all().map(|f| (f.id, f.name.clone(), f.ai_path.clone())).collect()
+        registry
+            .all()
+            .map(|f| (f.id, f.name.clone(), f.ai_path.clone()))
+            .collect()
     };
 
     for (faction_id, name, ai_path) in factions {
@@ -105,7 +106,10 @@ fn initialize_lua_vms(
                         let _ = vm.call_init();
                     }
                 } else {
-                    messages.push(format!("No Lua script for {} (expected {})", name, main_path));
+                    messages.push(format!(
+                        "No Lua script for {} (expected {})",
+                        name, main_path
+                    ));
                 }
                 lua_registry.register(faction_id, vm);
             }
@@ -123,7 +127,10 @@ fn initialize_lua_vms(
     for msg in messages {
         game_log.add(msg);
     }
-    game_log.add(format!("Lua VMs initialized for {} factions", faction_count));
+    game_log.add(format!(
+        "Lua VMs initialized for {} factions",
+        faction_count
+    ));
 
     // Mark as initialized
     let mut lua_state = world.resource_mut::<LuaState>();

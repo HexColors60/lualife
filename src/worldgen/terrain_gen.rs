@@ -1,7 +1,7 @@
 use crate::config::WorldgenConfig;
+use crate::consts::ROOM_TILE_SIZE;
 use crate::core::GameRng;
 use crate::world::{TerrainType, Tile};
-use crate::consts::ROOM_TILE_SIZE;
 
 pub struct TerrainGenerator;
 
@@ -46,7 +46,8 @@ impl TerrainGenerator {
             TerrainType::Plains
         } else if adjusted_roll < config.plains_ratio + config.forest_ratio {
             TerrainType::Forest
-        } else if adjusted_roll < config.plains_ratio + config.forest_ratio + config.mountain_ratio {
+        } else if adjusted_roll < config.plains_ratio + config.forest_ratio + config.mountain_ratio
+        {
             TerrainType::Mountain
         } else {
             TerrainType::Plains

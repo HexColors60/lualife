@@ -41,11 +41,7 @@ where
             }
         },
         Err(e) => {
-            tracing::info!(
-                "Config file {:?} not found ({}), using defaults",
-                path,
-                e
-            );
+            tracing::info!("Config file {:?} not found ({}), using defaults", path, e);
             T::default()
         }
     }

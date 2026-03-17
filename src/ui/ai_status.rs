@@ -53,7 +53,14 @@ pub fn update_ai_status(
         let mut lines = vec!["=== AI Status ===".to_string()];
 
         lines.push(format!("Factions: {}", factions.count()));
-        lines.push(format!("Lua VMs: {}", if lua_state.initialized { "Initialized" } else { "Pending" }));
+        lines.push(format!(
+            "Lua VMs: {}",
+            if lua_state.initialized {
+                "Initialized"
+            } else {
+                "Pending"
+            }
+        ));
 
         // Show script status
         if lua_state.initialized {

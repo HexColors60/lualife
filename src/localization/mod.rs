@@ -1,13 +1,13 @@
+mod formatting;
 mod i18n;
 mod language;
 mod rtl;
-mod formatting;
 mod translations;
 
+pub use formatting::*;
 pub use i18n::*;
 pub use language::*;
 pub use rtl::*;
-pub use formatting::*;
 pub use translations::*;
 
 use bevy::prelude::*;
@@ -21,10 +21,7 @@ impl Plugin for LocalizationPlugin {
             .init_resource::<LocalizationState>()
             .init_resource::<TranslationRegistry>()
             .add_systems(PreUpdate, load_translations_system)
-            .add_systems(Update, (
-                update_locale_system,
-                format_numbers_system,
-            ));
+            .add_systems(Update, (update_locale_system, format_numbers_system));
     }
 }
 
@@ -64,11 +61,11 @@ pub struct LocalizationState {
 /// Date format options
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Reflect)]
 pub enum DateFormat {
-    Short,   // 1/1/2024
-    Medium,  // Jan 1, 2024
-    Long,    // January 1, 2024
-    Full,    // Monday, January 1, 2024
-    Iso,     // 2024-01-01
+    Short,  // 1/1/2024
+    Medium, // Jan 1, 2024
+    Long,   // January 1, 2024
+    Full,   // Monday, January 1, 2024
+    Iso,    // 2024-01-01
 }
 
 /// Number format settings
@@ -93,8 +90,8 @@ impl Default for NumberFormat {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Reflect)]
 pub enum DecimalSeparator {
-    Dot,    // 1.234
-    Comma,  // 1,234
+    Dot,   // 1.234
+    Comma, // 1,234
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Reflect)]
@@ -108,10 +105,10 @@ pub enum ThousandsSeparator {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Reflect)]
 pub enum CurrencyPosition {
-    Before,       // $100
-    After,        // 100$
-    BeforeSpace,  // $ 100
-    AfterSpace,   // 100 $
+    Before,      // $100
+    After,       // 100$
+    BeforeSpace, // $ 100
+    AfterSpace,  // 100 $
 }
 
 /// Day of week

@@ -41,9 +41,9 @@ impl UnitApi {
         // units.transfer(id, target_id, resource, amount) -> boolean
         units.set(
             "transfer",
-            lua.create_function(|_, (_id, _target, _resource, _amount): (u32, u32, String, u32)| {
-                Ok(true)
-            })?,
+            lua.create_function(
+                |_, (_id, _target, _resource, _amount): (u32, u32, String, u32)| Ok(true),
+            )?,
         )?;
 
         Ok(())

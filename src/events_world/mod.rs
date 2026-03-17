@@ -1,12 +1,12 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
-use serde::{Deserialize, Serialize};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::core::TickNumber;
 use crate::factions::FactionId;
-use crate::world::WorldPos;
 use crate::resources::ResourceType;
+use crate::world::WorldPos;
 
 /// World event types
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -171,7 +171,8 @@ impl WorldEventManager {
 
         // Set cooldown
         let kind = self.event_kind(&event);
-        self.event_cooldown.insert(kind, tick + self.cooldown_duration(kind));
+        self.event_cooldown
+            .insert(kind, tick + self.cooldown_duration(kind));
     }
 
     pub fn event_kind(&self, event: &WorldEventType) -> WorldEventTypeKind {
@@ -257,13 +258,13 @@ pub fn random_event_system(
         if event_manager.can_trigger(kind, current_tick) {
             let event = generate_random_event(kind, &mut rng);
             let message = format_event_message(&event);
-            
+
             notifications.send(EventNotification {
                 event_type: event.clone(),
                 message: message.clone(),
                 severity: EventSeverity::Warning,
             });
-            
+
             game_log.add(format!("World Event: {}", message));
             event_manager.trigger_event(event, current_tick);
         }
@@ -272,58 +273,78 @@ pub fn random_event_system(
 
 fn generate_random_event(kind: WorldEventTypeKind, rng: &mut impl Rng) -> WorldEventType {
     match kind {
-        WorldEventTypeKind::MeteorStrike => {
-            WorldEventType::MeteorStrike {
-                position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
-                radius: rng.gen_range(2..5),
-                damage: rng.gen_range(50..150),
-            }
-        }
-        WorldEventTypeKind::ResourceBoom => {
-            WorldEventType::ResourceBoom {
-                resource_type: ResourceType::Power,
-                position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
-                amount: rng.gen_range(500..2000),
-                duration_ticks: rng.gen_range(100..500),
-            }
-        }
-        WorldEventTypeKind::ResourceDeposit => {
-            WorldEventType::ResourceDeposit {
-                resource_type: ResourceType::Iron,
-                position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
-                amount: rng.gen_range(1000..5000),
-            }
-        }
+        WorldEventTypeKind::MeteorStrike => WorldEventType::MeteorStrike {
+            position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
+            radius: rng.gen_range(2..5),
+            damage: rng.gen_range(50..150),
+        },
+        WorldEventTypeKind::ResourceBoom => WorldEventType::ResourceBoom {
+            resource_type: ResourceType::Power,
+            position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
+            amount: rng.gen_range(500..2000),
+            duration_ticks: rng.gen_range(100..500),
+        },
+        WorldEventTypeKind::ResourceDeposit => WorldEventType::ResourceDeposit {
+            resource_type: ResourceType::Iron,
+            position: WorldPos::new(rng.gen_range(0..256), rng.gen_range(0..256)),
+            amount: rng.gen_range(1000..5000),
+        },
         _ => WorldEventType::ResourceDeposit {
             resource_type: ResourceType::Power,
             position: WorldPos::new(128, 128),
             amount: 1000,
-        }
+        },
     }
 }
 
 fn format_event_message(event: &WorldEventType) -> String {
     match event {
-        WorldEventType::MeteorStrike { position, radius, .. } => {
-            format!("Meteor strike at ({}, {}) with radius {}!", position.x, position.y, radius)
+        WorldEventType::MeteorStrike {
+            position, radius, ..
+        } => {
+            format!(
+                "Meteor strike at ({}, {}) with radius {}!",
+                position.x, position.y, radius
+            )
         }
-        WorldEventType::ResourceBoom { resource_type, amount, .. } => {
+        WorldEventType::ResourceBoom {
+            resource_type,
+            amount,
+            ..
+        } => {
             format!("Resource boom! {:?} +{} available!", resource_type, amount)
         }
         WorldEventType::Earthquake { center, radius, .. } => {
-            format!("Earthquake at ({}, {}) radius {}!", center.x, center.y, radius)
+            format!(
+                "Earthquake at ({}, {}) radius {}!",
+                center.x, center.y, radius
+            )
         }
         WorldEventType::Flood { affected_area, .. } => {
-            format!("Flood from ({}, {}) to ({}, {})!", 
-                affected_area.0.x, affected_area.0.y,
-                affected_area.1.x, affected_area.1.y)
+            format!(
+                "Flood from ({}, {}) to ({}, {})!",
+                affected_area.0.x, affected_area.0.y, affected_area.1.x, affected_area.1.y
+            )
         }
-        WorldEventType::VolcanicEruption { position, lava_radius, .. } => {
-            format!("Volcanic eruption at ({}, {}) with lava radius {}!", position.x, position.y, lava_radius)
+        WorldEventType::VolcanicEruption {
+            position,
+            lava_radius,
+            ..
+        } => {
+            format!(
+                "Volcanic eruption at ({}, {}) with lava radius {}!",
+                position.x, position.y, lava_radius
+            )
         }
-        WorldEventType::ResourceDeposit { resource_type, amount, position } => {
-            format!("New {:?} deposit discovered at ({}, {}) with {} units!", 
-                resource_type, position.x, position.y, amount)
+        WorldEventType::ResourceDeposit {
+            resource_type,
+            amount,
+            position,
+        } => {
+            format!(
+                "New {:?} deposit discovered at ({}, {}) with {} units!",
+                resource_type, position.x, position.y, amount
+            )
         }
         WorldEventType::NpcInvasion { creep_count, .. } => {
             format!("NPC invasion with {} hostile creeps!", creep_count)

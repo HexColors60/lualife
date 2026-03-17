@@ -3,9 +3,7 @@ use bevy::prelude::*;
 use super::Creep;
 use crate::consts::CREEP_POWER_CONSUMPTION;
 
-pub fn creep_upkeep_system(
-    mut creeps: Query<&mut Creep>,
-) {
+pub fn creep_upkeep_system(mut creeps: Query<&mut Creep>) {
     for mut creep in creeps.iter_mut() {
         // Consume power each tick
         let consumption = CREEP_POWER_CONSUMPTION * creep.body.eat_parts() as f32;

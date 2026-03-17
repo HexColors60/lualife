@@ -153,10 +153,9 @@ impl Language {
 
     /// Check if the language is RTL (Right-to-Left)
     pub fn is_rtl(&self) -> bool {
-        matches!(self, 
-            Language::Arabic | 
-            Language::Hebrew | 
-            Language::Persian
+        matches!(
+            self,
+            Language::Arabic | Language::Hebrew | Language::Persian
         )
     }
 

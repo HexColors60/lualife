@@ -17,7 +17,12 @@ pub struct Building {
 }
 
 impl Building {
-    pub fn new(id: u32, building_type: BuildingType, faction_id: FactionId, position: WorldPos) -> Self {
+    pub fn new(
+        id: u32,
+        building_type: BuildingType,
+        faction_id: FactionId,
+        position: WorldPos,
+    ) -> Self {
         let max_hp = 1000.0; // Default HP
 
         Self {

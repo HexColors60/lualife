@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use bevy::prelude::*;
 use bevy::audio::{PlaybackMode, Volume};
+use bevy::prelude::*;
+use std::collections::HashMap;
 
 /// Audio settings resource
 #[derive(Resource, Debug, Clone)]
@@ -26,15 +26,27 @@ impl Default for AudioSettings {
 
 impl AudioSettings {
     pub fn effective_music_volume(&self) -> f32 {
-        if self.muted { 0.0 } else { self.master_volume * self.music_volume }
+        if self.muted {
+            0.0
+        } else {
+            self.master_volume * self.music_volume
+        }
     }
 
     pub fn effective_sfx_volume(&self) -> f32 {
-        if self.muted { 0.0 } else { self.master_volume * self.sfx_volume }
+        if self.muted {
+            0.0
+        } else {
+            self.master_volume * self.sfx_volume
+        }
     }
 
     pub fn effective_ambient_volume(&self) -> f32 {
-        if self.muted { 0.0 } else { self.master_volume * self.ambient_volume }
+        if self.muted {
+            0.0
+        } else {
+            self.master_volume * self.ambient_volume
+        }
     }
 }
 
@@ -221,11 +233,14 @@ impl Plugin for AudioPlugin {
             .init_resource::<AudioState>()
             .add_event::<PlaySfx>()
             .add_event::<ChangeMusic>()
-            .add_systems(Update, (
-                sfx_system,
-                music_system,
-                audio_settings_system,
-                audio_keyboard_system,
-            ));
+            .add_systems(
+                Update,
+                (
+                    sfx_system,
+                    music_system,
+                    audio_settings_system,
+                    audio_keyboard_system,
+                ),
+            );
     }
 }

@@ -20,27 +20,26 @@ pub struct PowerBarForeground {
 }
 
 /// Spawn health bars for creeps
-pub fn spawn_health_bars(
-    mut commands: Commands,
-    creeps: Query<(Entity, &Creep), Added<Creep>>,
-) {
+pub fn spawn_health_bars(mut commands: Commands, creeps: Query<(Entity, &Creep), Added<Creep>>) {
     for (entity, creep) in creeps.iter() {
         let x = creep.position.x as f32 - 128.0;
         let y = creep.position.y as f32 - 128.0 + 2.0; // Above creep
 
         // Background bar (dark)
-        let bg_entity = commands.spawn((
-            SpriteBundle {
-                sprite: Sprite {
-                    color: Color::srgba(0.2, 0.2, 0.2, 0.8),
-                    custom_size: Some(Vec2::new(3.0, 0.5)),
+        let bg_entity = commands
+            .spawn((
+                SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::srgba(0.2, 0.2, 0.2, 0.8),
+                        custom_size: Some(Vec2::new(3.0, 0.5)),
+                        ..default()
+                    },
+                    transform: Transform::from_xyz(x, y, 2.0),
                     ..default()
                 },
-                transform: Transform::from_xyz(x, y, 2.0),
-                ..default()
-            },
-            HealthBarBackground,
-        )).id();
+                HealthBarBackground,
+            ))
+            .id();
 
         // HP bar (green)
         commands.spawn((
@@ -53,7 +52,9 @@ pub fn spawn_health_bars(
                 transform: Transform::from_xyz(x, y + 0.15, 2.1),
                 ..default()
             },
-            HealthBarForeground { creep_entity: entity },
+            HealthBarForeground {
+                creep_entity: entity,
+            },
         ));
 
         // Power bar (blue)
@@ -67,7 +68,9 @@ pub fn spawn_health_bars(
                 transform: Transform::from_xyz(x, y - 0.15, 2.1),
                 ..default()
             },
-            PowerBarForeground { creep_entity: entity },
+            PowerBarForeground {
+                creep_entity: entity,
+            },
         ));
     }
 }

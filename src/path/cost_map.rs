@@ -19,7 +19,10 @@ impl CostMap {
     }
 
     pub fn get_cost(&self, pos: WorldPos) -> f32 {
-        self.costs.get(&(pos.x, pos.y)).copied().unwrap_or(self.default_cost)
+        self.costs
+            .get(&(pos.x, pos.y))
+            .copied()
+            .unwrap_or(self.default_cost)
     }
 
     pub fn set_cost(&mut self, pos: WorldPos, cost: f32) {

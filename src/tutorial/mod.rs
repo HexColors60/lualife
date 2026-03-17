@@ -4,13 +4,20 @@ mod hint_system;
 mod tooltip_system;
 mod tutorial_system;
 
-pub use beginner_guide::*;
-pub use help_encyclopedia::*;
-pub use hint_system::*;
-pub use tooltip_system::*;
-pub use tutorial_system::*;
+pub use beginner_guide::{BeginnerGuide, BeginnerGuideDisplay, Objective};
+pub use help_encyclopedia::{HelpCategory, HelpDisplay, HelpEncyclopedia, HelpEntry};
+pub use hint_system::{Hint, HintDisplay, HintEvent, HintState, HintTrigger};
+pub use tooltip_system::{TooltipDisplay, TooltipInfo, TooltipState, TooltipTarget};
+pub use tutorial_system::{
+    TutorialAction, TutorialEvent, TutorialState, TutorialStep, TutorialText,
+};
 
+use beginner_guide::beginner_guide_system;
 use bevy::prelude::*;
+use help_encyclopedia::help_encyclopedia_system;
+use hint_system::hint_system;
+use tooltip_system::tooltip_system;
+use tutorial_system::{handle_tutorial_input, setup_tutorial_ui, tutorial_system};
 
 pub struct TutorialPlugin;
 
@@ -24,13 +31,17 @@ impl Plugin for TutorialPlugin {
             .add_event::<TutorialEvent>()
             .add_event::<HintEvent>()
             .add_systems(Startup, setup_tutorial_ui)
-            .add_systems(Update, (
-                tutorial_system,
-                tooltip_system,
-                hint_system,
-                beginner_guide_system,
-                handle_tutorial_input,
-            ));
+            .add_systems(
+                Update,
+                (
+                    tutorial_system,
+                    tooltip_system,
+                    hint_system,
+                    beginner_guide_system,
+                    help_encyclopedia_system,
+                    handle_tutorial_input,
+                ),
+            );
     }
 }
 

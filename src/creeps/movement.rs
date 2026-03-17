@@ -4,12 +4,11 @@ use super::{Creep, CreepAction};
 use crate::world::WorldMap;
 use crate::world::WorldPos;
 
-pub fn creep_movement_system(
-    mut creeps: Query<&mut Creep>,
-    world_map: Res<WorldMap>,
-) {
+pub fn creep_movement_system(mut creeps: Query<&mut Creep>, world_map: Res<WorldMap>) {
     for mut creep in creeps.iter_mut() {
-        if let Some(CreepAction::MoveTo { target }) = &creep.current_action.as_ref().map(|a| &a.action) {
+        if let Some(CreepAction::MoveTo { target }) =
+            &creep.current_action.as_ref().map(|a| &a.action)
+        {
             let target = *target;
 
             // Calculate direction

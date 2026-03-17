@@ -1,10 +1,12 @@
 use indexmap::IndexSet;
 
-use super::{FactionSpawnGenerator, MineDistributor, MinePlacement, RoomLayoutGenerator, FactionSpawn};
+use super::{
+    FactionSpawn, FactionSpawnGenerator, MineDistributor, MinePlacement, RoomLayoutGenerator,
+};
 use crate::config::WorldgenConfig;
+use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y};
 use crate::core::GameRng;
 use crate::world::{Room, RoomCoord, Tile};
-use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y};
 
 #[derive(Debug, Clone)]
 pub struct GeneratedRoom {

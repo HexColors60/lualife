@@ -1,16 +1,16 @@
-use std::collections::{HashMap, HashSet};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::{HashMap, HashSet};
 
 use crate::factions::FactionId;
 
 /// Diplomatic stance between factions
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum DiplomaticStance {
-    Neutral,    // Default - no special relationship
-    Allied,     // Friendly - share vision, no combat
-    Enemy,      // Hostile - can attack
-    Truce,      // Temporary peace
+    Neutral, // Default - no special relationship
+    Allied,  // Friendly - share vision, no combat
+    Enemy,   // Hostile - can attack
+    Truce,   // Temporary peace
 }
 
 impl Default for DiplomaticStance {
@@ -84,7 +84,12 @@ impl DiplomacyState {
     }
 
     /// Set the diplomatic stance between two factions
-    pub fn set_stance(&mut self, faction1: FactionId, faction2: FactionId, stance: DiplomaticStance) {
+    pub fn set_stance(
+        &mut self,
+        faction1: FactionId,
+        faction2: FactionId,
+        stance: DiplomaticStance,
+    ) {
         // Store both directions for easy lookup
         self.relationships.insert((faction1, faction2), stance);
         self.relationships.insert((faction2, faction1), stance);
@@ -104,7 +109,10 @@ impl DiplomacyState {
 
     /// Check if two factions are allies
     pub fn are_allied(&self, faction1: FactionId, faction2: FactionId) -> bool {
-        matches!(self.get_stance(faction1, faction2), DiplomaticStance::Allied)
+        matches!(
+            self.get_stance(faction1, faction2),
+            DiplomaticStance::Allied
+        )
     }
 
     /// Check if two factions are enemies
@@ -147,7 +155,9 @@ impl DiplomacyState {
     /// Leave an alliance
     pub fn leave_alliance(&mut self, alliance_id: u32, faction: FactionId) -> bool {
         // Get members first before modifying
-        let members_to_update: Option<Vec<FactionId>> = self.alliances.get(&alliance_id)
+        let members_to_update: Option<Vec<FactionId>> = self
+            .alliances
+            .get(&alliance_id)
             .map(|a| a.members.iter().copied().collect());
 
         if let Some(members) = members_to_update {
@@ -164,7 +174,9 @@ impl DiplomacyState {
             }
 
             // Check if alliance should be dissolved
-            let should_dissolve = self.alliances.get(&alliance_id)
+            let should_dissolve = self
+                .alliances
+                .get(&alliance_id)
                 .map(|a| a.members.is_empty() || faction == a.founder)
                 .unwrap_or(false);
 
@@ -219,10 +231,24 @@ impl DiplomacyState {
 /// Event for diplomatic changes
 #[derive(Event, Debug, Clone)]
 pub enum DiplomacyEvent {
-    AllianceFormed { alliance_id: u32, name: String, founder: FactionId },
-    AllianceJoined { alliance_id: u32, faction: FactionId },
-    AllianceLeft { alliance_id: u32, faction: FactionId },
-    StanceChanged { faction1: FactionId, faction2: FactionId, stance: DiplomaticStance },
+    AllianceFormed {
+        alliance_id: u32,
+        name: String,
+        founder: FactionId,
+    },
+    AllianceJoined {
+        alliance_id: u32,
+        faction: FactionId,
+    },
+    AllianceLeft {
+        alliance_id: u32,
+        faction: FactionId,
+    },
+    StanceChanged {
+        faction1: FactionId,
+        faction2: FactionId,
+        stance: DiplomaticStance,
+    },
 }
 
 /// Plugin for diplomacy system

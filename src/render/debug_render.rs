@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
+use crate::creeps::Creep;
 use crate::debug::{DebugOverlays, GodMode};
 use crate::path::PathCache;
-use crate::world::WorldMap;
-use crate::creeps::Creep;
 use crate::render::MainCamera;
+use crate::world::WorldMap;
 
 /// Marker for debug overlay entities
 #[derive(Component)]
@@ -19,10 +19,7 @@ pub struct GridOverlay;
 pub struct FpsText;
 
 /// Setup debug overlays
-pub fn setup_debug_overlays(
-    mut commands: Commands,
-    overlays: Res<DebugOverlays>,
-) {
+pub fn setup_debug_overlays(mut commands: Commands, overlays: Res<DebugOverlays>) {
     // FPS counter at top-right (below unit panel)
     commands.spawn((
         TextBundle {

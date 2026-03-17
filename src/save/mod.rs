@@ -73,7 +73,10 @@ fn handle_load_input(
                 if saves.is_empty() {
                     game_log.add("No save files found".to_string());
                 } else {
-                    game_log.add(format!("Available saves: {:?}", saves.iter().take(5).collect::<Vec<_>>()));
+                    game_log.add(format!(
+                        "Available saves: {:?}",
+                        saves.iter().take(5).collect::<Vec<_>>()
+                    ));
                     // Try to load the most recent
                     if let Some(latest) = saves.first() {
                         match LoadGame::load_from_file(latest) {

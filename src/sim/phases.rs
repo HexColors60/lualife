@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 
-use crate::creeps::{Creep, CreepAction};
 use crate::core::{GameState, TickNumber};
-use crate::world::WorldMap;
+use crate::creeps::{Creep, CreepAction};
 use crate::mines::MineNode;
-use crate::resources::ResourceType;
 use crate::path::{AStar, PathCache};
+use crate::resources::ResourceType;
+use crate::world::WorldMap;
 
 /// Simulation phase ordering
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -82,9 +82,10 @@ pub fn movement_phase(
                 };
 
                 // Find next waypoint
-                if let Some(&next_pos) = path.iter().find(|&&pos| {
-                    pos.x != creep.position.x || pos.y != creep.position.y
-                }) {
+                if let Some(&next_pos) = path
+                    .iter()
+                    .find(|&&pos| pos.x != creep.position.x || pos.y != creep.position.y)
+                {
                     // Move towards next waypoint
                     let dx = (next_pos.x - creep.position.x).signum();
                     let dy = (next_pos.y - creep.position.y).signum();
@@ -148,10 +149,7 @@ pub fn mining_phase(
 }
 
 /// Combat phase system - handles creep vs creep combat
-pub fn combat_phase(
-    mut creeps: Query<(Entity, &mut Creep)>,
-    game_state: Res<GameState>,
-) {
+pub fn combat_phase(mut creeps: Query<(Entity, &mut Creep)>, game_state: Res<GameState>) {
     if *game_state != GameState::Running {
         return;
     }
@@ -160,10 +158,8 @@ pub fn combat_phase(
     let mut damage_to_apply: Vec<(Entity, f32)> = Vec::new();
 
     // Collect all creeps for targeting
-    let creep_data: Vec<(Entity, crate::factions::FactionId)> = creeps
-        .iter()
-        .map(|(e, c)| (e, c.faction_id))
-        .collect();
+    let creep_data: Vec<(Entity, crate::factions::FactionId)> =
+        creeps.iter().map(|(e, c)| (e, c.faction_id)).collect();
 
     for (entity, mut creep) in creeps.iter_mut() {
         if let Some(ref action) = creep.current_action {
@@ -237,10 +233,7 @@ pub fn death_cleanup_phase(
 }
 
 /// Economy phase - handles resource regeneration
-pub fn economy_phase(
-    mut mines: Query<&mut MineNode>,
-    game_state: Res<GameState>,
-) {
+pub fn economy_phase(mut mines: Query<&mut MineNode>, game_state: Res<GameState>) {
     if *game_state != GameState::Running {
         return;
     }

@@ -18,10 +18,7 @@ impl DebugApi {
         )?;
 
         // debug.get_entity_count() -> number
-        debug.set(
-            "get_entity_count",
-            lua.create_function(|_, ()| Ok(0u64))?,
-        )?;
+        debug.set("get_entity_count", lua.create_function(|_, ()| Ok(0u64))?)?;
 
         Ok(())
     }

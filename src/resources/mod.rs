@@ -22,7 +22,21 @@ impl Plugin for ResourcesPlugin {
 
 #[derive(Event, Debug, Clone)]
 pub enum ResourceEvent {
-    ResourceDropped { x: i32, y: i32, resource_type: ResourceType, amount: u32 },
-    ResourcePickedUp { entity: Entity, resource_type: ResourceType, amount: u32 },
-    ResourceTransferred { from: Entity, to: Entity, resource_type: ResourceType, amount: u32 },
+    ResourceDropped {
+        x: i32,
+        y: i32,
+        resource_type: ResourceType,
+        amount: u32,
+    },
+    ResourcePickedUp {
+        entity: Entity,
+        resource_type: ResourceType,
+        amount: u32,
+    },
+    ResourceTransferred {
+        from: Entity,
+        to: Entity,
+        resource_type: ResourceType,
+        amount: u32,
+    },
 }

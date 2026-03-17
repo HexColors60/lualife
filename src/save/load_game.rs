@@ -8,7 +8,8 @@ pub struct LoadGame;
 impl LoadGame {
     pub fn load(path: &Path) -> GameResult<GameSnapshot> {
         let content = std::fs::read_to_string(path)?;
-        let snapshot: GameSnapshot = ron::from_str(&content).map_err(|e| crate::error::GameError::Serialization(e.into()))?;
+        let snapshot: GameSnapshot = ron::from_str(&content)
+            .map_err(|e| crate::error::GameError::Serialization(e.into()))?;
         tracing::info!("Game loaded from {:?}", path);
         Ok(snapshot)
     }

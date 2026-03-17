@@ -60,8 +60,8 @@ pub fn camera_zoom_system(
 ) {
     for event in scroll_events.read() {
         for mut projection in camera.iter_mut() {
-            projection.scale = (projection.scale + event.y * config.camera_zoom_speed)
-                .clamp(0.1, 5.0);
+            projection.scale =
+                (projection.scale + event.y * config.camera_zoom_speed).clamp(0.1, 5.0);
         }
     }
 }

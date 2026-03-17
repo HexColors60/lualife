@@ -61,10 +61,7 @@ impl CommandBuffer {
     }
 
     pub fn add_command(&mut self, faction_id: FactionId, command: Command) {
-        self.commands
-            .entry(faction_id)
-            .or_default()
-            .push(command);
+        self.commands.entry(faction_id).or_default().push(command);
     }
 
     pub fn get_commands(&self, faction_id: FactionId) -> Option<&Vec<Command>> {

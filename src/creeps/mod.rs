@@ -30,16 +30,27 @@ impl Plugin for CreepsPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<CreepIdGenerator>()
             .add_event::<CreepEvent>()
-            .add_systems(Update, (
-                spawn_initial_creeps.run_if(resource_exists::<crate::world::WorldMap>),
-                autonomous_creep_ai,
-            ));
+            .add_systems(
+                Update,
+                (
+                    spawn_initial_creeps.run_if(resource_exists::<crate::world::WorldMap>),
+                    autonomous_creep_ai,
+                ),
+            );
     }
 }
 
 #[derive(Event, Debug, Clone)]
 pub enum CreepEvent {
-    CreepSpawned { entity: Entity, faction_id: crate::factions::FactionId },
-    CreepDied { entity: Entity, faction_id: crate::factions::FactionId },
-    CreepStarving { entity: Entity },
+    CreepSpawned {
+        entity: Entity,
+        faction_id: crate::factions::FactionId,
+    },
+    CreepDied {
+        entity: Entity,
+        faction_id: crate::factions::FactionId,
+    },
+    CreepStarving {
+        entity: Entity,
+    },
 }

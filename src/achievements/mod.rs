@@ -1,9 +1,9 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-use crate::factions::FactionId;
 use crate::core::TickNumber;
+use crate::factions::FactionId;
 
 /// Achievement definition
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -84,7 +84,8 @@ impl AchievementProgress {
     }
 
     pub fn update_progress(&mut self, achievement_id: String, progress: f32) {
-        self.progress.insert(achievement_id, progress.clamp(0.0, 1.0));
+        self.progress
+            .insert(achievement_id, progress.clamp(0.0, 1.0));
     }
 }
 
@@ -135,7 +136,10 @@ impl AchievementRegistry {
             description: "Gather 10,000 Power".to_string(),
             icon: "gem".to_string(),
             category: AchievementCategory::Economy,
-            requirement: AchievementRequirement::GatherResource { resource_type: 0, amount: 10000 },
+            requirement: AchievementRequirement::GatherResource {
+                resource_type: 0,
+                amount: 10000,
+            },
             reward: AchievementReward::default(),
             hidden: false,
         });
@@ -146,7 +150,10 @@ impl AchievementRegistry {
             description: "Gather 100,000 Power".to_string(),
             icon: "coins".to_string(),
             category: AchievementCategory::Economy,
-            requirement: AchievementRequirement::GatherResource { resource_type: 0, amount: 100000 },
+            requirement: AchievementRequirement::GatherResource {
+                resource_type: 0,
+                amount: 100000,
+            },
             reward: AchievementReward {
                 stat_multiplier: Some(("gather_rate".to_string(), 1.1)),
                 ..default()
@@ -207,7 +214,8 @@ impl AchievementRegistry {
     }
 
     pub fn register(&mut self, achievement: Achievement) {
-        self.achievements.insert(achievement.id.clone(), achievement);
+        self.achievements
+            .insert(achievement.id.clone(), achievement);
     }
 
     pub fn get(&self, id: &str) -> Option<&Achievement> {
@@ -215,7 +223,10 @@ impl AchievementRegistry {
     }
 
     pub fn by_category(&self, category: AchievementCategory) -> Vec<&Achievement> {
-        self.achievements.values().filter(|a| a.category == category).collect()
+        self.achievements
+            .values()
+            .filter(|a| a.category == category)
+            .collect()
     }
 }
 
@@ -380,8 +391,15 @@ pub fn achievement_check_system(
                 AchievementRequirement::KillCreeps { count } => {
                     (stats.total_kills as f32 / *count as f32).min(1.0)
                 }
-                AchievementRequirement::GatherResource { resource_type, amount } => {
-                    let gathered = stats.resources_gathered.get(resource_type).copied().unwrap_or(0);
+                AchievementRequirement::GatherResource {
+                    resource_type,
+                    amount,
+                } => {
+                    let gathered = stats
+                        .resources_gathered
+                        .get(resource_type)
+                        .copied()
+                        .unwrap_or(0);
                     (gathered as f32 / *amount as f32).min(1.0)
                 }
                 AchievementRequirement::SurviveTicks { ticks } => {

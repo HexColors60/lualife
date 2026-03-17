@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use super::{CreepBody, Inventory, CreepRole};
+use super::{CreepBody, CreepRole, Inventory};
 use crate::factions::FactionId;
 use crate::world::WorldPos;
 

@@ -49,7 +49,12 @@ impl ScreenReaderState {
     }
 
     /// Queue a message for screen reader
-    pub fn announce(&mut self, text: impl Into<String>, priority: MessagePriority, category: MessageCategory) {
+    pub fn announce(
+        &mut self,
+        text: impl Into<String>,
+        priority: MessagePriority,
+        category: MessageCategory,
+    ) {
         let message = ScreenReaderMessage {
             text: text.into(),
             priority,
@@ -181,7 +186,8 @@ pub fn screen_reader_announce(
     // Process messages (in a real implementation, this would interface with TTS)
     while let Some(msg) = state.pop_next() {
         // Log the announcement for now
-        tracing::info!("[Screen Reader] {}: {}", 
+        tracing::info!(
+            "[Screen Reader] {}: {}",
             match msg.priority {
                 MessagePriority::Low => "LOW",
                 MessagePriority::Normal => "NORMAL",
@@ -263,7 +269,7 @@ pub mod text_helpers {
         } else {
             0
         };
-        
+
         if percentage >= 100 {
             "at full health".to_string()
         } else if percentage >= 75 {

@@ -77,7 +77,9 @@ impl WorldMap {
     }
 
     pub fn is_buildable(&self, pos: WorldPos) -> bool {
-        self.get_tile(pos).map(|t| t.is_buildable()).unwrap_or(false)
+        self.get_tile(pos)
+            .map(|t| t.is_buildable())
+            .unwrap_or(false)
     }
 
     pub fn all_rooms(&self) -> impl Iterator<Item = &Room> {

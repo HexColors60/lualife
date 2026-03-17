@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
-use crate::creeps::CreepBody;
 use crate::creeps::Creep;
+use crate::creeps::CreepBody;
 use crate::factions::FactionId;
 use crate::world::WorldPos;
 
@@ -88,19 +88,13 @@ pub fn spawn_creep_system(
             );
 
             let creep_id = creep_id_gen.next();
-            let creep = Creep::new(
-                creep_id,
-                building.faction_id,
-                pos,
-                body,
-            );
+            let creep = Creep::new(creep_id, building.faction_id, pos, body);
 
             commands.spawn(creep);
 
             game_log.add(format!(
                 "Spawned creep {} for faction {}",
-                creep_id,
-                building.faction_id.0
+                creep_id, building.faction_id.0
             ));
         }
     }

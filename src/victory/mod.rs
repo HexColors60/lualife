@@ -1,20 +1,20 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
+use crate::buildings::Building;
+use crate::creeps::Creep;
 use crate::factions::FactionId;
 use crate::territory::TerritoryManager;
-use crate::creeps::Creep;
-use crate::buildings::Building;
 
 /// Victory condition types
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum VictoryCondition {
-    Domination,      // Control X% of the map
-    Elimination,     // Eliminate all other factions
-    Economic,        // Accumulate X resources
-    Technological,   // Research all techs
-    Alliance,        // Form an alliance with X factions
+    Domination,    // Control X% of the map
+    Elimination,   // Eliminate all other factions
+    Economic,      // Accumulate X resources
+    Technological, // Research all techs
+    Alliance,      // Form an alliance with X factions
 }
 
 impl Default for VictoryCondition {
@@ -106,8 +106,15 @@ pub fn victory_progress_system(
 
         // Elimination score: based on surviving factions
         let creep_count = creeps.iter().filter(|c| c.faction_id == faction.id).count();
-        let building_count = buildings.iter().filter(|b| b.faction_id == faction.id).count();
-        progress.elimination_score = if creep_count > 0 || building_count > 0 { 1.0 } else { 0.0 };
+        let building_count = buildings
+            .iter()
+            .filter(|b| b.faction_id == faction.id)
+            .count();
+        progress.elimination_score = if creep_count > 0 || building_count > 0 {
+            1.0
+        } else {
+            0.0
+        };
 
         // Economic score: based on resources (placeholder)
         progress.economic_score = 0.0;
@@ -145,9 +152,6 @@ pub struct VictoryPlugin;
 impl Plugin for VictoryPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(VictoryState::new(VictoryCondition::Domination, 0.5))
-            .add_systems(Update, (
-                victory_progress_system,
-                victory_display_system,
-            ));
+            .add_systems(Update, (victory_progress_system, victory_display_system));
     }
 }

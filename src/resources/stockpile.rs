@@ -58,7 +58,10 @@ impl Stockpile {
     }
 
     pub fn get_capacity(&self, resource_type: ResourceType) -> u32 {
-        self.capacity.get(&resource_type).copied().unwrap_or(u32::MAX)
+        self.capacity
+            .get(&resource_type)
+            .copied()
+            .unwrap_or(u32::MAX)
     }
 
     pub fn can_add(&self, resource_type: ResourceType, amount: u32) -> bool {

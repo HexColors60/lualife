@@ -37,7 +37,9 @@ pub fn spawn_mine_sprites(
                 transform: Transform::from_xyz(x, y, 0.5),
                 ..default()
             },
-            MineSprite { mine_entity: entity },
+            MineSprite {
+                mine_entity: entity,
+            },
         ));
     }
 }

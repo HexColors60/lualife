@@ -36,14 +36,23 @@ pub fn diplomacy_ui_system(
         game_log.add("=== Diplomacy ===".to_string());
 
         // Show alliances
-        game_log.add(format!("Active alliances: {}", diplomacy_state.alliance_count()));
+        game_log.add(format!(
+            "Active alliances: {}",
+            diplomacy_state.alliance_count()
+        ));
 
         for (id, alliance) in diplomacy_state.get_alliances() {
-            let members: Vec<String> = alliance.members.iter()
+            let members: Vec<String> = alliance
+                .members
+                .iter()
                 .map(|f| format!("F{}", f.0))
                 .collect();
-            game_log.add(format!("  Alliance {}: {} members: {}",
-                id, alliance.members.len(), members.join(", ")));
+            game_log.add(format!(
+                "  Alliance {}: {} members: {}",
+                id,
+                alliance.members.len(),
+                members.join(", ")
+            ));
         }
 
         // Show selected faction relations
@@ -66,9 +75,6 @@ pub struct DiplomacyUIPlugin;
 impl Plugin for DiplomacyUIPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DiplomacyUI>()
-            .add_systems(Update, (
-                toggle_diplomacy_ui,
-                diplomacy_ui_system,
-            ));
+            .add_systems(Update, (toggle_diplomacy_ui, diplomacy_ui_system));
     }
 }

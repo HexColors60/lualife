@@ -1,8 +1,8 @@
 use indexmap::IndexSet;
 
 use crate::config::WorldgenConfig;
-use crate::core::GameRng;
 use crate::consts::ROOM_TILE_SIZE;
+use crate::core::GameRng;
 use crate::resources::ResourceType;
 
 #[derive(Debug, Clone)]

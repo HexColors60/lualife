@@ -31,10 +31,7 @@ impl WorldPos {
     }
 
     pub fn is_valid(&self) -> bool {
-        self.x >= 0
-            && self.y >= 0
-            && self.x < WORLD_TILES_X as i32
-            && self.y < WORLD_TILES_Y as i32
+        self.x >= 0 && self.y >= 0 && self.x < WORLD_TILES_X as i32 && self.y < WORLD_TILES_Y as i32
     }
 
     pub fn clamp(&self) -> Self {

@@ -34,6 +34,7 @@ pub mod sim;
 pub mod sync;
 pub mod territory;
 pub mod trade;
+pub mod tutorial;
 pub mod ui;
 pub mod victory;
 pub mod world;

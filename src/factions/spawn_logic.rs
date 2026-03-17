@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use super::{FactionId, FactionRegistry};
-use crate::creeps::{CreepBody, spawn_creep, CreepIdGenerator};
+use crate::creeps::{spawn_creep, CreepBody, CreepIdGenerator};
 use crate::resources::Stockpile;
 use crate::world::WorldPos;
 
@@ -18,9 +18,7 @@ impl FactionSpawnLogic {
         spawn_creep(commands, id_gen, faction_id, position, body)
     }
 
-    pub fn spawn_initial_resources(
-        stockpile: &mut Stockpile,
-    ) {
+    pub fn spawn_initial_resources(stockpile: &mut Stockpile) {
         // Give each faction some starting resources
         stockpile.add(crate::resources::ResourceType::Power, 1000);
         stockpile.add(crate::resources::ResourceType::Iron, 500);

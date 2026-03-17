@@ -28,17 +28,17 @@ pub fn path_visualization_system(
                     creep.position.y as f32 - 128.0,
                     5.0,
                 );
-                let end = Vec3::new(
-                    target.x as f32 - 128.0,
-                    target.y as f32 - 128.0,
-                    5.0,
-                );
+                let end = Vec3::new(target.x as f32 - 128.0, target.y as f32 - 128.0, 5.0);
 
                 // Draw path line
                 gizmos.line(start, end, Color::srgba(0.0, 1.0, 0.0, 0.8));
 
                 // Draw target marker
-                gizmos.circle_2d(Vec2::new(end.x, end.y), 0.5, Color::srgba(1.0, 1.0, 0.0, 0.8));
+                gizmos.circle_2d(
+                    Vec2::new(end.x, end.y),
+                    0.5,
+                    Color::srgba(1.0, 1.0, 0.0, 0.8),
+                );
             }
         }
     }

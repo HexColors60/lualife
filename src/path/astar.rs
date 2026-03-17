@@ -1,5 +1,5 @@
-use std::collections::{BinaryHeap, HashMap, HashSet};
 use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 use crate::world::{WorldMap, WorldPos};
 
@@ -105,7 +105,10 @@ impl AStar {
         neighbors
     }
 
-    fn reconstruct_path(came_from: &HashMap<WorldPos, WorldPos>, mut current: WorldPos) -> Vec<WorldPos> {
+    fn reconstruct_path(
+        came_from: &HashMap<WorldPos, WorldPos>,
+        mut current: WorldPos,
+    ) -> Vec<WorldPos> {
         let mut path = vec![current];
 
         while let Some(&prev) = came_from.get(&current) {

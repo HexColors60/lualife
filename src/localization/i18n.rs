@@ -22,19 +22,31 @@ impl TranslationRegistry {
     }
 
     /// Register translations for a language
-    pub fn register(&mut self, language: Language, translations: HashMap<TranslationKey, TranslationValue>) {
+    pub fn register(
+        &mut self,
+        language: Language,
+        translations: HashMap<TranslationKey, TranslationValue>,
+    ) {
         self.translations.insert(language, translations);
     }
 
     /// Register translations for a namespace
-    pub fn register_namespace(&mut self, language: Language, namespace: &str, translations: HashMap<TranslationKey, TranslationValue>) {
+    pub fn register_namespace(
+        &mut self,
+        language: Language,
+        namespace: &str,
+        translations: HashMap<TranslationKey, TranslationValue>,
+    ) {
         let prefixed: HashMap<TranslationKey, TranslationValue> = translations
             .into_iter()
             .map(|(k, v)| (format!("{}.{}", namespace, k), v))
             .collect();
 
         let keys: Vec<TranslationKey> = prefixed.keys().cloned().collect();
-        self.namespaces.entry(namespace.to_string()).or_default().extend(keys);
+        self.namespaces
+            .entry(namespace.to_string())
+            .or_default()
+            .extend(keys);
 
         self.translations
             .entry(language)
@@ -48,7 +60,11 @@ impl TranslationRegistry {
     }
 
     /// Get a translation with fallback
-    pub fn get_with_fallback<'a>(&'a self, settings: &LocalizationSettings, key: &'a str) -> &'a str {
+    pub fn get_with_fallback<'a>(
+        &'a self,
+        settings: &LocalizationSettings,
+        key: &'a str,
+    ) -> &'a str {
         self.get(settings.current_language, key)
             .or_else(|| self.get(settings.fallback_language, key))
             .map(|s| s.as_str())
@@ -57,16 +73,25 @@ impl TranslationRegistry {
 
     /// Check if a translation exists
     pub fn has(&self, language: Language, key: &str) -> bool {
-        self.translations.get(&language).map(|t| t.contains_key(key)).unwrap_or(false)
+        self.translations
+            .get(&language)
+            .map(|t| t.contains_key(key))
+            .unwrap_or(false)
     }
 
     /// Get all keys for a language
     pub fn keys(&self, language: Language) -> Vec<&TranslationKey> {
-        self.translations.get(&language).map(|t| t.keys().collect()).unwrap_or_default()
+        self.translations
+            .get(&language)
+            .map(|t| t.keys().collect())
+            .unwrap_or_default()
     }
 
     /// Get all translations for a language
-    pub fn all_translations(&self, language: Language) -> Option<&HashMap<TranslationKey, TranslationValue>> {
+    pub fn all_translations(
+        &self,
+        language: Language,
+    ) -> Option<&HashMap<TranslationKey, TranslationValue>> {
         self.translations.get(&language)
     }
 
@@ -119,7 +144,11 @@ impl LocalizedText {
         self
     }
 
-    pub fn resolve(&self, registry: &TranslationRegistry, settings: &LocalizationSettings) -> String {
+    pub fn resolve(
+        &self,
+        registry: &TranslationRegistry,
+        settings: &LocalizationSettings,
+    ) -> String {
         let mut text = registry.get_with_fallback(settings, &self.key).to_string();
 
         // Replace parameters
@@ -161,7 +190,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     en.insert("game.tick".to_string(), "Tick: {tick}".to_string());
     en.insert("game.paused".to_string(), "Paused".to_string());
     en.insert("game.speed".to_string(), "Speed: {speed}x".to_string());
-    
+
     // UI
     en.insert("ui.minimap".to_string(), "Minimap".to_string());
     en.insert("ui.log".to_string(), "Log".to_string());
@@ -180,17 +209,20 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     en.insert("ui.yes".to_string(), "Yes".to_string());
     en.insert("ui.no".to_string(), "No".to_string());
     en.insert("ui.ok".to_string(), "OK".to_string());
-    
+
     // Buildings
     en.insert("building.spawn".to_string(), "Spawn".to_string());
     en.insert("building.tower".to_string(), "Tower".to_string());
     en.insert("building.storage".to_string(), "Storage".to_string());
     en.insert("building.refinery".to_string(), "Refinery".to_string());
-    en.insert("building.research_lab".to_string(), "Research Lab".to_string());
+    en.insert(
+        "building.research_lab".to_string(),
+        "Research Lab".to_string(),
+    );
     en.insert("building.market".to_string(), "Market".to_string());
     en.insert("building.road".to_string(), "Road".to_string());
     en.insert("building.wall".to_string(), "Wall".to_string());
-    
+
     // Resources
     en.insert("resource.power".to_string(), "Power".to_string());
     en.insert("resource.iron".to_string(), "Iron".to_string());
@@ -202,7 +234,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     en.insert("resource.sulfur".to_string(), "Sulfur".to_string());
     en.insert("resource.water".to_string(), "Water".to_string());
     en.insert("resource.biomass".to_string(), "Biomass".to_string());
-    
+
     // Units
     en.insert("unit.creep".to_string(), "Creep".to_string());
     en.insert("unit.worker".to_string(), "Worker".to_string());
@@ -210,7 +242,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     en.insert("unit.harvester".to_string(), "Harvester".to_string());
     en.insert("unit.builder".to_string(), "Builder".to_string());
     en.insert("unit.transport".to_string(), "Transport".to_string());
-    
+
     // Actions
     en.insert("action.move".to_string(), "Move".to_string());
     en.insert("action.attack".to_string(), "Attack".to_string());
@@ -218,24 +250,48 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     en.insert("action.build".to_string(), "Build".to_string());
     en.insert("action.transfer".to_string(), "Transfer".to_string());
     en.insert("action.repair".to_string(), "Repair".to_string());
-    
+
     // Messages
     en.insert("msg.game_saved".to_string(), "Game saved".to_string());
     en.insert("msg.game_loaded".to_string(), "Game loaded".to_string());
-    en.insert("msg.building_placed".to_string(), "Building placed".to_string());
+    en.insert(
+        "msg.building_placed".to_string(),
+        "Building placed".to_string(),
+    );
     en.insert("msg.unit_spawned".to_string(), "Unit spawned".to_string());
-    en.insert("msg.research_complete".to_string(), "Research complete: {tech}".to_string());
-    en.insert("msg.enemy_detected".to_string(), "Enemy detected!".to_string());
+    en.insert(
+        "msg.research_complete".to_string(),
+        "Research complete: {tech}".to_string(),
+    );
+    en.insert(
+        "msg.enemy_detected".to_string(),
+        "Enemy detected!".to_string(),
+    );
     en.insert("msg.under_attack".to_string(), "Under attack!".to_string());
-    en.insert("msg.resources_low".to_string(), "Resources low: {resource}".to_string());
-    
+    en.insert(
+        "msg.resources_low".to_string(),
+        "Resources low: {resource}".to_string(),
+    );
+
     // Accessibility
-    en.insert("accessibility.settings".to_string(), "Accessibility Settings".to_string());
-    en.insert("accessibility.screen_reader".to_string(), "Screen Reader".to_string());
-    en.insert("accessibility.colorblind_mode".to_string(), "Colorblind Mode".to_string());
-    en.insert("accessibility.high_contrast".to_string(), "High Contrast".to_string());
+    en.insert(
+        "accessibility.settings".to_string(),
+        "Accessibility Settings".to_string(),
+    );
+    en.insert(
+        "accessibility.screen_reader".to_string(),
+        "Screen Reader".to_string(),
+    );
+    en.insert(
+        "accessibility.colorblind_mode".to_string(),
+        "Colorblind Mode".to_string(),
+    );
+    en.insert(
+        "accessibility.high_contrast".to_string(),
+        "High Contrast".to_string(),
+    );
     en.insert("accessibility.ui_scale".to_string(), "UI Scale".to_string());
-    
+
     registry.register(Language::English, en);
 
     // Chinese Simplified translations
@@ -244,7 +300,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     zh_cn.insert("game.tick".to_string(), "回合: {tick}".to_string());
     zh_cn.insert("game.paused".to_string(), "已暂停".to_string());
     zh_cn.insert("game.speed".to_string(), "速度: {speed}x".to_string());
-    
+
     zh_cn.insert("ui.minimap".to_string(), "小地图".to_string());
     zh_cn.insert("ui.log".to_string(), "日志".to_string());
     zh_cn.insert("ui.resources".to_string(), "资源".to_string());
@@ -262,7 +318,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     zh_cn.insert("ui.yes".to_string(), "是".to_string());
     zh_cn.insert("ui.no".to_string(), "否".to_string());
     zh_cn.insert("ui.ok".to_string(), "确定".to_string());
-    
+
     zh_cn.insert("building.spawn".to_string(), "孵化器".to_string());
     zh_cn.insert("building.tower".to_string(), "炮塔".to_string());
     zh_cn.insert("building.storage".to_string(), "仓库".to_string());
@@ -271,7 +327,7 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     zh_cn.insert("building.market".to_string(), "市场".to_string());
     zh_cn.insert("building.road".to_string(), "道路".to_string());
     zh_cn.insert("building.wall".to_string(), "墙壁".to_string());
-    
+
     zh_cn.insert("resource.power".to_string(), "能量".to_string());
     zh_cn.insert("resource.iron".to_string(), "铁".to_string());
     zh_cn.insert("resource.copper".to_string(), "铜".to_string());
@@ -282,43 +338,61 @@ fn load_builtin_translations(registry: &mut TranslationRegistry) {
     zh_cn.insert("resource.sulfur".to_string(), "硫磺".to_string());
     zh_cn.insert("resource.water".to_string(), "水".to_string());
     zh_cn.insert("resource.biomass".to_string(), "生物质".to_string());
-    
+
     zh_cn.insert("unit.creep".to_string(), "爬虫".to_string());
     zh_cn.insert("unit.worker".to_string(), "工人".to_string());
     zh_cn.insert("unit.fighter".to_string(), "战士".to_string());
     zh_cn.insert("unit.harvester".to_string(), "采集者".to_string());
     zh_cn.insert("unit.builder".to_string(), "建造者".to_string());
     zh_cn.insert("unit.transport".to_string(), "运输者".to_string());
-    
+
     zh_cn.insert("action.move".to_string(), "移动".to_string());
     zh_cn.insert("action.attack".to_string(), "攻击".to_string());
     zh_cn.insert("action.mine".to_string(), "采集".to_string());
     zh_cn.insert("action.build".to_string(), "建造".to_string());
     zh_cn.insert("action.transfer".to_string(), "转移".to_string());
     zh_cn.insert("action.repair".to_string(), "修复".to_string());
-    
+
     zh_cn.insert("msg.game_saved".to_string(), "游戏已保存".to_string());
     zh_cn.insert("msg.game_loaded".to_string(), "游戏已加载".to_string());
     zh_cn.insert("msg.building_placed".to_string(), "建筑已放置".to_string());
     zh_cn.insert("msg.unit_spawned".to_string(), "单位已生成".to_string());
-    zh_cn.insert("msg.research_complete".to_string(), "研究完成: {tech}".to_string());
+    zh_cn.insert(
+        "msg.research_complete".to_string(),
+        "研究完成: {tech}".to_string(),
+    );
     zh_cn.insert("msg.enemy_detected".to_string(), "发现敌人!".to_string());
     zh_cn.insert("msg.under_attack".to_string(), "正在被攻击!".to_string());
-    zh_cn.insert("msg.resources_low".to_string(), "资源不足: {resource}".to_string());
-    
-    zh_cn.insert("accessibility.settings".to_string(), "无障碍设置".to_string());
-    zh_cn.insert("accessibility.screen_reader".to_string(), "屏幕阅读器".to_string());
-    zh_cn.insert("accessibility.colorblind_mode".to_string(), "色盲模式".to_string());
-    zh_cn.insert("accessibility.high_contrast".to_string(), "高对比度".to_string());
+    zh_cn.insert(
+        "msg.resources_low".to_string(),
+        "资源不足: {resource}".to_string(),
+    );
+
+    zh_cn.insert(
+        "accessibility.settings".to_string(),
+        "无障碍设置".to_string(),
+    );
+    zh_cn.insert(
+        "accessibility.screen_reader".to_string(),
+        "屏幕阅读器".to_string(),
+    );
+    zh_cn.insert(
+        "accessibility.colorblind_mode".to_string(),
+        "色盲模式".to_string(),
+    );
+    zh_cn.insert(
+        "accessibility.high_contrast".to_string(),
+        "高对比度".to_string(),
+    );
     zh_cn.insert("accessibility.ui_scale".to_string(), "界面缩放".to_string());
-    
+
     registry.register(Language::ChineseSimplified, zh_cn);
 }
 
 /// Load translation files from disk
 fn load_translation_files(registry: &mut TranslationRegistry) -> Result<(), String> {
     let translations_dir = std::path::Path::new("assets/translations");
-    
+
     if !translations_dir.exists() {
         return Ok(());
     }
@@ -332,7 +406,8 @@ fn load_translation_files(registry: &mut TranslationRegistry) -> Result<(), Stri
             if let Some(stem) = path.file_stem() {
                 if let Some(lang) = Language::from_iso_code(&stem.to_string_lossy()) {
                     if let Ok(content) = std::fs::read_to_string(&path) {
-                        if let Ok(translations) = ron::from_str::<HashMap<String, String>>(&content) {
+                        if let Ok(translations) = ron::from_str::<HashMap<String, String>>(&content)
+                        {
                             registry.register(lang, translations);
                             tracing::info!("Loaded translations for {:?}", lang);
                         }

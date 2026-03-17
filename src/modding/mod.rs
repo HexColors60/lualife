@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use std::path::PathBuf;
 use bevy::prelude::*;
-use serde::{Deserialize, Serialize};
 use ron::de::from_reader;
 use ron::ser::to_string_pretty;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 /// Mod metadata
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -172,8 +172,7 @@ impl ModManager {
         let info: ModInfo = if info_path.exists() {
             let file = std::fs::File::open(&info_path)
                 .map_err(|e| format!("Failed to open mod info: {}", e))?;
-            from_reader(file)
-                .map_err(|e| format!("Failed to parse mod info: {}", e))?
+            from_reader(file).map_err(|e| format!("Failed to parse mod info: {}", e))?
         } else {
             ModInfo::default()
         };
@@ -183,8 +182,7 @@ impl ModManager {
         let content: ModContent = if content_path.exists() {
             let file = std::fs::File::open(&content_path)
                 .map_err(|e| format!("Failed to open mod content: {}", e))?;
-            from_reader(file)
-                .map_err(|e| format!("Failed to parse mod content: {}", e))?
+            from_reader(file).map_err(|e| format!("Failed to parse mod content: {}", e))?
         } else {
             ModContent::default()
         };
@@ -231,36 +229,39 @@ impl ModManager {
     }
 
     pub fn get_all_buildings(&self) -> Vec<&CustomBuilding> {
-        self.loaded_mods.values()
+        self.loaded_mods
+            .values()
             .filter(|m| m.enabled)
             .flat_map(|m| &m.content.buildings)
             .collect()
     }
 
     pub fn get_all_resources(&self) -> Vec<&CustomResource> {
-        self.loaded_mods.values()
+        self.loaded_mods
+            .values()
             .filter(|m| m.enabled)
             .flat_map(|m| &m.content.resources)
             .collect()
     }
 
     pub fn get_all_body_parts(&self) -> Vec<&CustomBodyPart> {
-        self.loaded_mods.values()
+        self.loaded_mods
+            .values()
             .filter(|m| m.enabled)
             .flat_map(|m| &m.content.body_parts)
             .collect()
     }
 
     pub fn get_all_techs(&self) -> Vec<&CustomTech> {
-        self.loaded_mods.values()
+        self.loaded_mods
+            .values()
             .filter(|m| m.enabled)
             .flat_map(|m| &m.content.techs)
             .collect()
     }
 
     pub fn save_mod(&self, mod_id: &str) -> Result<(), String> {
-        let mod_data = self.loaded_mods.get(mod_id)
-            .ok_or("Mod not found")?;
+        let mod_data = self.loaded_mods.get(mod_id).ok_or("Mod not found")?;
 
         let info_string = to_string_pretty(&mod_data.info, Default::default())
             .map_err(|e| format!("Failed to serialize mod info: {}", e))?;

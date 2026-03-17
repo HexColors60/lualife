@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
 use crate::creeps::Creep;
-use crate::factions::FactionRegistry;
 use crate::debug::SelectionState;
+use crate::factions::FactionRegistry;
 
 /// Marker for screep status panel
 #[derive(Component)]

@@ -15,21 +15,33 @@ pub struct KeybindingsConfig {
 impl Default for KeybindingsConfig {
     fn default() -> Self {
         let mut bindings = HashMap::new();
-        
+
         // Camera controls
-        bindings.insert("camera_up".to_string(), vec![KeyCode::KeyW, KeyCode::ArrowUp]);
-        bindings.insert("camera_down".to_string(), vec![KeyCode::KeyS, KeyCode::ArrowDown]);
-        bindings.insert("camera_left".to_string(), vec![KeyCode::KeyA, KeyCode::ArrowLeft]);
-        bindings.insert("camera_right".to_string(), vec![KeyCode::KeyD, KeyCode::ArrowRight]);
+        bindings.insert(
+            "camera_up".to_string(),
+            vec![KeyCode::KeyW, KeyCode::ArrowUp],
+        );
+        bindings.insert(
+            "camera_down".to_string(),
+            vec![KeyCode::KeyS, KeyCode::ArrowDown],
+        );
+        bindings.insert(
+            "camera_left".to_string(),
+            vec![KeyCode::KeyA, KeyCode::ArrowLeft],
+        );
+        bindings.insert(
+            "camera_right".to_string(),
+            vec![KeyCode::KeyD, KeyCode::ArrowRight],
+        );
         bindings.insert("camera_zoom_in".to_string(), vec![]);
         bindings.insert("camera_zoom_out".to_string(), vec![]);
-        
+
         // Selection
         bindings.insert("select".to_string(), vec![]);
         bindings.insert("deselect".to_string(), vec![KeyCode::Escape]);
         bindings.insert("select_all".to_string(), vec![KeyCode::KeyA]);
         bindings.insert("box_select".to_string(), vec![]);
-        
+
         // UI
         bindings.insert("toggle_minimap".to_string(), vec![KeyCode::KeyM]);
         bindings.insert("toggle_log".to_string(), vec![KeyCode::KeyL]);
@@ -38,7 +50,7 @@ impl Default for KeybindingsConfig {
         bindings.insert("toggle_tech_tree".to_string(), vec![KeyCode::KeyT]);
         bindings.insert("toggle_market".to_string(), vec![KeyCode::KeyK]);
         bindings.insert("toggle_diplomacy".to_string(), vec![]);
-        
+
         // Game
         bindings.insert("pause".to_string(), vec![KeyCode::Space]);
         bindings.insert("speed_up".to_string(), vec![KeyCode::Equal]);
@@ -46,7 +58,7 @@ impl Default for KeybindingsConfig {
         bindings.insert("save".to_string(), vec![KeyCode::F5]);
         bindings.insert("load".to_string(), vec![KeyCode::F9]);
         bindings.insert("quick_save".to_string(), vec![]);
-        
+
         // Building
         bindings.insert("build_spawn".to_string(), vec![KeyCode::Digit1]);
         bindings.insert("build_tower".to_string(), vec![KeyCode::Digit2]);
@@ -57,7 +69,7 @@ impl Default for KeybindingsConfig {
         bindings.insert("build_road".to_string(), vec![KeyCode::Digit7]);
         bindings.insert("build_wall".to_string(), vec![KeyCode::Digit8]);
         bindings.insert("cancel_build".to_string(), vec![KeyCode::Escape]);
-        
+
         // Unit commands
         bindings.insert("unit_move".to_string(), vec![KeyCode::KeyM]);
         bindings.insert("unit_attack".to_string(), vec![KeyCode::KeyA]);
@@ -65,12 +77,12 @@ impl Default for KeybindingsConfig {
         bindings.insert("unit_build".to_string(), vec![KeyCode::KeyB]);
         bindings.insert("unit_transfer".to_string(), vec![KeyCode::KeyT]);
         bindings.insert("unit_stop".to_string(), vec![KeyCode::KeyS]);
-        
+
         // Accessibility
         bindings.insert("accessibility_menu".to_string(), vec![KeyCode::F2]);
         bindings.insert("screen_reader_read".to_string(), vec![]);
         bindings.insert("screen_reader_help".to_string(), vec![]);
-        
+
         Self {
             bindings,
             mouse_bindings: Self::default_mouse_bindings(),
@@ -204,26 +216,32 @@ impl KeybindingsConfig {
     /// Get human-readable binding string
     pub fn get_binding_string(&self, name: &str) -> String {
         let mut parts = Vec::new();
-        
+
         // Add modifiers
         if let Some(mods) = self.modifiers.get(name) {
-            if mods.ctrl { parts.push("Ctrl".to_string()); }
-            if mods.alt { parts.push("Alt".to_string()); }
-            if mods.shift { parts.push("Shift".to_string()); }
+            if mods.ctrl {
+                parts.push("Ctrl".to_string());
+            }
+            if mods.alt {
+                parts.push("Alt".to_string());
+            }
+            if mods.shift {
+                parts.push("Shift".to_string());
+            }
         }
-        
+
         // Add keys
         if let Some(keys) = self.bindings.get(name) {
             for key in keys {
                 parts.push(Self::key_name(*key));
             }
         }
-        
+
         // Add mouse buttons
         if let Some(mouse) = self.mouse_bindings.get(name) {
             parts.push(format!("{:?}", mouse));
         }
-        
+
         parts.join(" + ")
     }
 }
@@ -268,7 +286,8 @@ impl KeyModifiers {
 
     /// Check if current keyboard state matches these modifiers
     pub fn matches(&self, keyboard: &ButtonInput<KeyCode>) -> bool {
-        let ctrl = keyboard.pressed(KeyCode::ControlLeft) || keyboard.pressed(KeyCode::ControlRight);
+        let ctrl =
+            keyboard.pressed(KeyCode::ControlLeft) || keyboard.pressed(KeyCode::ControlRight);
         let alt = keyboard.pressed(KeyCode::AltLeft) || keyboard.pressed(KeyCode::AltRight);
         let shift = keyboard.pressed(KeyCode::ShiftLeft) || keyboard.pressed(KeyCode::ShiftRight);
 
@@ -294,9 +313,12 @@ pub fn handle_keybinding_input(
             mods.matches(&keyboard)
         } else {
             // No modifiers required - check that no modifiers are pressed
-            !keyboard.pressed(KeyCode::ControlLeft) && !keyboard.pressed(KeyCode::ControlRight) &&
-            !keyboard.pressed(KeyCode::AltLeft) && !keyboard.pressed(KeyCode::AltRight) &&
-            !keyboard.pressed(KeyCode::ShiftLeft) && !keyboard.pressed(KeyCode::ShiftRight)
+            !keyboard.pressed(KeyCode::ControlLeft)
+                && !keyboard.pressed(KeyCode::ControlRight)
+                && !keyboard.pressed(KeyCode::AltLeft)
+                && !keyboard.pressed(KeyCode::AltRight)
+                && !keyboard.pressed(KeyCode::ShiftLeft)
+                && !keyboard.pressed(KeyCode::ShiftRight)
         };
 
         if modifiers_match {
@@ -304,7 +326,7 @@ pub fn handle_keybinding_input(
                 if keyboard.just_pressed(*key) {
                     // Emit event for the action (would be handled by game systems)
                     tracing::debug!("Keybinding triggered: {}", action);
-                    
+
                     // Announce for screen reader
                     if screen_reader.enabled {
                         screen_reader.say(format!("{} activated", action.replace("_", " ")));

@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Player account information
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -50,7 +50,8 @@ impl AuthToken {
             expires_at: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
                 .unwrap()
-                .as_secs() + duration_secs,
+                .as_secs()
+                + duration_secs,
         }
     }
 
@@ -145,11 +146,20 @@ impl AuthManager {
 /// Authentication events
 #[derive(Event, Debug, Clone)]
 pub enum AuthEvent {
-    LoginRequest { username: String },
-    RegisterRequest { username: String },
+    LoginRequest {
+        username: String,
+    },
+    RegisterRequest {
+        username: String,
+    },
     Logout,
-    LoginSuccess { player: PlayerAccount, token: AuthToken },
-    LoginFailed { reason: String },
+    LoginSuccess {
+        player: PlayerAccount,
+        token: AuthToken,
+    },
+    LoginFailed {
+        reason: String,
+    },
 }
 
 /// System to process authentication events
@@ -174,7 +184,10 @@ pub fn auth_event_system(
                     Ok(player) => {
                         let token = AuthToken::new(player.id, 3600);
                         auth_state.login(player.clone(), token);
-                        game_log.add(format!("Registered and logged in as {}", player.display_name));
+                        game_log.add(format!(
+                            "Registered and logged in as {}",
+                            player.display_name
+                        ));
                     }
                     Err(e) => {
                         game_log.add(format!("Registration failed: {}", e));

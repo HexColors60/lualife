@@ -31,10 +31,7 @@ pub fn road_speed_system(
 }
 
 /// Check if a position has a road
-pub fn has_road_at(
-    _roads: &Query<&Road, (With<Road>, With<Transform>)>,
-    _pos: WorldPos,
-) -> bool {
+pub fn has_road_at(_roads: &Query<&Road, (With<Road>, With<Transform>)>, _pos: WorldPos) -> bool {
     // Check if any road is at the given position
     false
 }

@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::core::TickNumber;
 use crate::network::{ClientCommand, CommandType};
@@ -84,10 +84,7 @@ pub struct SyncRandom {
 
 impl SyncRandom {
     pub fn new(seed: u64) -> Self {
-        Self {
-            seed,
-            state: seed,
-        }
+        Self { seed, state: seed }
     }
 
     /// Deterministic random number generator (xorshift)
@@ -135,20 +132,14 @@ impl Default for LockstepConfig {
 }
 
 /// System to synchronize game state
-pub fn sync_system(
-    mut sync_state: ResMut<SyncState>,
-    tick: Res<TickNumber>,
-) {
+pub fn sync_system(mut sync_state: ResMut<SyncState>, tick: Res<TickNumber>) {
     if tick.is_changed() {
         sync_state.advance_tick();
     }
 }
 
 /// System to process pending commands
-pub fn command_sync_system(
-    mut sync_state: ResMut<SyncState>,
-    tick: Res<TickNumber>,
-) {
+pub fn command_sync_system(mut sync_state: ResMut<SyncState>, tick: Res<TickNumber>) {
     // Process commands for current tick
     let _commands = sync_state.get_commands(*tick);
     // Commands would be applied to game state here
@@ -161,9 +152,6 @@ impl Plugin for SyncPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SyncState>()
             .init_resource::<LockstepConfig>()
-            .add_systems(Update, (
-                sync_system,
-                command_sync_system,
-            ));
+            .add_systems(Update, (sync_system, command_sync_system));
     }
 }

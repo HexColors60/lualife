@@ -90,7 +90,9 @@ pub fn spawn_building_sprites(
                 transform: Transform::from_xyz(x, y, 0.8),
                 ..default()
             },
-            BuildingSprite { building_entity: entity },
+            BuildingSprite {
+                building_entity: entity,
+            },
         ));
     }
 }

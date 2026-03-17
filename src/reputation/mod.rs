@@ -1,17 +1,17 @@
-use std::collections::HashMap;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::factions::FactionId;
 
 /// Reputation level with a faction
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ReputationLevel {
-    Hostile,     // -100 to -50
-    Unfriendly,  // -50 to -10
-    Neutral,     // -10 to 10
-    Friendly,    // 10 to 50
-    Allied,      // 50 to 100
+    Hostile,    // -100 to -50
+    Unfriendly, // -50 to -10
+    Neutral,    // -10 to 10
+    Friendly,   // 10 to 50
+    Allied,     // 50 to 100
 }
 
 impl Default for ReputationLevel {
@@ -106,7 +106,11 @@ impl ReputationManager {
         self.reputations.get(&key).map(|r| r.value).unwrap_or(0)
     }
 
-    pub fn get_reputation_level(&self, faction1: FactionId, faction2: FactionId) -> ReputationLevel {
+    pub fn get_reputation_level(
+        &self,
+        faction1: FactionId,
+        faction2: FactionId,
+    ) -> ReputationLevel {
         ReputationLevel::from_value(self.get_reputation(faction1, faction2))
     }
 
@@ -117,9 +121,10 @@ impl ReputationManager {
 
         let key = Self::make_key(faction1, faction2);
 
-        let reputation = self.reputations.entry(key).or_insert_with(|| {
-            Reputation::new(key.0, key.1)
-        });
+        let reputation = self
+            .reputations
+            .entry(key)
+            .or_insert_with(|| Reputation::new(key.0, key.1));
 
         reputation.modify(delta);
     }
@@ -131,9 +136,10 @@ impl ReputationManager {
 
         let key = Self::make_key(faction1, faction2);
 
-        let reputation = self.reputations.entry(key).or_insert_with(|| {
-            Reputation::new(key.0, key.1)
-        });
+        let reputation = self
+            .reputations
+            .entry(key)
+            .or_insert_with(|| Reputation::new(key.0, key.1));
 
         reputation.set(value);
     }
@@ -157,11 +163,26 @@ impl ReputationManager {
 /// Events that affect reputation
 #[derive(Event, Debug, Clone)]
 pub enum ReputationEvent {
-    Attacked { attacker: FactionId, victim: FactionId },
-    Traded { faction1: FactionId, faction2: FactionId },
-    Allied { faction1: FactionId, faction2: FactionId },
-    Betrayed { traitor: FactionId, victim: FactionId },
-    Helped { helper: FactionId, helped: FactionId },
+    Attacked {
+        attacker: FactionId,
+        victim: FactionId,
+    },
+    Traded {
+        faction1: FactionId,
+        faction2: FactionId,
+    },
+    Allied {
+        faction1: FactionId,
+        faction2: FactionId,
+    },
+    Betrayed {
+        traitor: FactionId,
+        victim: FactionId,
+    },
+    Helped {
+        helper: FactionId,
+        helped: FactionId,
+    },
 }
 
 /// System to process reputation events

@@ -28,7 +28,8 @@ pub fn update_unit_panel(
                     .unwrap_or_else(|| "Unknown".to_string());
 
                 let role_name = format!("{:?}", creep.role);
-                let action_name = creep.current_action
+                let action_name = creep
+                    .current_action
                     .as_ref()
                     .map(|a| format!("{:?}", a.action))
                     .unwrap_or_else(|| "Idle".to_string());

@@ -76,36 +76,37 @@ impl PluralForm {
         // Simplified plural rules - a full implementation would use CLDR data
         match language {
             // Languages with simple singular/plural
-            Language::English | 
-            Language::German | 
-            Language::Dutch | 
-            Language::Swedish | 
-            Language::Norwegian | 
-            Language::Danish | 
-            Language::Finnish | 
-            Language::Greek | 
-            Language::Italian | 
-            Language::Portuguese | 
-            Language::Spanish => {
-                if count == 1 { PluralForm::One } else { PluralForm::Other }
+            Language::English
+            | Language::German
+            | Language::Dutch
+            | Language::Swedish
+            | Language::Norwegian
+            | Language::Danish
+            | Language::Finnish
+            | Language::Greek
+            | Language::Italian
+            | Language::Portuguese
+            | Language::Spanish => {
+                if count == 1 {
+                    PluralForm::One
+                } else {
+                    PluralForm::Other
+                }
             }
-            
+
             // Languages with no plural distinction
-            Language::ChineseSimplified | 
-            Language::ChineseTraditional | 
-            Language::Japanese | 
-            Language::Korean | 
-            Language::Vietnamese | 
-            Language::Thai => PluralForm::Other,
-            
+            Language::ChineseSimplified
+            | Language::ChineseTraditional
+            | Language::Japanese
+            | Language::Korean
+            | Language::Vietnamese
+            | Language::Thai => PluralForm::Other,
+
             // Russian, Ukrainian, Polish have complex plural rules
-            Language::Russian | 
-            Language::Ukrainian | 
-            Language::Polish | 
-            Language::Czech => {
+            Language::Russian | Language::Ukrainian | Language::Polish | Language::Czech => {
                 let mod10 = count % 10;
                 let mod100 = count % 100;
-                
+
                 if mod10 == 1 && mod100 != 11 {
                     PluralForm::One
                 } else if (2..=4).contains(&mod10) && !(12..=14).contains(&mod100) {
@@ -114,11 +115,11 @@ impl PluralForm {
                     PluralForm::Many
                 }
             }
-            
+
             // Arabic has all plural forms
             Language::Arabic => {
                 let mod100 = count % 100;
-                
+
                 if count == 0 {
                     PluralForm::Zero
                 } else if count == 1 {
@@ -133,10 +134,14 @@ impl PluralForm {
                     PluralForm::Other
                 }
             }
-            
+
             // Default to simple singular/plural
             _ => {
-                if count == 1 { PluralForm::One } else { PluralForm::Other }
+                if count == 1 {
+                    PluralForm::One
+                } else {
+                    PluralForm::Other
+                }
             }
         }
     }
@@ -163,26 +168,26 @@ pub fn get_plural_translation(
 ) -> String {
     let plural_form = PluralForm::from_count(count, settings.current_language);
     let plural_key = format!("{}{}", key, plural_key_suffix(plural_form));
-    
+
     // Try plural key first
     if let Some(translation) = registry.get(settings.current_language, &plural_key) {
         return translation.replace("{count}", &count.to_string());
     }
-    
+
     // Fall back to base key
     if let Some(translation) = registry.get(settings.current_language, key) {
         return translation.replace("{count}", &count.to_string());
     }
-    
+
     // Fall back to fallback language
     if let Some(translation) = registry.get(settings.fallback_language, &plural_key) {
         return translation.replace("{count}", &count.to_string());
     }
-    
+
     if let Some(translation) = registry.get(settings.fallback_language, key) {
         return translation.replace("{count}", &count.to_string());
     }
-    
+
     key.to_string()
 }
 

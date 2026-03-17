@@ -39,7 +39,9 @@ pub fn spawn_creep_sprites(
                 transform: Transform::from_xyz(x, y, 1.0),
                 ..default()
             },
-            CreepSprite { creep_entity: entity },
+            CreepSprite {
+                creep_entity: entity,
+            },
         ));
     }
 }
