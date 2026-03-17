@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
 use crate::audio::AudioPlugin;
+use crate::auth::AuthPlugin;
 use crate::buildings::BuildingsPlugin;
+use crate::chat::ChatPlugin;
 use crate::config::GameConfigPlugin;
 use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
@@ -9,12 +11,14 @@ use crate::diplomacy::DiplomacyPlugin;
 use crate::events::EventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::market::MarketPlugin;
+use crate::network::NetworkPlugin;
 use crate::path::PathPlugin;
 use crate::render::RenderPlugin;
 use crate::reputation::ReputationPlugin;
 use crate::research::ResearchPlugin;
 use crate::save::SavePlugin;
 use crate::sim::SimPlugin;
+use crate::sync::SyncPlugin;
 use crate::territory::TerritoryPlugin;
 use crate::trade::TradePlugin;
 use crate::ui::UiPlugin;
@@ -59,6 +63,12 @@ impl Plugin for GameAppPlugin {
             TerritoryPlugin,
             TradePlugin,
             VictoryPlugin,
+        ));
+        app.add_plugins((
+            NetworkPlugin,
+            AuthPlugin,
+            ChatPlugin,
+            SyncPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,

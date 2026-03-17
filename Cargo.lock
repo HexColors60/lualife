@@ -932,6 +932,7 @@ dependencies = [
  "thiserror",
  "tracing",
  "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]

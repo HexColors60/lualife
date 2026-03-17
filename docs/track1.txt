@@ -64,3 +64,4 @@
 2026-03-17 Phase 18 advanced: Road speed bonus, SpawnBuilding creep spawning, DiplomacyState alliances.
 2026-03-17 Phase 19 visualizations: Path visualization (F6), Tower range (F7), Tech UI (T), Market UI (K), Diplomacy UI (Shift+D).
 2026-03-17 Phase 20 gameplay: TradeRoute/Caravan, TerritoryManager, VictoryState, ReputationManager, CreepCustomizationUI.
+2026-03-17 Phase 21 multiplayer: NetworkPlugin, AuthPlugin, ChatPlugin, SyncPlugin with client/server architecture.
