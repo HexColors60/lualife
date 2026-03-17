@@ -1,0 +1,88 @@
+[TODO] Project bootstrap
+[x] Create Rust Bevy project skeleton
+[x] Add mlua integration
+[x] Add config loading
+[x] Add logging and error types
+[x] Add base plugin structure
+
+[TODO] World foundation
+[x] Implement coordinate types
+[x] Implement 256x256 world map
+[x] Implement 32x32 room grid
+[x] Implement room/tile data structures
+[x] Implement terrain and ownership models
+
+[TODO] World generation
+[x] Generate room terrain
+[x] Generate 2 or 3 mines per room
+[x] Add 10 mine types
+[x] Ensure power mine strategic distribution
+[x] Spawn 32 default AI factions fairly
+
+[TODO] Faction and economy
+[x] Implement faction registry
+[x] Implement stockpile system
+[x] Implement resource type enum
+[x] Implement dropped resources
+[x] Implement basic recipes
+
+[TODO] Creep system
+[x] Implement creep components and bundle
+[x] Implement body part model: move/work/fight/mine/build/eat/transport
+[x] Implement power upkeep
+[x] Implement inventory
+[x] Implement spawn logic
+
+[TODO] Building system
+[x] Implement base core
+[x] Implement spawn building
+[x] Implement storage
+[x] Implement mine extractor
+[x] Implement wall/tower/road basics
+
+[TODO] Lua integration
+[x] Create one Lua VM per faction
+[x] Load scripts from ai/ai_xx/
+[x] Expose safe query API
+[x] Expose command buffer API
+[x] Add on_tick hook
+[x] Add script error collection
+[x] Add hot reload
+
+[TODO] Simulation phases
+[x] Add tick counter
+[x] Add command validation
+[x] Add movement phase
+[x] Add mining phase
+[x] Add transport phase
+[x] Add build phase
+[x] Add combat phase
+[x] Add upkeep phase
+[x] Add economy phase
+[x] Add death cleanup
+
+[TODO] UI and debug
+[ ] Add map window
+[ ] Add screep status window
+[ ] Add text info/log window
+[ ] Add AI status window
+[ ] Add minimap
+[ ] Add selection system
+[x] Add GOD mode actions
+[x] Add performance panel
+
+[TODO] Tooling and files
+[x] Create docs/todo1.txt
+[x] Create docs/track1.txt in append-only format
+[ ] Add AI sample Lua files
+[ ] Add config/*.ron defaults
+
+[TODO] Initial playable milestone
+[ ] Load generated world
+[ ] Show map
+[ ] Run 32 AI Lua scripts
+[ ] Spawn creeps
+[ ] Allow creeps to mine Power
+[ ] Allow survival/upkeep loop
+[ ] Allow building of basic structures
+[ ] Show logs and selected unit info

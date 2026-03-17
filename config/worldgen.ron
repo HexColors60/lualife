@@ -1,0 +1,10 @@
+(
+    seed: 0,
+    mines_per_room_min: 2,
+    mines_per_room_max: 3,
+    power_mine_rarity: 0.3,
+    plains_ratio: 0.6,
+    forest_ratio: 0.25,
+    mountain_ratio: 0.15,
+    faction_spawn_min_distance: 3,
+)

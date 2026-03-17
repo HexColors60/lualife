@@ -1,0 +1,9 @@
+(
+    tick_rate: 20,
+    god_mode: true,
+    ai_count: 32,
+    autosave_interval: 0,
+    sim_speed: 1.0,
+    lua_budget: 1000000,
+    start_paused: false,
+)

@@ -1,0 +1,9 @@
+(
+    folder_pattern: "ai/ai_{:02}",
+    main_script: "main.lua",
+    config_script: "config.lua",
+    roles_folder: "roles",
+    libs_folder: "libs",
+    hot_reload: true,
+    script_timeout_ms: 100,
+)

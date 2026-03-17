@@ -1,0 +1,12 @@
+(
+    window_width: 1600.0,
+    window_height: 900.0,
+    map_panel_ratio: 0.7,
+    show_minimap: true,
+    show_log_panel: true,
+    show_perf_panel: false,
+    default_zoom: 1.0,
+    pan_speed: 500.0,
+    zoom_speed: 0.1,
+    font_size: 14.0,
+)

@@ -1,0 +1,17 @@
+[TRACK APPEND ONLY]
+2026-03-17 Project spec created for bevy_screeps_lua.
+2026-03-17 Core requirements captured: Rust + Bevy + Lua, 256x256 world, 32x32 rooms, 10 mine types, 32 default AI factions.
+2026-03-17 Architecture expanded into many small Rust files to avoid oversized functions and overly large source files.
+2026-03-17 Initial required UI windows recorded: map view, screep status, text info/log, AI status, minimap, debug/perf panels.
+2026-03-17 GOD mode default enabled and treated as first-class debug/sandbox feature.
+2026-03-17 Phase 1 implementation started: main.rs, app.rs, consts.rs, error.rs, config/*, core/*.
+2026-03-17 Phase 2 implementation completed: world coordinates, tiles, rooms, world_map, worldgen.
+2026-03-17 Phase 3 implementation completed: resources, mines, factions modules.
+2026-03-17 Phase 4 implementation completed: creeps module with components, body parts, inventory, actions.
+2026-03-17 Phase 5 implementation completed: lua module with VM, sandbox, loader, API.
+2026-03-17 Phase 6 implementation completed: sim module with phases and command buffer.
+2026-03-17 Phase 7 implementation started: render and ui modules with basic structure.
+2026-03-17 Phase 8 implementation completed: buildings, path, debug, save modules.
+2026-03-17 Project compiles successfully with all 8 phases implemented.
+2026-03-17 Sample AI Lua scripts created in ai/ai_00/ with main.lua, config.lua, and role scripts.
+2026-03-17 Config files created: game.ron, worldgen.ron, ai.ron, ui.ron.
