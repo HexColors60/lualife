@@ -1,4 +1,5 @@
 mod ai_status;
+mod creep_customization;
 mod diplomacy_ui;
 mod layout;
 mod log_panel;
@@ -13,6 +14,7 @@ mod unit_panel;
 mod widgets;
 
 pub use ai_status::*;
+pub use creep_customization::*;
 pub use diplomacy_ui::*;
 pub use layout::*;
 pub use log_panel::*;

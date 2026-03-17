@@ -181,13 +181,13 @@ PHASE 19: Visualizations [DONE]
 [x] Faction diplomacy UI (Shift+D)
 
 ==================================================
-PHASE 20: Advanced Gameplay [TODO]
+PHASE 20: Advanced Gameplay [DONE]
 ==================================================
-[ ] Add trade routes and caravans
-[ ] Implement creep body customization UI
-[ ] Add faction reputation system
-[ ] Implement territory control
-[ ] Add victory conditions
+[x] Add trade routes and caravans
+[x] Implement creep body customization UI (Shift+C)
+[x] Add faction reputation system
+[x] Implement territory control
+[x] Add victory conditions
 
 ==================================================
 PHASE 21: Multiplayer [TODO]

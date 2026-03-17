@@ -11,10 +11,14 @@ use crate::factions::FactionsPlugin;
 use crate::market::MarketPlugin;
 use crate::path::PathPlugin;
 use crate::render::RenderPlugin;
+use crate::reputation::ReputationPlugin;
 use crate::research::ResearchPlugin;
 use crate::save::SavePlugin;
 use crate::sim::SimPlugin;
+use crate::territory::TerritoryPlugin;
+use crate::trade::TradePlugin;
 use crate::ui::UiPlugin;
+use crate::victory::VictoryPlugin;
 use crate::world::WorldPlugin;
 use crate::worldgen::WorldgenPlugin;
 
@@ -51,6 +55,10 @@ impl Plugin for GameAppPlugin {
             MarketPlugin,
             AudioPlugin,
             DiplomacyPlugin,
+            ReputationPlugin,
+            TerritoryPlugin,
+            TradePlugin,
+            VictoryPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
