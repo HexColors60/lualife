@@ -21,6 +21,7 @@ pub mod mines;
 pub mod modding;
 pub mod network;
 pub mod path;
+pub mod performance;
 pub mod prelude;
 pub mod render;
 pub mod reputation;

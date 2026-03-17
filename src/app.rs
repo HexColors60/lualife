@@ -17,6 +17,7 @@ use crate::market::MarketPlugin;
 use crate::modding::ModdingPlugin;
 use crate::network::NetworkPlugin;
 use crate::path::PathPlugin;
+use crate::performance::PerformancePlugin;
 use crate::render::RenderPlugin;
 use crate::reputation::ReputationPlugin;
 use crate::research::ResearchPlugin;
@@ -77,6 +78,7 @@ impl Plugin for GameAppPlugin {
             WorldEventsPlugin,
             AchievementsPlugin,
             ModdingPlugin,
+            PerformancePlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,

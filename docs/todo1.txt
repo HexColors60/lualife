@@ -233,3 +233,48 @@ PHASE 25: Modding Support [DONE]
 [x] Add custom creep body parts
 [x] Implement custom tech tree modifications
 [x] Add workshop support for sharing mods
+
+==================================================
+PHASE 26: Performance Optimization [TODO]
+==================================================
+[ ] Implement spatial partitioning for entity queries
+[ ] Add object pooling for frequently spawned entities
+[ ] Optimize pathfinding with hierarchical path maps
+[ ] Implement LOD (Level of Detail) for rendering
+[ ] Add async asset loading
+
+==================================================
+PHASE 27: Accessibility [TODO]
+==================================================
+[ ] Add colorblind modes
+[ ] Implement screen reader support
+[ ] Add customizable keybindings
+[ ] Implement UI scaling options
+[ ] Add high contrast mode
+
+==================================================
+PHASE 28: Localization [TODO]
+==================================================
+[ ] Implement i18n system for UI text
+[ ] Add language selection in settings
+[ ] Create translation files for major languages
+[ ] Implement RTL (Right-to-Left) text support
+[ ] Add locale-specific number/date formatting
+
+==================================================
+PHASE 29: Tutorial & Onboarding [TODO]
+==================================================
+[ ] Implement interactive tutorial system
+[ ] Add tooltip system for UI elements
+[ ] Create beginner guide with objectives
+[ ] Add in-game help encyclopedia
+[ ] Implement hint system for new players
+
+==================================================
+PHASE 30: Quality of Life [TODO]
+==================================================
+[ ] Add auto-save functionality
+[ ] Implement undo/redo for building placement
+[ ] Add construction templates
+[ ] Implement unit group selection and control
+[ ] Add minimap ping and drawing system
