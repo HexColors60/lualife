@@ -271,10 +271,10 @@ PHASE 29: Tutorial & Onboarding [DONE]
 [x] Implement hint system for new players
 
 ==================================================
-PHASE 30: Quality of Life [TODO]
+PHASE 30: Quality of Life [DONE]
 ==================================================
-[ ] Add auto-save functionality
-[ ] Implement undo/redo for building placement
-[ ] Add construction templates
-[ ] Implement unit group selection and control
-[ ] Add minimap ping and drawing system
+[x] Add auto-save functionality
+[x] Implement undo/redo for building placement
+[x] Add construction templates
+[x] Implement unit group selection and control
+[x] Add minimap ping and drawing system

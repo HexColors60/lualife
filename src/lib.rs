@@ -25,6 +25,7 @@ pub mod network;
 pub mod path;
 pub mod performance;
 pub mod prelude;
+pub mod quality_of_life;
 pub mod render;
 pub mod reputation;
 pub mod research;

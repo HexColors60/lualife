@@ -20,6 +20,7 @@ use crate::modding::ModdingPlugin;
 use crate::network::NetworkPlugin;
 use crate::path::PathPlugin;
 use crate::performance::PerformancePlugin;
+use crate::quality_of_life::QualityOfLifePlugin;
 use crate::render::RenderPlugin;
 use crate::reputation::ReputationPlugin;
 use crate::research::ResearchPlugin;
@@ -86,11 +87,12 @@ impl Plugin for GameAppPlugin {
             PerformancePlugin,
             AccessibilityPlugin,
             LocalizationPlugin,
+            TutorialPlugin,
+            QualityOfLifePlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
             UiPlugin,
-            TutorialPlugin,
         ));
         app.add_plugins(DebugPlugin);
     }
