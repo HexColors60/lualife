@@ -23,3 +23,5 @@
 2026-03-17 Implemented basic UI: GameLog resource, log panel, info panel.
 2026-03-17 Faction initialization: initialize_factions system spawns 32 default factions.
 2026-03-17 Creeps spawn for each faction with harvester body, displayed with faction colors.
+2026-03-17 Lua AI execution: LuaRegistry as NonSend resource, initialize_lua_vms, run_lua_ticks systems.
+2026-03-17 Lua scripts loaded from ai/ai_XX/main.lua, on_init and on_tick hooks called.
