@@ -67,3 +67,4 @@
 2026-03-17 Phase 21 multiplayer: NetworkPlugin, AuthPlugin, ChatPlugin, SyncPlugin with client/server architecture.
 2026-03-17 Phase 22 advanced AI: AiDifficulty, AiPersonality, AiLearningData, AiCoordinator with difficulty levels and personality traits.
 2026-03-17 Phase 23 world events: WorldEventType, Season, WorldEventManager, EventNotification with random events and seasonal changes.
+2026-03-17 Phase 24 achievements: Achievement, AchievementProgress, PlayerStatistics, LeaderboardManager, GameHistory with unlock events.

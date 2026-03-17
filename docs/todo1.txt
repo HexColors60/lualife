@@ -217,13 +217,13 @@ PHASE 23: World Events [DONE]
 [x] Add special resource deposits
 
 ==================================================
-PHASE 24: Achievements & Statistics [TODO]
+PHASE 24: Achievements & Statistics [DONE]
 ==================================================
-[ ] Implement achievement system
-[ ] Add player statistics tracking
-[ ] Implement leaderboards
-[ ] Add game history and replays
-[ ] Implement milestone rewards
+[x] Implement achievement system
+[x] Add player statistics tracking
+[x] Implement leaderboards
+[x] Add game history and replays
+[x] Implement milestone rewards
 
 ==================================================
 PHASE 25: Modding Support [TODO]

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+use crate::achievements::AchievementsPlugin;
 use crate::ai::AdvancedAiPlugin;
 use crate::audio::AudioPlugin;
 use crate::auth::AuthPlugin;
@@ -73,6 +74,7 @@ impl Plugin for GameAppPlugin {
             SyncPlugin,
             AdvancedAiPlugin,
             WorldEventsPlugin,
+            AchievementsPlugin,
             SimPlugin,
             SavePlugin,
             RenderPlugin,
