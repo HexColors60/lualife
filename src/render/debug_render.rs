@@ -19,7 +19,7 @@ pub struct GridOverlay;
 pub struct FpsText;
 
 /// Setup debug overlays
-pub fn setup_debug_overlays(mut commands: Commands, overlays: Res<DebugOverlays>) {
+pub fn setup_debug_overlays(mut commands: Commands) {
     // FPS counter at top-right (below unit panel)
     commands.spawn((
         TextBundle {

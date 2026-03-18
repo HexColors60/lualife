@@ -47,6 +47,9 @@ pub enum CreepAction {
     Heal {
         target_id: u32,
     },
+    PackAll {
+        target_id: u32,
+    },
 }
 
 impl Default for CreepAction {

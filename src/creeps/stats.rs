@@ -132,3 +132,154 @@ impl CreepBody {
         self.fight_parts() as f32 * 10.0
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_creep_body_new() {
+        let body = CreepBody::new();
+        assert!(body.parts.is_empty());
+    }
+
+    #[test]
+    fn test_creep_body_add_part() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        assert_eq!(body.parts.len(), 1);
+        assert_eq!(body.parts[0], PartType::Move);
+    }
+
+    #[test]
+    fn test_creep_body_part_count() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Fight);
+        assert_eq!(body.part_count(PartType::Move), 2);
+        assert_eq!(body.part_count(PartType::Fight), 1);
+        assert_eq!(body.part_count(PartType::Work), 0);
+    }
+
+    #[test]
+    fn test_creep_body_convenience_methods() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Work);
+        body.add_part(PartType::Fight);
+        body.add_part(PartType::Mine);
+        body.add_part(PartType::Build);
+        body.add_part(PartType::Eat);
+        body.add_part(PartType::Transport);
+
+        assert_eq!(body.move_parts(), 1);
+        assert_eq!(body.work_parts(), 1);
+        assert_eq!(body.fight_parts(), 1);
+        assert_eq!(body.mine_parts(), 1);
+        assert_eq!(body.build_parts(), 1);
+        assert_eq!(body.eat_parts(), 1);
+        assert_eq!(body.transport_parts(), 1);
+    }
+
+    #[test]
+    fn test_creep_body_default_harvester() {
+        let body = CreepBody::default_harvester();
+        assert_eq!(body.parts.len(), 6);
+        assert_eq!(body.move_parts(), 2);
+        assert_eq!(body.mine_parts(), 2);
+        assert_eq!(body.transport_parts(), 1);
+        assert_eq!(body.eat_parts(), 1);
+    }
+
+    #[test]
+    fn test_creep_body_default_builder() {
+        let body = CreepBody::default_builder();
+        assert_eq!(body.parts.len(), 6);
+        assert_eq!(body.move_parts(), 2);
+        assert_eq!(body.build_parts(), 2);
+        assert_eq!(body.work_parts(), 1);
+        assert_eq!(body.eat_parts(), 1);
+    }
+
+    #[test]
+    fn test_creep_body_default_fighter() {
+        let body = CreepBody::default_fighter();
+        assert_eq!(body.parts.len(), 6);
+        assert_eq!(body.move_parts(), 2);
+        assert_eq!(body.fight_parts(), 3);
+        assert_eq!(body.eat_parts(), 1);
+    }
+
+    #[test]
+    fn test_creep_body_max_hp() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Work);
+        assert!((body.max_hp() - 100.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_creep_body_max_power() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Eat);
+        body.add_part(PartType::Eat);
+        assert!((body.max_power() - 250.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_creep_body_carry_capacity() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Transport);
+        body.add_part(PartType::Transport);
+        assert_eq!(body.carry_capacity(), 100);
+    }
+
+    #[test]
+    fn test_creep_body_speed() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Move);
+        body.add_part(PartType::Work);
+        assert!((body.speed() - 0.6666667).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_creep_body_speed_no_move_parts() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Work);
+        assert_eq!(body.speed(), 0.0);
+    }
+
+    #[test]
+    fn test_creep_body_mining_efficiency() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Mine);
+        body.add_part(PartType::Mine);
+        assert!((body.mining_efficiency() - 1.5).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_creep_body_build_efficiency() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Build);
+        body.add_part(PartType::Build);
+        body.add_part(PartType::Build);
+        assert!((body.build_efficiency() - 2.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_creep_body_attack_power() {
+        let mut body = CreepBody::new();
+        body.add_part(PartType::Fight);
+        body.add_part(PartType::Fight);
+        assert!((body.attack_power() - 20.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_part_type_equality() {
+        assert_eq!(PartType::Move, PartType::Move);
+        assert_ne!(PartType::Move, PartType::Work);
+    }
+}

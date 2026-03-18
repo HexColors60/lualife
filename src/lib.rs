@@ -12,6 +12,7 @@ pub mod core;
 pub mod creeps;
 pub mod debug;
 pub mod diplomacy;
+pub mod discord;
 pub mod error;
 pub mod events;
 pub mod events_world;

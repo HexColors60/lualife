@@ -48,3 +48,62 @@ impl Tile {
         self.buildable
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tile_default() {
+        let tile = Tile::default();
+        assert_eq!(tile.terrain, TerrainType::Plains);
+        assert!(tile.walkable);
+        assert!(tile.buildable);
+        assert_eq!(tile.movement_cost, 1.0);
+    }
+
+    #[test]
+    fn test_tile_new_plains() {
+        let tile = Tile::new(TerrainType::Plains);
+        assert_eq!(tile.terrain, TerrainType::Plains);
+        assert!(tile.is_walkable());
+        assert!(tile.is_buildable());
+        assert_eq!(tile.movement_cost, 1.0);
+    }
+
+    #[test]
+    fn test_tile_new_forest() {
+        let tile = Tile::new(TerrainType::Forest);
+        assert_eq!(tile.terrain, TerrainType::Forest);
+        assert!(tile.is_walkable());
+        assert!(!tile.is_buildable());
+        assert_eq!(tile.movement_cost, 2.0);
+    }
+
+    #[test]
+    fn test_tile_new_mountain() {
+        let tile = Tile::new(TerrainType::Mountain);
+        assert_eq!(tile.terrain, TerrainType::Mountain);
+        assert!(!tile.is_walkable());
+        assert!(!tile.is_buildable());
+        assert!(tile.movement_cost.is_infinite());
+    }
+
+    #[test]
+    fn test_tile_new_water() {
+        let tile = Tile::new(TerrainType::Water);
+        assert_eq!(tile.terrain, TerrainType::Water);
+        assert!(!tile.is_walkable());
+        assert!(!tile.is_buildable());
+        assert!(tile.movement_cost.is_infinite());
+    }
+
+    #[test]
+    fn test_tile_new_swamp() {
+        let tile = Tile::new(TerrainType::Swamp);
+        assert_eq!(tile.terrain, TerrainType::Swamp);
+        assert!(tile.is_walkable());
+        assert!(!tile.is_buildable());
+        assert_eq!(tile.movement_cost, 3.0);
+    }
+}

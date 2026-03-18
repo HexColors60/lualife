@@ -113,3 +113,105 @@ impl BuildingType {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_building_type_default() {
+        let building = BuildingType::default();
+        assert_eq!(building, BuildingType::BaseCore);
+    }
+
+    #[test]
+    fn test_building_type_name() {
+        assert_eq!(BuildingType::BaseCore.name(), "base_core");
+        assert_eq!(BuildingType::Spawn.name(), "spawn");
+        assert_eq!(BuildingType::Storage.name(), "storage");
+        assert_eq!(BuildingType::PowerDepot.name(), "power_depot");
+        assert_eq!(BuildingType::MineExtractor.name(), "mine_extractor");
+        assert_eq!(BuildingType::Refinery.name(), "refinery");
+        assert_eq!(BuildingType::Workshop.name(), "workshop");
+        assert_eq!(BuildingType::Wall.name(), "wall");
+        assert_eq!(BuildingType::Tower.name(), "tower");
+        assert_eq!(BuildingType::Road.name(), "road");
+        assert_eq!(BuildingType::ScriptRelay.name(), "script_relay");
+        assert_eq!(BuildingType::Scanner.name(), "scanner");
+        assert_eq!(BuildingType::RepairBay.name(), "repair_bay");
+        assert_eq!(BuildingType::Factory.name(), "factory");
+        assert_eq!(BuildingType::Lab.name(), "lab");
+        assert_eq!(BuildingType::Barracks.name(), "barracks");
+    }
+
+    #[test]
+    fn test_building_type_from_name() {
+        assert_eq!(BuildingType::from_name("base_core"), Some(BuildingType::BaseCore));
+        assert_eq!(BuildingType::from_name("spawn"), Some(BuildingType::Spawn));
+        assert_eq!(BuildingType::from_name("storage"), Some(BuildingType::Storage));
+        assert_eq!(BuildingType::from_name("unknown"), None);
+    }
+
+    #[test]
+    fn test_building_type_roundtrip() {
+        for building in [
+            BuildingType::BaseCore,
+            BuildingType::Spawn,
+            BuildingType::Storage,
+            BuildingType::PowerDepot,
+            BuildingType::MineExtractor,
+            BuildingType::Refinery,
+            BuildingType::Workshop,
+            BuildingType::Wall,
+            BuildingType::Tower,
+            BuildingType::Road,
+            BuildingType::ScriptRelay,
+            BuildingType::Scanner,
+            BuildingType::RepairBay,
+            BuildingType::Factory,
+            BuildingType::Lab,
+            BuildingType::Barracks,
+        ] {
+            let name = building.name();
+            let parsed = BuildingType::from_name(name);
+            assert_eq!(parsed, Some(building));
+        }
+    }
+
+    #[test]
+    fn test_building_type_color() {
+        assert_eq!(BuildingType::BaseCore.color(), (255, 215, 0));
+        assert_eq!(BuildingType::Spawn.color(), (0, 255, 127));
+        assert_eq!(BuildingType::Storage.color(), (139, 90, 43));
+    }
+
+    #[test]
+    fn test_building_type_base_cost() {
+        use crate::resources::ResourceType;
+
+        let cost = BuildingType::Wall.base_cost();
+        assert_eq!(cost.len(), 1);
+        assert_eq!(cost[0], (ResourceType::Stone, 50));
+
+        let cost = BuildingType::BaseCore.base_cost();
+        assert_eq!(cost.len(), 2);
+        assert_eq!(cost[0], (ResourceType::Iron, 500));
+        assert_eq!(cost[1], (ResourceType::Stone, 300));
+    }
+
+    #[test]
+    fn test_building_type_equality() {
+        assert_eq!(BuildingType::Spawn, BuildingType::Spawn);
+        assert_ne!(BuildingType::Spawn, BuildingType::Storage);
+    }
+
+    #[test]
+    fn test_building_type_hash() {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        set.insert(BuildingType::Spawn);
+        set.insert(BuildingType::Storage);
+        set.insert(BuildingType::Spawn);
+        assert_eq!(set.len(), 2);
+    }
+}

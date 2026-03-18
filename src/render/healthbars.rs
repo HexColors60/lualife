@@ -78,8 +78,8 @@ pub fn spawn_health_bars(mut commands: Commands, creeps: Query<(Entity, &Creep),
 /// Update health bar positions and sizes
 pub fn update_health_bars(
     creeps: Query<&Creep, Changed<Creep>>,
-    mut hp_bars: Query<(&HealthBarForeground, &mut Sprite, &mut Transform)>,
-    mut power_bars: Query<(&PowerBarForeground, &mut Sprite, &mut Transform)>,
+    mut hp_bars: Query<(&HealthBarForeground, &mut Sprite, &mut Transform), Without<PowerBarForeground>>,
+    mut power_bars: Query<(&PowerBarForeground, &mut Sprite, &mut Transform), Without<HealthBarForeground>>,
 ) {
     // Update HP bars
     for (hp_bar, mut sprite, mut transform) in hp_bars.iter_mut() {

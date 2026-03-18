@@ -11,6 +11,7 @@ use crate::config::GameConfigPlugin;
 use crate::core::CorePlugin;
 use crate::debug::DebugPlugin;
 use crate::diplomacy::DiplomacyPlugin;
+use crate::discord::DiscordPlugin;
 use crate::events::EventsPlugin;
 use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
@@ -93,6 +94,7 @@ impl Plugin for GameAppPlugin {
             SavePlugin,
             RenderPlugin,
             UiPlugin,
+            DiscordPlugin,
         ));
         app.add_plugins(DebugPlugin);
     }

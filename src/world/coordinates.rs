@@ -142,3 +142,152 @@ impl From<RoomCoord> for RoomPos {
         RoomPos::new(coord.x, coord.y)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_world_pos_new() {
+        let pos = WorldPos::new(10, 20);
+        assert_eq!(pos.x, 10);
+        assert_eq!(pos.y, 20);
+    }
+
+    #[test]
+    fn test_world_pos_to_room_pos() {
+        let pos = WorldPos::new(10, 20);
+        let room_pos = pos.to_room_pos();
+        assert_eq!(room_pos.room_x, 1);
+        assert_eq!(room_pos.room_y, 2);
+    }
+
+    #[test]
+    fn test_world_pos_to_local() {
+        let pos = WorldPos::new(10, 20);
+        let (local_x, local_y) = pos.to_local();
+        assert_eq!(local_x, 2);
+        assert_eq!(local_y, 4);
+    }
+
+    #[test]
+    fn test_world_pos_is_valid() {
+        assert!(WorldPos::new(0, 0).is_valid());
+        assert!(WorldPos::new(255, 255).is_valid());
+        assert!(!WorldPos::new(-1, 0).is_valid());
+        assert!(!WorldPos::new(0, -1).is_valid());
+        assert!(!WorldPos::new(256, 0).is_valid());
+        assert!(!WorldPos::new(0, 256).is_valid());
+    }
+
+    #[test]
+    fn test_world_pos_clamp() {
+        assert_eq!(WorldPos::new(-1, -1).clamp(), WorldPos::new(0, 0));
+        assert_eq!(WorldPos::new(300, 300).clamp(), WorldPos::new(255, 255));
+        assert_eq!(WorldPos::new(100, 100).clamp(), WorldPos::new(100, 100));
+    }
+
+    #[test]
+    fn test_world_pos_distance() {
+        let pos1 = WorldPos::new(0, 0);
+        let pos2 = WorldPos::new(3, 4);
+        assert!((pos1.distance(&pos2) - 5.0).abs() < f32::EPSILON);
+    }
+
+    #[test]
+    fn test_world_pos_manhattan_distance() {
+        let pos1 = WorldPos::new(0, 0);
+        let pos2 = WorldPos::new(3, 4);
+        assert_eq!(pos1.manhattan_distance(&pos2), 7);
+    }
+
+    #[test]
+    fn test_room_coord_new() {
+        let coord = RoomCoord::new(5, 10);
+        assert_eq!(coord.x, 5);
+        assert_eq!(coord.y, 10);
+    }
+
+    #[test]
+    fn test_room_coord_from_index() {
+        let coord = RoomCoord::from_index(0);
+        assert_eq!(coord.x, 0);
+        assert_eq!(coord.y, 0);
+
+        let coord = RoomCoord::from_index(33);
+        assert_eq!(coord.x, 1);
+        assert_eq!(coord.y, 1);
+    }
+
+    #[test]
+    fn test_room_coord_to_index() {
+        let coord = RoomCoord::new(1, 1);
+        assert_eq!(coord.to_index(), 33);
+    }
+
+    #[test]
+    fn test_room_coord_is_valid() {
+        assert!(RoomCoord::new(0, 0).is_valid());
+        assert!(RoomCoord::new(31, 31).is_valid());
+        assert!(!RoomCoord::new(32, 0).is_valid());
+        assert!(!RoomCoord::new(0, 32).is_valid());
+    }
+
+    #[test]
+    fn test_room_coord_to_world_origin() {
+        let coord = RoomCoord::new(2, 3);
+        let origin = coord.to_world_origin();
+        assert_eq!(origin.x, 16);
+        assert_eq!(origin.y, 24);
+    }
+
+    #[test]
+    fn test_room_coord_neighbors() {
+        let coord = RoomCoord::new(1, 1);
+        let neighbors = coord.neighbors();
+        assert_eq!(neighbors.len(), 4);
+
+        let corner = RoomCoord::new(0, 0);
+        let neighbors = corner.neighbors();
+        assert_eq!(neighbors.len(), 2);
+    }
+
+    #[test]
+    fn test_room_pos_new() {
+        let pos = RoomPos::new(3, 5);
+        assert_eq!(pos.room_x, 3);
+        assert_eq!(pos.room_y, 5);
+    }
+
+    #[test]
+    fn test_room_pos_to_world() {
+        let pos = RoomPos::new(2, 3);
+        let world = pos.to_world(4, 5);
+        assert_eq!(world.x, 20);
+        assert_eq!(world.y, 29);
+    }
+
+    #[test]
+    fn test_room_pos_from_world() {
+        let world = WorldPos::new(10, 20);
+        let pos = RoomPos::from_world(&world);
+        assert_eq!(pos.room_x, 1);
+        assert_eq!(pos.room_y, 2);
+    }
+
+    #[test]
+    fn test_world_pos_to_room_coord_conversion() {
+        let pos = WorldPos::new(16, 24);
+        let coord: RoomCoord = pos.into();
+        assert_eq!(coord.x, 2);
+        assert_eq!(coord.y, 3);
+    }
+
+    #[test]
+    fn test_room_coord_to_room_pos_conversion() {
+        let coord = RoomCoord::new(5, 7);
+        let pos: RoomPos = coord.into();
+        assert_eq!(pos.room_x, 5);
+        assert_eq!(pos.room_y, 7);
+    }
+}

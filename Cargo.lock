@@ -351,7 +351,7 @@ dependencies = [
  "serde",
  "thiserror",
  "thread_local",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -398,7 +398,7 @@ dependencies = [
  "ron",
  "serde",
  "thiserror",
- "uuid",
+ "uuid 1.22.0",
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
@@ -461,7 +461,7 @@ dependencies = [
  "bevy_reflect",
  "bevy_tasks",
  "bevy_utils",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -819,7 +819,7 @@ dependencies = [
  "smallvec",
  "smol_str",
  "thiserror",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -832,7 +832,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.117",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -912,7 +912,7 @@ dependencies = [
  "bevy_utils",
  "serde",
  "thiserror",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -921,6 +921,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bevy",
+ "discord-rich-presence",
  "indexmap",
  "mlua",
  "parking_lot",
@@ -932,7 +933,7 @@ dependencies = [
  "thiserror",
  "tracing",
  "tracing-subscriber",
- "uuid",
+ "uuid 1.22.0",
 ]
 
 [[package]]
@@ -1617,6 +1618,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7a1e2f27636f116493b8b860f5546edb47c8d8f8ea73e1d2a20be88e28d1fea"
 
 [[package]]
+name = "discord-rich-presence"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a75db747ecd252c01bfecaf709b07fcb4c634adf0edb5fed47bc9c3052e7076b"
+dependencies = [
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "serde_repr",
+ "uuid 0.8.2",
+]
+
+[[package]]
 name = "dispatch"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1941,7 +1955,7 @@ dependencies = [
  "fnv",
  "gilrs-core",
  "log",
- "uuid",
+ "uuid 1.22.0",
  "vec_map",
 ]
 
@@ -1959,7 +1973,7 @@ dependencies = [
  "libudev-sys",
  "log",
  "nix",
- "uuid",
+ "uuid 1.22.0",
  "vec_map",
  "wasm-bindgen",
  "web-sys",
@@ -3510,6 +3524,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_repr"
+version = "0.1.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "175ee3e80ae9982737ca543e96133087cbd9a485eecc3bc4de9c1a37b47ea59c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
 name = "sharded-slab"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3856,6 +3881,15 @@ name = "unicode-xid"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
+
+[[package]]
+name = "uuid"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
+dependencies = [
+ "getrandom 0.2.17",
+]
 
 [[package]]
 name = "uuid"

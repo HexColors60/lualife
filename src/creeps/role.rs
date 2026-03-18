@@ -41,3 +41,73 @@ impl CreepRole {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_creep_role_default() {
+        let role = CreepRole::default();
+        assert_eq!(role, CreepRole::Idle);
+    }
+
+    #[test]
+    fn test_creep_role_name() {
+        assert_eq!(CreepRole::Idle.name(), "idle");
+        assert_eq!(CreepRole::Harvester.name(), "harvester");
+        assert_eq!(CreepRole::Builder.name(), "builder");
+        assert_eq!(CreepRole::Fighter.name(), "fighter");
+        assert_eq!(CreepRole::Hauler.name(), "hauler");
+        assert_eq!(CreepRole::Scout.name(), "scout");
+        assert_eq!(CreepRole::Upgrader.name(), "upgrader");
+        assert_eq!(CreepRole::Repairer.name(), "repairer");
+    }
+
+    #[test]
+    fn test_creep_role_from_name() {
+        assert_eq!(CreepRole::from_name("idle"), Some(CreepRole::Idle));
+        assert_eq!(CreepRole::from_name("harvester"), Some(CreepRole::Harvester));
+        assert_eq!(CreepRole::from_name("builder"), Some(CreepRole::Builder));
+        assert_eq!(CreepRole::from_name("fighter"), Some(CreepRole::Fighter));
+        assert_eq!(CreepRole::from_name("hauler"), Some(CreepRole::Hauler));
+        assert_eq!(CreepRole::from_name("scout"), Some(CreepRole::Scout));
+        assert_eq!(CreepRole::from_name("upgrader"), Some(CreepRole::Upgrader));
+        assert_eq!(CreepRole::from_name("repairer"), Some(CreepRole::Repairer));
+        assert_eq!(CreepRole::from_name("unknown"), None);
+    }
+
+    #[test]
+    fn test_creep_role_equality() {
+        assert_eq!(CreepRole::Harvester, CreepRole::Harvester);
+        assert_ne!(CreepRole::Harvester, CreepRole::Builder);
+    }
+
+    #[test]
+    fn test_creep_role_roundtrip() {
+        for role in [
+            CreepRole::Idle,
+            CreepRole::Harvester,
+            CreepRole::Builder,
+            CreepRole::Fighter,
+            CreepRole::Hauler,
+            CreepRole::Scout,
+            CreepRole::Upgrader,
+            CreepRole::Repairer,
+        ] {
+            let name = role.name();
+            let parsed = CreepRole::from_name(name);
+            assert_eq!(parsed, Some(role));
+        }
+    }
+
+    #[test]
+    fn test_creep_role_hash() {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        set.insert(CreepRole::Harvester);
+        set.insert(CreepRole::Builder);
+        set.insert(CreepRole::Harvester);
+        assert_eq!(set.len(), 2);
+    }
+}

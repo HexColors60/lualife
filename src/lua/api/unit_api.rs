@@ -46,6 +46,12 @@ impl UnitApi {
             )?,
         )?;
 
+        // units.pack_all(id, target_id) -> boolean
+        units.set(
+            "pack_all",
+            lua.create_function(|_, (_id, _target_id): (u32, u32)| Ok(true))?,
+        )?;
+
         Ok(())
     }
 }
