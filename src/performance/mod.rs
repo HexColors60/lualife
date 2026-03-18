@@ -4,14 +4,188 @@ use std::collections::HashMap;
 use crate::consts::{WORLD_TILES_X, WORLD_TILES_Y};
 use crate::world::WorldPos;
 
-/// Grid cell size for spatial partitioning
-pub const CELL_SIZE: u32 = 16;
+pub mod batch_processing;
+pub mod profiling;
 
-/// Number of cells in each dimension
+pub use batch_processing::*;
+pub use profiling::*;
+
+pub const CELL_SIZE: u32 = 16;
 pub const GRID_WIDTH: u32 = WORLD_TILES_X / CELL_SIZE;
 pub const GRID_HEIGHT: u32 = WORLD_TILES_Y / CELL_SIZE;
 
-/// Spatial hash grid for efficient entity queries
+#[derive(Debug, Clone, Resource)]
+pub struct DenseSpatialGrid {
+    cells: Box<[Vec<Entity>]>,
+    entity_cells: HashMap<Entity, (i32, i32)>,
+    width: usize,
+    height: usize,
+}
+
+impl Default for DenseSpatialGrid {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl DenseSpatialGrid {
+    pub fn new() -> Self {
+        let total_cells = (GRID_WIDTH * GRID_HEIGHT) as usize;
+        Self {
+            cells: vec![Vec::new(); total_cells].into_boxed_slice(),
+            entity_cells: HashMap::with_capacity(1000),
+            width: GRID_WIDTH as usize,
+            height: GRID_HEIGHT as usize,
+        }
+    }
+
+    #[inline]
+    fn cell_index(&self, x: i32, y: i32) -> Option<usize> {
+        if x >= 0 && x < self.width as i32 && y >= 0 && y < self.height as i32 {
+            Some((y as usize) * self.width + (x as usize))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub fn pos_to_cell(pos: &WorldPos) -> (i32, i32) {
+        let x = (pos.x as u32 / CELL_SIZE).min(GRID_WIDTH - 1) as i32;
+        let y = (pos.y as u32 / CELL_SIZE).min(GRID_HEIGHT - 1) as i32;
+        (x, y)
+    }
+
+    #[inline]
+    pub fn insert(&mut self, entity: Entity, pos: &WorldPos) {
+        let new_cell = Self::pos_to_cell(pos);
+
+        if let Some(&old_cell) = self.entity_cells.get(&entity) {
+            if old_cell == new_cell {
+                return;
+            }
+            if let Some(idx) = self.cell_index(old_cell.0, old_cell.1) {
+                self.cells[idx].retain(|&e| e != entity);
+            }
+        }
+
+        if let Some(idx) = self.cell_index(new_cell.0, new_cell.1) {
+            self.cells[idx].push(entity);
+        }
+        self.entity_cells.insert(entity, new_cell);
+    }
+
+    #[inline]
+    pub fn remove(&mut self, entity: Entity) {
+        if let Some(cell) = self.entity_cells.remove(&entity) {
+            if let Some(idx) = self.cell_index(cell.0, cell.1) {
+                self.cells[idx].retain(|&e| e != entity);
+            }
+        }
+    }
+
+    #[inline]
+    pub fn update(&mut self, entity: Entity, pos: &WorldPos) {
+        self.insert(entity, pos);
+    }
+
+    #[inline]
+    pub fn get_in_cell(&self, x: i32, y: i32) -> &[Entity] {
+        self.cell_index(x, y)
+            .map(|idx| self.cells[idx].as_slice())
+            .unwrap_or(&[])
+    }
+
+    pub fn get_in_radius(&self, pos: &WorldPos, radius: i32) -> Vec<Entity> {
+        let (cx, cy) = Self::pos_to_cell(pos);
+        let cell_radius = (radius as u32 / CELL_SIZE + 1) as i32;
+
+        let mut result = Vec::new();
+        let r2 = radius * radius;
+
+        for dx in -cell_radius..=cell_radius {
+            for dy in -cell_radius..=cell_radius {
+                let cell_x = cx + dx;
+                let cell_y = cy + dy;
+
+                if let Some(idx) = self.cell_index(cell_x, cell_y) {
+                    for &entity in &self.cells[idx] {
+                        if let Some(&entity_cell) = self.entity_cells.get(&entity) {
+                            if (entity_cell.0 - cx).pow(2) + (entity_cell.1 - cy).pow(2) <= r2 {
+                                result.push(entity);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        result
+    }
+
+    pub fn get_in_radius_fast(&self, pos: &WorldPos, radius: i32) -> SmallEntityList {
+        let (cx, cy) = Self::pos_to_cell(pos);
+        let cell_radius = (radius as u32 / CELL_SIZE + 1) as i32;
+
+        let mut result = SmallEntityList::new();
+
+        for dx in -cell_radius..=cell_radius {
+            for dy in -cell_radius..=cell_radius {
+                if let Some(idx) = self.cell_index(cx + dx, cy + dy) {
+                    result.extend(self.cells[idx].iter().copied());
+                }
+            }
+        }
+
+        result
+    }
+
+    pub fn get_in_rect(&self, min_pos: &WorldPos, max_pos: &WorldPos) -> Vec<Entity> {
+        let (min_x, min_y) = Self::pos_to_cell(min_pos);
+        let (max_x, max_y) = Self::pos_to_cell(max_pos);
+
+        let mut result = Vec::new();
+
+        for x in min_x..=max_x {
+            for y in min_y..=max_y {
+                if let Some(idx) = self.cell_index(x, y) {
+                    result.extend(self.cells[idx].iter().copied());
+                }
+            }
+        }
+
+        result
+    }
+
+    pub fn clear(&mut self) {
+        for cell in self.cells.iter_mut() {
+            cell.clear();
+        }
+        self.entity_cells.clear();
+    }
+
+    pub fn entity_count(&self) -> usize {
+        self.entity_cells.len()
+    }
+
+    pub fn cell_count(&self) -> usize {
+        self.cells.len()
+    }
+
+    pub fn average_cell_occupancy(&self) -> f32 {
+        let total: usize = self.cells.iter().map(|c| c.len()).sum();
+        let non_empty = self.cells.iter().filter(|c| !c.is_empty()).count();
+        if non_empty > 0 {
+            total as f32 / non_empty as f32
+        } else {
+            0.0
+        }
+    }
+}
+
+use smallvec::SmallVec;
+
+pub type SmallEntityList = SmallVec<[Entity; 16]>;
+
 #[derive(Debug, Clone, Resource, Default)]
 pub struct SpatialGrid {
     cells: HashMap<(i32, i32), Vec<Entity>>,
@@ -23,18 +197,15 @@ impl SpatialGrid {
         Self::default()
     }
 
-    /// Get cell coordinates from world position
     pub fn pos_to_cell(pos: &WorldPos) -> (i32, i32) {
         let x = (pos.x as u32 / CELL_SIZE).min(GRID_WIDTH - 1) as i32;
         let y = (pos.y as u32 / CELL_SIZE).min(GRID_HEIGHT - 1) as i32;
         (x, y)
     }
 
-    /// Insert entity into grid
     pub fn insert(&mut self, entity: Entity, pos: &WorldPos) {
         let cell = Self::pos_to_cell(pos);
 
-        // Remove from old cell if exists
         if let Some(&old_cell) = self.entity_cells.get(&entity) {
             if old_cell != cell {
                 if let Some(entities) = self.cells.get_mut(&old_cell) {
@@ -43,12 +214,10 @@ impl SpatialGrid {
             }
         }
 
-        // Insert into new cell
         self.cells.entry(cell).or_default().push(entity);
         self.entity_cells.insert(entity, cell);
     }
 
-    /// Remove entity from grid
     pub fn remove(&mut self, entity: Entity) {
         if let Some(cell) = self.entity_cells.remove(&entity) {
             if let Some(entities) = self.cells.get_mut(&cell) {
@@ -57,17 +226,14 @@ impl SpatialGrid {
         }
     }
 
-    /// Update entity position
     pub fn update(&mut self, entity: Entity, pos: &WorldPos) {
         self.insert(entity, pos);
     }
 
-    /// Get entities in a cell
     pub fn get_in_cell(&self, cell: (i32, i32)) -> Option<&Vec<Entity>> {
         self.cells.get(&cell)
     }
 
-    /// Get entities in radius around position
     pub fn get_in_radius(&self, pos: &WorldPos, radius: i32) -> Vec<Entity> {
         let center_cell = Self::pos_to_cell(pos);
         let cell_radius = (radius as u32 / CELL_SIZE + 1) as i32;
@@ -92,7 +258,6 @@ impl SpatialGrid {
         result
     }
 
-    /// Get entities in rectangle
     pub fn get_in_rect(&self, min_pos: &WorldPos, max_pos: &WorldPos) -> Vec<Entity> {
         let min_cell = Self::pos_to_cell(min_pos);
         let max_cell = Self::pos_to_cell(max_pos);
@@ -110,19 +275,16 @@ impl SpatialGrid {
         result
     }
 
-    /// Clear all entities
     pub fn clear(&mut self) {
         self.cells.clear();
         self.entity_cells.clear();
     }
 
-    /// Get total entity count
     pub fn entity_count(&self) -> usize {
         self.entity_cells.len()
     }
 }
 
-/// Object pool for reusable entities
 #[derive(Debug, Clone, Resource)]
 pub struct ObjectPool<T: Clone> {
     available: Vec<T>,
@@ -175,7 +337,6 @@ impl<T: Clone> ObjectPool<T> {
     }
 }
 
-/// Pooled entity data for creeps
 #[derive(Debug, Clone, Default)]
 pub struct PooledCreepData {
     pub position: WorldPos,
@@ -185,7 +346,6 @@ pub struct PooledCreepData {
     pub active: bool,
 }
 
-/// Pooled entity data for buildings
 #[derive(Debug, Clone, Default)]
 pub struct PooledBuildingData {
     pub position: WorldPos,
@@ -195,7 +355,6 @@ pub struct PooledBuildingData {
     pub active: bool,
 }
 
-/// Performance metrics
 #[derive(Debug, Clone, Resource, Default)]
 pub struct PerformanceMetrics {
     pub frame_time_ms: f32,
@@ -205,6 +364,9 @@ pub struct PerformanceMetrics {
     pub spatial_queries: u32,
     pub cache_hits: u32,
     pub cache_misses: u32,
+    pub tick_time_us: u64,
+    pub lua_time_us: u64,
+    pub pathfind_time_us: u64,
 }
 
 impl PerformanceMetrics {
@@ -218,7 +380,6 @@ impl PerformanceMetrics {
     }
 }
 
-/// Hierarchical path map for optimized pathfinding
 #[derive(Debug, Clone, Resource)]
 pub struct HierarchicalPathMap {
     pub chunk_size: i32,
@@ -226,7 +387,6 @@ pub struct HierarchicalPathMap {
     pub chunk_graph: HashMap<(i32, i32), Vec<(i32, i32)>>,
 }
 
-/// Path chunk for hierarchical pathfinding
 #[derive(Debug, Clone, Default)]
 pub struct PathChunk {
     pub traversable: bool,
@@ -269,7 +429,6 @@ impl HierarchicalPathMap {
             return vec![start_chunk];
         }
 
-        // Simple BFS on chunk graph
         let mut visited = vec![start_chunk];
         let mut queue = vec![(start_chunk, vec![start_chunk])];
 
@@ -295,13 +454,12 @@ impl HierarchicalPathMap {
     }
 }
 
-/// LOD level for rendering
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum LodLevel {
-    High,   // Full detail
-    Medium, // Reduced detail
-    Low,    // Minimal detail
-    Culled, // Not rendered
+    High,
+    Medium,
+    Low,
+    Culled,
 }
 
 impl LodLevel {
@@ -318,21 +476,61 @@ impl LodLevel {
     }
 }
 
-/// System to update spatial grid
-pub fn spatial_grid_update_system(
-    mut grid: ResMut<SpatialGrid>,
-    // Using a simple approach - this would be called manually or with specific components
-) {
-    // This is a placeholder - in a real implementation, you would query entities
-    // with position components and update the grid
+#[derive(Resource, Debug, Clone, Default)]
+pub struct ChunkStreamingState {
+    pub loaded_chunks: Vec<(i32, i32)>,
+    pub view_distance: i32,
+    pub unload_distance: i32,
 }
 
-/// Plugin for performance systems
+impl ChunkStreamingState {
+    pub fn new() -> Self {
+        Self {
+            loaded_chunks: Vec::new(),
+            view_distance: 3,
+            unload_distance: 5,
+        }
+    }
+
+    pub fn get_visible_chunks(&self, center: &WorldPos, chunk_size: i32) -> Vec<(i32, i32)> {
+        let cx = center.x / chunk_size;
+        let cy = center.y / chunk_size;
+
+        let mut chunks = Vec::new();
+        for dx in -self.view_distance..=self.view_distance {
+            for dy in -self.view_distance..=self.view_distance {
+                chunks.push((cx + dx, cy + dy));
+            }
+        }
+        chunks
+    }
+
+    pub fn should_unload(&self, chunk: (i32, i32), center: &WorldPos, chunk_size: i32) -> bool {
+        let cx = center.x / chunk_size;
+        let cy = center.y / chunk_size;
+
+        let dx = (chunk.0 - cx).abs();
+        let dy = (chunk.1 - cy).abs();
+
+        dx > self.unload_distance || dy > self.unload_distance
+    }
+}
+
+pub fn spatial_grid_update_system(_grid: ResMut<SpatialGrid>) {}
+
 pub struct PerformancePlugin;
 
 impl Plugin for PerformancePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<SpatialGrid>()
-            .init_resource::<PerformanceMetrics>();
+            .init_resource::<DenseSpatialGrid>()
+            .init_resource::<PerformanceMetrics>()
+            .init_resource::<ChunkStreamingState>()
+            .init_resource::<Profiler>()
+            .init_resource::<BatchProcessor>()
+            .init_resource::<UpdateBatches>()
+            .init_resource::<TickBudget>()
+            .add_systems(First, profiler_frame_system)
+            .add_systems(Last, profiler_report_system);
     }
 }
