@@ -18,6 +18,8 @@ pub struct QualityOfLifePlugin;
 impl Plugin for QualityOfLifePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<AutoSaveSettings>()
+            .init_resource::<AutoSaveSlots>()
+            .init_resource::<UndoRedoState>()
             .init_resource::<UndoRedoState>()
             .init_resource::<TemplateManager>()
             .init_resource::<UnitGroupManager>()

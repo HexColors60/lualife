@@ -16,6 +16,7 @@ use crate::events::EventsPlugin;
 use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
 use crate::localization::LocalizationPlugin;
+use crate::lua::LuaPlugin;
 use crate::market::MarketPlugin;
 use crate::modding::ModdingPlugin;
 use crate::network::NetworkPlugin;
@@ -96,7 +97,7 @@ impl Plugin for GameAppPlugin {
             UiPlugin,
             DiscordPlugin,
         ));
-        app.add_plugins(DebugPlugin);
+        app.add_plugins((DebugPlugin, LuaPlugin));
     }
 }
 
