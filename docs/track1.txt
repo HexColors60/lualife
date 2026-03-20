@@ -116,3 +116,7 @@
 2026-03-20 Added AI faction coordination system for intel sharing between allies.
 2026-03-20 Added territory overlay visualization (T key to toggle).
 2026-03-20 Hooked particles and screen shake to combat events (tower attacks, creep deaths).
+2026-03-20 Added faction identity system with 32 unique leader names, titles, mottos, and personalities.
+2026-03-20 Added day/night cycle system with dawn, day, dusk, night phases and lighting effects.
+2026-03-20 Added controls: T (territory overlay), N (day/night pause), [/] (time speed), Shift+1-4 (skip time).
+

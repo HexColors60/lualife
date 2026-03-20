@@ -5,6 +5,7 @@ mod camera;
 mod construction_progress;
 mod creep_render;
 mod creep_trail;
+mod day_night;
 mod debug_render;
 mod healthbars;
 mod map_render;
@@ -23,8 +24,9 @@ pub use camera::*;
 pub use construction_progress::*;
 pub use creep_render::*;
 pub use creep_trail::*;
-pub use debug_render::*;
 pub use damage_numbers::*;
+pub use day_night::*;
+pub use debug_render::*;
 pub use healthbars::*;
 pub use map_render::*;
 pub use mine_render::*;
@@ -57,6 +59,7 @@ impl Plugin for RenderPlugin {
             .add_plugins(ParticlePlugin)
             .add_plugins(ScreenShakePlugin)
             .add_plugins(TerritoryOverlayPlugin)
+            .add_plugins(DayNightPlugin)
             .add_systems(Startup, (setup_render, setup_debug_overlays))
             .add_systems(
                 Update,
