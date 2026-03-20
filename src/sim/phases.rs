@@ -235,17 +235,30 @@ pub fn upkeep_phase(
 /// Death cleanup phase - removes dead creeps
 pub fn death_cleanup_phase(
     mut commands: Commands,
-    creeps: Query<(Entity, &Creep)>,
+    creeps: Query<(Entity, &Creep, &Transform)>,
     game_state: Res<GameState>,
     mut game_log: ResMut<crate::ui::GameLog>,
+    mut particle_events: EventWriter<crate::render::ParticleEvent>,
+    mut shake_events: EventWriter<crate::render::ScreenShakeEvent>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
 
-    for (entity, creep) in creeps.iter() {
+    for (entity, creep, transform) in creeps.iter() {
         if !creep.is_alive() {
             game_log.add(format!("Creep {} died", creep.id));
+            
+            // Spawn death particles
+            particle_events.send(crate::render::ParticleEvent::Death {
+                position: transform.translation,
+            });
+            
+            // Medium screen shake for death
+            shake_events.send(crate::render::ScreenShakeEvent::from_type(
+                crate::render::ShakeEventType::Medium
+            ));
+            
             commands.entity(entity).despawn();
         }
     }

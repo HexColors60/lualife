@@ -113,7 +113,6 @@
 2026-03-20 Integrated resource transfer events into mining phase for visual feedback.
 2026-03-20 Added particle system for explosions, smoke, sparks, and resource pickup effects.
 2026-03-20 Added screen shake system with intensity levels (Light, Medium, Heavy, Impact).
-2026-03-20 Added ParticleEvent and ScreenShakeEvent for triggering visual feedback.
-
-
-
+2026-03-20 Added AI faction coordination system for intel sharing between allies.
+2026-03-20 Added territory overlay visualization (T key to toggle).
+2026-03-20 Hooked particles and screen shake to combat events (tower attacks, creep deaths).

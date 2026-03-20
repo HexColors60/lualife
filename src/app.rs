@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use crate::accessibility::AccessibilityPlugin;
 use crate::achievements::AchievementsPlugin;
 use crate::ai::AdvancedAiPlugin;
+use crate::ai::AICoordinationPlugin;
 use crate::audio::AudioPlugin;
 use crate::auth::AuthPlugin;
 use crate::buildings::BuildingsPlugin;
@@ -82,6 +83,7 @@ impl Plugin for GameAppPlugin {
             ChatPlugin,
             SyncPlugin,
             AdvancedAiPlugin,
+            AICoordinationPlugin,
             WorldEventsPlugin,
             AchievementsPlugin,
             ModdingPlugin,

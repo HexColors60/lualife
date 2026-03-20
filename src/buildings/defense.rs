@@ -84,6 +84,8 @@ impl Wall {
 pub fn tower_attack_system(
     mut towers: Query<(&mut Tower, &Building, &Transform)>,
     mut creeps: Query<(Entity, &mut Creep, &Transform)>,
+    mut particle_events: EventWriter<crate::render::ParticleEvent>,
+    mut shake_events: EventWriter<crate::render::ScreenShakeEvent>,
 ) {
     // Update tower cooldowns
     for (mut tower, _, _) in towers.iter_mut() {
@@ -102,6 +104,7 @@ pub fn tower_attack_system(
         // Find nearest enemy creep in range
         let mut nearest_enemy: Option<Entity> = None;
         let mut nearest_dist = f32::MAX;
+        let mut nearest_pos: Option<Vec3> = None;
 
         for (entity, creep, creep_transform) in creeps.iter() {
             // Skip same faction
@@ -119,6 +122,7 @@ pub fn tower_attack_system(
             if dist <= tower.range && dist < nearest_dist {
                 nearest_dist = dist;
                 nearest_enemy = Some(entity);
+                nearest_pos = Some(creep_transform.translation);
             }
         }
 
@@ -126,8 +130,18 @@ pub fn tower_attack_system(
         if let Some(enemy_entity) = nearest_enemy {
             let damage = tower.attack();
             // Apply damage to the target creep
-            if let Ok((_, mut enemy_creep, _)) = creeps.get_mut(enemy_entity) {
+            if let Ok((_, mut enemy_creep, creep_transform)) = creeps.get_mut(enemy_entity) {
                 enemy_creep.take_damage(damage);
+                
+                // Spawn spark particles at impact point
+                particle_events.send(crate::render::ParticleEvent::Sparks {
+                    position: creep_transform.translation,
+                });
+                
+                // Light screen shake for tower hit
+                shake_events.send(crate::render::ScreenShakeEvent::from_type(
+                    crate::render::ShakeEventType::Light
+                ));
             }
         }
     }

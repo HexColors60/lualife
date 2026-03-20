@@ -15,6 +15,7 @@ mod resource_transfer;
 mod room_borders;
 mod room_overlay;
 mod screen_shake;
+mod territory_overlay;
 mod tower_visualization;
 
 pub use building_render::*;
@@ -33,6 +34,7 @@ pub use resource_transfer::*;
 pub use room_borders::*;
 pub use room_overlay::*;
 pub use screen_shake::*;
+pub use territory_overlay::*;
 pub use tower_visualization::*;
 
 
@@ -54,6 +56,7 @@ impl Plugin for RenderPlugin {
             .add_plugins(ConstructionProgressPlugin)
             .add_plugins(ParticlePlugin)
             .add_plugins(ScreenShakePlugin)
+            .add_plugins(TerritoryOverlayPlugin)
             .add_systems(Startup, (setup_render, setup_debug_overlays))
             .add_systems(
                 Update,
