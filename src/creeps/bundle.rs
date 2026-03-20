@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-use super::{Creep, CreepBody, CreepRole};
-use crate::factions::FactionId;
-use crate::world::WorldPos;
+use super::Creep;
 
 #[derive(Bundle)]
 pub struct CreepBundle {

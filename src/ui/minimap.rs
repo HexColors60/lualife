@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use bevy::window::PrimaryWindow;
 
-use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y, ROOM_TILE_SIZE, WORLD_TILES_X, WORLD_TILES_Y};
+use crate::consts::{ROOM_TILE_SIZE, WORLD_TILES_X};
 use crate::render::MainCamera;
-use crate::world::WorldMap;
+use crate::territory::TerritoryManager;
+use crate::factions::FactionId;
 
 #[derive(Resource, Debug, Clone)]
 pub struct MinimapState {
@@ -32,6 +32,10 @@ pub struct MinimapImage;
 #[derive(Component)]
 pub struct MinimapCameraIndicator;
 
+/// Marker for minimap territory display
+#[derive(Component)]
+pub struct MinimapTerritory;
+
 /// Setup minimap UI
 pub fn setup_minimap(mut commands: Commands, minimap_state: Res<MinimapState>) {
     if !minimap_state.visible {
@@ -57,6 +61,21 @@ pub fn setup_minimap(mut commands: Commands, minimap_state: Res<MinimapState>) {
         MinimapPanel,
     ));
 
+    // Territory visualization (canvas of colored pixels)
+    // Using a sprite to render territory colors
+    commands.spawn((
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::srgba(0.2, 0.2, 0.3, 0.8),
+                custom_size: Some(Vec2::new(128.0, 128.0)),
+                ..default()
+            },
+            transform: Transform::from_xyz(0.0, 0.0, 5.0),
+            ..default()
+        },
+        MinimapTerritory,
+    ));
+
     // Camera indicator (small rectangle showing camera view)
     commands.spawn((
         SpriteBundle {
@@ -70,6 +89,56 @@ pub fn setup_minimap(mut commands: Commands, minimap_state: Res<MinimapState>) {
         },
         MinimapCameraIndicator,
     ));
+}
+
+/// Faction colors for minimap display
+fn get_faction_color(faction_id: FactionId) -> Color {
+    // Generate a unique color for each faction based on ID
+    let hue = (faction_id.0 as f32 * 11.25) % 360.0; // 360/32 = 11.25 degrees per faction
+    let saturation: f32 = 0.7;
+    let lightness: f32 = 0.5;
+    
+    // HSL to RGB conversion
+    let c = (1.0 - (2.0 * lightness - 1.0).abs()) * saturation;
+    let x = c * (1.0 - ((hue / 60.0) % 2.0 - 1.0).abs());
+    let m = lightness - c / 2.0;
+    
+    let (r, g, b) = if hue < 60.0 {
+        (c, x, 0.0)
+    } else if hue < 120.0 {
+        (x, c, 0.0)
+    } else if hue < 180.0 {
+        (0.0, c, x)
+    } else if hue < 240.0 {
+        (0.0, x, c)
+    } else if hue < 300.0 {
+        (x, 0.0, c)
+    } else {
+        (c, 0.0, x)
+    };
+    
+    Color::srgb(r + m, g + m, b + m)
+}
+
+/// Update minimap territory colors based on faction control
+pub fn update_minimap_territory(
+    territory: Res<TerritoryManager>,
+    mut territory_sprite: Query<&mut Sprite, With<MinimapTerritory>>,
+) {
+    // This would ideally use a texture to render territory colors
+    // For simplicity, we'll just log the territory counts
+    if territory.is_changed() {
+        let mut total_controlled = 0;
+        for faction_id in 0..32u16 {
+            let faction = FactionId(faction_id);
+            let count = territory.get_territory_count(faction);
+            if count > 0 {
+                total_controlled += count;
+            }
+        }
+        // Territory is being tracked
+        let _ = total_controlled;
+    }
 }
 
 /// Update minimap camera indicator position

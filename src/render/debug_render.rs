@@ -3,7 +3,6 @@ use bevy::prelude::*;
 use crate::creeps::Creep;
 use crate::debug::{DebugOverlays, GodMode};
 use crate::path::PathCache;
-use crate::render::MainCamera;
 use crate::world::WorldMap;
 
 /// Marker for debug overlay entities

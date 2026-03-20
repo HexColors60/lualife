@@ -4,7 +4,6 @@ use bevy::prelude::*;
 
 use super::{Room, RoomCoord, Tile, WorldPos};
 use crate::consts::*;
-use crate::error::{GameError, GameResult};
 
 /// The main world map resource
 #[derive(Resource, Debug, Clone)]

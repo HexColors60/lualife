@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use crate::core::TickNumber;
 use crate::factions::FactionId;
 use crate::resources::ResourceType;
-use crate::world::WorldMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameSnapshot {

@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 
-use super::{Building, BuildingType};
+use super::BuildingType;
 use crate::factions::FactionId;
-use crate::world::WorldPos;
 
 #[derive(Debug, Clone, Component)]
 pub struct ConstructionSite {

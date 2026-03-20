@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use crate::config::AiConfig;
-use crate::error::{GameError, GameResult};
+use crate::error::GameResult;
 use crate::factions::FactionId;
 use crate::lua::LuaVm;
 

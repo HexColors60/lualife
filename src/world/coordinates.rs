@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 use crate::consts::*;
-use crate::error::GameError;
 
 /// World position in tile coordinates
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
@@ -64,6 +63,14 @@ impl RoomCoord {
         Self { x, y }
     }
 
+    /// Try to create a RoomCoord, returning None if out of bounds.
+    pub fn try_new(x: i32, y: i32) -> Option<Self> {
+        if x >= 0 && y >= 0 && (x as u32) < ROOM_GRID_X && (y as u32) < ROOM_GRID_Y {
+            Some(Self { x: x as u32, y: y as u32 })
+        } else {
+            None
+        }
+    }
     pub fn from_index(index: usize) -> Self {
         let x = (index % ROOM_GRID_X as usize) as u32;
         let y = (index / ROOM_GRID_X as usize) as u32;

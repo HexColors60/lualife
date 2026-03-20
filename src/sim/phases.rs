@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 
-use crate::core::{GameState, TickNumber};
+use crate::core::GameState;
 use crate::creeps::{Creep, CreepAction};
 use crate::mines::MineNode;
 use crate::path::{AStar, PathCache};
-use crate::resources::ResourceType;
 use crate::world::WorldMap;
 
 /// Simulation phase ordering
@@ -149,28 +148,32 @@ pub fn mining_phase(
 }
 
 /// Combat phase system - handles creep vs creep combat
-pub fn combat_phase(mut creeps: Query<(Entity, &mut Creep)>, game_state: Res<GameState>) {
+pub fn combat_phase(
+    mut creeps: Query<(Entity, &mut Creep, &Transform)>,
+    game_state: Res<GameState>,
+    mut damage_events: EventWriter<crate::render::DamageEvent>,
+) {
     if *game_state != GameState::Running {
         return;
     }
 
     // Simple combat: creeps with Fight action attack target
-    let mut damage_to_apply: Vec<(Entity, f32)> = Vec::new();
+    let mut damage_to_apply: Vec<(Entity, f32, Vec3)> = Vec::new();
 
     // Collect all creeps for targeting
     let creep_data: Vec<(Entity, crate::factions::FactionId)> =
-        creeps.iter().map(|(e, c)| (e, c.faction_id)).collect();
+        creeps.iter().map(|(e, c, _)| (e, c.faction_id)).collect();
 
-    for (entity, mut creep) in creeps.iter_mut() {
+    for (entity, mut creep, transform) in creeps.iter_mut() {
         if let Some(ref action) = creep.current_action {
-            if let CreepAction::Attack { target_id } = action.action {
+            if let CreepAction::Attack { target_id: _ } = action.action {
                 // Find target by creep id (not entity)
                 for (target_entity, target_faction) in &creep_data {
                     // Check if different faction
                     if *target_faction != creep.faction_id {
                         // Simple: attack the first enemy found
                         let damage = creep.body.attack_power();
-                        damage_to_apply.push((*target_entity, damage));
+                        damage_to_apply.push((*target_entity, damage, transform.translation));
                         break;
                     }
                 }
@@ -178,11 +181,18 @@ pub fn combat_phase(mut creeps: Query<(Entity, &mut Creep)>, game_state: Res<Gam
         }
     }
 
-    // Apply damage
-    for (entity, mut creep) in creeps.iter_mut() {
-        for (target_entity, damage) in &damage_to_apply {
+    // Apply damage and send events
+    for (entity, mut creep, transform) in creeps.iter_mut() {
+        for (target_entity, damage, _pos) in &damage_to_apply {
             if entity == *target_entity {
                 creep.take_damage(*damage);
+                // Send damage event for visual feedback
+                damage_events.send(crate::render::DamageEvent {
+                    target: entity,
+                    attacker_faction: creep.faction_id,
+                    damage: *damage as u32,
+                    position: transform.translation,
+                });
             }
         }
     }
@@ -232,17 +242,33 @@ pub fn death_cleanup_phase(
     }
 }
 
-/// Economy phase - handles resource regeneration
-pub fn economy_phase(mut mines: Query<&mut MineNode>, game_state: Res<GameState>) {
+/// Economy phase - handles resource regeneration with scarcity effects
+pub fn economy_phase(
+    mut mines: Query<&mut MineNode>,
+    game_state: Res<GameState>,
+    levels: Res<crate::resources::GlobalResourceLevels>,
+    config: Res<crate::resources::ScarcityConfig>,
+) {
     if *game_state != GameState::Running {
         return;
     }
 
     for mut mine in mines.iter_mut() {
-        // Regenerate mine resources
+        // Regenerate mine resources with scarcity multiplier
         if mine.current_amount < mine.max_amount {
-            let regen = (mine.max_amount as f32 * crate::consts::DEFAULT_MINE_REGEN_RATE) as u32;
+            let base_regen = crate::consts::DEFAULT_MINE_REGEN_RATE;
+            let multiplier = crate::resources::get_regen_multiplier(
+                mine.resource_type(),
+                &levels,
+                &config,
+            );
+            let regen = (mine.max_amount as f32 * base_regen * multiplier) as u32;
             mine.current_amount = (mine.current_amount + regen).min(mine.max_amount);
+            
+            // Unexhaust if regenerated
+            if mine.current_amount > 0 && mine.exhausted {
+                mine.exhausted = false;
+            }
         }
     }
 }

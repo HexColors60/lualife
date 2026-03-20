@@ -53,6 +53,10 @@ pub struct VictoryState {
     pub progress: HashMap<FactionId, VictoryProgress>,
     pub winner: Option<FactionId>,
     pub game_over: bool,
+    /// Factions that have been eliminated
+    pub eliminated_factions: Vec<FactionId>,
+    /// Active factions still in the game
+    pub active_factions: Vec<FactionId>,
 }
 
 impl VictoryState {
@@ -63,6 +67,8 @@ impl VictoryState {
             progress: HashMap::new(),
             winner: None,
             game_over: false,
+            eliminated_factions: Vec::new(),
+            active_factions: Vec::new(),
         }
     }
 
@@ -84,6 +90,27 @@ impl VictoryState {
         }
 
         None
+    }
+
+    /// Check if only one faction remains
+    pub fn check_last_faction_standing(&mut self) -> Option<FactionId> {
+        if self.active_factions.len() == 1 {
+            let winner = self.active_factions.first().copied();
+            if let Some(w) = winner {
+                self.winner = Some(w);
+                self.game_over = true;
+            }
+            return winner;
+        }
+        None
+    }
+
+    /// Mark a faction as eliminated
+    pub fn eliminate_faction(&mut self, faction: FactionId) {
+        if !self.eliminated_factions.contains(&faction) {
+            self.eliminated_factions.push(faction);
+            self.active_factions.retain(|&f| f != faction);
+        }
     }
 }
 

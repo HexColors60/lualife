@@ -17,7 +17,6 @@ use bevy::prelude::*;
 use crate::config::WorldgenConfig;
 use crate::core::GameRng;
 use crate::world::WorldBuilder;
-use crate::world::WorldMap;
 
 pub struct WorldgenPlugin;
 

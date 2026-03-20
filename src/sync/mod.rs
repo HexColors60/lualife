@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::core::TickNumber;
-use crate::network::{ClientCommand, CommandType};
+use crate::network::ClientCommand;
 
 /// Synchronization state
 #[derive(Resource, Debug, Clone, Default)]

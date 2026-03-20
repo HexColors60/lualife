@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{FactionId, FactionRegistry};
+use super::FactionId;
 use crate::creeps::{spawn_creep, CreepBody, CreepIdGenerator};
 use crate::resources::Stockpile;
 use crate::world::WorldPos;

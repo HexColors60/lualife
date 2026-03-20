@@ -10,7 +10,9 @@ mod perf_panel;
 mod screep_status;
 mod selection;
 mod tech_ui;
+mod time_control;
 mod unit_panel;
+mod victory_screen;
 mod widgets;
 
 pub use ai_status::*;
@@ -25,8 +27,11 @@ pub use perf_panel::*;
 pub use screep_status::*;
 pub use selection::*;
 pub use tech_ui::*;
+pub use time_control::*;
 pub use unit_panel::*;
+pub use victory_screen::*;
 pub use widgets::*;
+
 
 use bevy::prelude::*;
 
@@ -38,12 +43,16 @@ impl Plugin for UiPlugin {
             .init_resource::<GameLog>()
             .init_resource::<MinimapState>()
             .add_plugins(SelectionPlugin)
+            .add_plugins(TimeControlPlugin)
+            .add_plugins(DiplomacyUIPlugin)
             .add_systems(
                 Startup,
                 (
                     setup_ui,
                     setup_minimap,
                     setup_resource_bar,
+                    setup_scarcity_indicator,
+                    setup_victory_screen,
                     setup_screep_status_panel,
                     setup_ai_status_panel,
                 ),
@@ -60,10 +69,19 @@ impl Plugin for UiPlugin {
             )
             .add_systems(
                 Update,
-                (update_resource_bar, update_screep_status, update_ai_status),
+                (
+                    update_resource_bar,
+                    update_scarcity_indicator,
+                    update_victory_screen,
+                    handle_restart_button,
+                    update_screep_status,
+                    update_ai_status,
+                ),
             );
     }
 }
+
+
 
 #[derive(Resource, Debug, Clone, Default)]
 pub struct UiState {
@@ -210,11 +228,17 @@ pub struct TickText;
 /// System to update tick display
 pub fn update_tick_display(
     tick: Res<crate::core::TickNumber>,
+    time_state: Res<crate::ui::TimeControlState>,
     mut query: Query<&mut Text, With<TickText>>,
 ) {
-    if tick.is_changed() {
+    if tick.is_changed() || time_state.is_changed() {
         for mut text in query.iter_mut() {
-            text.sections[0].value = format!("Tick: {}", tick.0);
+            let speed_text = if time_state.is_paused {
+                "PAUSED".to_string()
+            } else {
+                format!("{:.1}x", time_state.current_speed)
+            };
+            text.sections[0].value = format!("Tick: {} | Speed: {}", tick.0, speed_text);
         }
     }
 }

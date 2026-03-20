@@ -2,7 +2,7 @@ use std::path::Path;
 
 use mlua::Lua;
 
-use crate::error::{GameError, GameResult};
+use crate::error::GameResult;
 use crate::factions::FactionId;
 
 pub struct LuaVm {

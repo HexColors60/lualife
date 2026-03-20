@@ -6,7 +6,7 @@ use super::{
 use crate::config::WorldgenConfig;
 use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y};
 use crate::core::GameRng;
-use crate::world::{Room, RoomCoord, Tile};
+use crate::world::{RoomCoord, Tile};
 
 #[derive(Debug, Clone)]
 pub struct GeneratedRoom {

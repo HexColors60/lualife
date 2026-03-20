@@ -1,9 +1,5 @@
-use bevy::prelude::*;
-
-use crate::creeps::{Creep, Inventory};
+use crate::creeps::Creep;
 use crate::mines::MineNode;
-use crate::resources::ResourceType;
-
 pub struct MiningLogic;
 
 impl MiningLogic {

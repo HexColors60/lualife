@@ -1,3 +1,5 @@
+mod scarcity;
+
 mod dropped_resource;
 mod economy;
 mod recipes;
@@ -8,6 +10,7 @@ pub use dropped_resource::*;
 pub use economy::*;
 pub use recipes::*;
 pub use resource_type::*;
+pub use scarcity::*;
 pub use stockpile::*;
 
 use bevy::prelude::*;
@@ -16,7 +19,8 @@ pub struct ResourcesPlugin;
 
 impl Plugin for ResourcesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<ResourceEvent>();
+        app.add_event::<ResourceEvent>()
+            .add_plugins(ScarcityPlugin);
     }
 }
 

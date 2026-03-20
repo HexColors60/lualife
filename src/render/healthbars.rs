@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
 use crate::creeps::Creep;
-use crate::render::creep_render::CreepSprite;
-
 /// Marker for health bar background
 #[derive(Component)]
 pub struct HealthBarBackground;

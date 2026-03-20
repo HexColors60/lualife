@@ -124,13 +124,13 @@ PHASE 13: Pathfinding [DONE]
 [x] Add PathfindingCache resource
 [x] Integrate pathfinding with movement commands
 [x] Handle terrain costs (roads faster, swamp slower)
-[ ] Visualize paths in debug mode
+[x] Visualize paths in debug mode
 
 ==================================================
 PHASE 14: Tower Defense [DONE]
 ==================================================
 [x] Implement Tower building type
-[ ] Add tower attack range visualization
+[x] Add tower attack range visualization
 [x] Implement auto-targeting for towers
 [x] Add tower energy consumption
 [x] Balance tower damage and range
@@ -142,7 +142,7 @@ PHASE 15: Tech Tree [DONE]
 [x] Implement ResearchLab building
 [x] Add research progress tracking
 [x] Unlock new abilities per tech level
-[ ] Add tech visualization UI
+[x] Add tech visualization UI
 
 ==================================================
 PHASE 16: Market & Trading [DONE]
@@ -150,8 +150,8 @@ PHASE 16: Market & Trading [DONE]
 [x] Implement Market building
 [x] Add resource trading between factions
 [x] Implement dynamic pricing
-[ ] Add trade routes and caravans
-[ ] Market UI panel
+[x] Add trade routes and caravans
+[x] Market UI panel
 
 ==================================================
 PHASE 17: Audio [DONE]

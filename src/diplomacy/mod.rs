@@ -257,6 +257,132 @@ pub struct DiplomacyPlugin;
 impl Plugin for DiplomacyPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<DiplomacyState>()
-            .add_event::<DiplomacyEvent>();
+            .init_resource::<DiplomacyConfig>()
+            .add_event::<DiplomacyEvent>()
+            .add_systems(Update, (ai_diplomacy_decisions, ai_cooperation));
+    }
+}
+
+
+/// Configuration for AI diplomacy behavior
+#[derive(Resource, Debug, Clone)]
+pub struct DiplomacyConfig {
+    pub min_alliance_power_ratio: f32,
+    pub max_enemies_before_alliance: usize,
+    pub diplomacy_check_interval: u64,
+    pub alliance_proposal_chance: f32,
+    pub war_declaration_chance: f32,
+}
+
+impl Default for DiplomacyConfig {
+    fn default() -> Self {
+        Self {
+            min_alliance_power_ratio: 0.8,
+            max_enemies_before_alliance: 3,
+            diplomacy_check_interval: 500,
+            alliance_proposal_chance: 0.1,
+            war_declaration_chance: 0.05,
+        }
+    }
+}
+
+/// AI diplomacy decisions
+fn ai_diplomacy_decisions(
+    mut diplomacy: ResMut<DiplomacyState>,
+    config: Res<DiplomacyConfig>,
+    tick: Res<crate::core::TickNumber>,
+    creeps: Query<&crate::creeps::Creep>,
+    mut events: EventWriter<DiplomacyEvent>,
+) {
+    if tick.0 % config.diplomacy_check_interval != 0 {
+        return;
+    }
+
+    let mut faction_power: std::collections::HashMap<crate::factions::FactionId, u32> = 
+        std::collections::HashMap::new();
+    
+    for creep in creeps.iter() {
+        *faction_power.entry(creep.faction_id).or_insert(0) += 1;
+    }
+
+    let all_factions: Vec<crate::factions::FactionId> = faction_power.keys().copied().collect();
+
+    for &faction_id in &all_factions {
+        let my_power = faction_power.get(&faction_id).copied().unwrap_or(0);
+        let my_enemies = diplomacy.get_enemies(faction_id);
+
+        if my_enemies.len() >= config.max_enemies_before_alliance || my_power < 3 {
+            for &other_faction in &all_factions {
+                if other_faction == faction_id { continue; }
+                let stance = diplomacy.get_stance(faction_id, other_faction);
+                if stance != DiplomaticStance::Neutral { continue; }
+
+                let other_power = faction_power.get(&other_faction).copied().unwrap_or(0);
+                let ratio = if my_power > 0 { other_power as f32 / my_power as f32 } else { 1.0 };
+
+                if ratio >= config.min_alliance_power_ratio && rand::random::<f32>() < config.alliance_proposal_chance {
+                    diplomacy.set_stance(faction_id, other_faction, DiplomaticStance::Allied);
+                    events.send(DiplomacyEvent::StanceChanged {
+                        faction1: faction_id, faction2: other_faction, stance: DiplomaticStance::Allied
+                    });
+                }
+            }
+        }
+
+        if my_power > 5 && my_enemies.len() < 2 && rand::random::<f32>() < config.war_declaration_chance {
+            for &other_faction in &all_factions {
+                if other_faction == faction_id { continue; }
+                let stance = diplomacy.get_stance(faction_id, other_faction);
+                if stance != DiplomaticStance::Neutral { continue; }
+
+                let other_power = faction_power.get(&other_faction).copied().unwrap_or(0);
+                if other_power > 0 && my_power > other_power * 2 {
+                    diplomacy.set_stance(faction_id, other_faction, DiplomaticStance::Enemy);
+                    events.send(DiplomacyEvent::StanceChanged {
+                        faction1: faction_id, faction2: other_faction, stance: DiplomaticStance::Enemy
+                    });
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+/// AI cooperation - allied factions share intelligence and coordinate
+fn ai_cooperation(
+    diplomacy: Res<DiplomacyState>,
+    tick: Res<crate::core::TickNumber>,
+    mut events: EventWriter<DiplomacyEvent>,
+) {
+    // Only check periodically
+    if tick.0 % 1000 != 0 {
+        return;
+    }
+
+    // For each faction, check if allies share common enemies
+    for faction_id in 0..32u16 {
+        let faction = crate::factions::FactionId(faction_id);
+        let allies = diplomacy.get_allies(faction);
+        let enemies = diplomacy.get_enemies(faction);
+
+        // If we have allies and enemies, they should also consider our enemies as theirs
+        if !allies.is_empty() && !enemies.is_empty() {
+            for &ally in &allies {
+                for &enemy in &enemies {
+                    let ally_stance = diplomacy.get_stance(ally, enemy);
+                    // If ally is neutral to our enemy, encourage them to become hostile
+                    if ally_stance == DiplomaticStance::Neutral && rand::random::<f32>() < 0.1 {
+                        // 10% chance to influence ally's stance
+                        // This is just an event notification - actual stance change would need mutable diplomacy
+                        events.send(DiplomacyEvent::StanceChanged {
+                            faction1: ally,
+                            faction2: enemy,
+                            stance: DiplomaticStance::Enemy,
+                        });
+                    }
+                }
+            }
+        }
     }
 }

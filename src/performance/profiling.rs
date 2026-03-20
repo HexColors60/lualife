@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use std::collections::HashMap;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 #[derive(Resource, Debug, Clone, Default)]
 pub struct Profiler {

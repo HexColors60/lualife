@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{Creep, CreepBody, CreepBundle, CreepRole};
+use super::{Creep, CreepBody, CreepBundle};
 use crate::factions::FactionId;
 use crate::world::WorldPos;
 

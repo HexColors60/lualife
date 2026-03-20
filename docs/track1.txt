@@ -69,3 +69,44 @@
 2026-03-17 Phase 23 world events: WorldEventType, Season, WorldEventManager, EventNotification with random events and seasonal changes.
 2026-03-17 Phase 24 achievements: Achievement, AchievementProgress, PlayerStatistics, LeaderboardManager, GameHistory with unlock events.
 2026-03-17 Phase 25 modding: ModInfo, CustomBuilding, CustomResource, CustomBodyPart, CustomTech, ModManager, WorkshopManager with RON config loading.
+2026-03-19 Fixed missing debug module: created src/debug.rs with DebugPlugin, GodMode, DebugOverlays, SelectionState, PerfMetrics resources.
+2026-03-19 Project compiles successfully with 78 minor warnings (unused imports).
+2026-03-19 Game runs successfully: 32 factions, 1024 rooms, 2562 mines, Vulkan renderer on RTX 5090.
+2026-03-19 Created missing AI scripts: generated main.lua for AI_02 through AI_31 (30 new AI factions).
+2026-03-19 All 32 AI factions now have Lua scripts loaded.
+2026-03-19 Added Time Control UI: pause, 0.5x, 1x, 2x, 4x, 8x speed buttons at top-center.
+2026-03-19 Created TimeControlPlugin with TimeControlState resource, PauseButton and SpeedButton components.
+2026-03-19 Generated 30 unique AI scripts with varied personalities: Survivor, Aggressive, Economic, Builder, Defensive, Explorer, Scavenger, Tank, Rusher, Turtle, Swarm, Tech, Farmer, Raider, Diplomat, Isolationist, Expansionist, Minimalist, Hoarder, Gambler, Calculator, Nomad, Territorial, Opportunist, Determined, Cautious, Warmonger, Passive, Random, Symbiotic, Parasitic.
+2026-03-19 Added keyboard shortcuts for time control: Space (pause), -/+ (speed down/up).
+2026-03-19 Added speed indicator to tick display showing current speed or PAUSED status.
+2026-03-19 Updated README with all keyboard shortcuts documentation.
+2026-03-19 Implemented Fog of War system: VisibilityPlugin, update_visibility_from_creeps system.
+2026-03-19 Added RoomCoord::try_new for bounds-checked coordinate creation.
+2026-03-19 Added RoomSprite component with room_coord field, RoomOriginalColor for fog rendering.
+2026-03-19 Added update_fog_of_war system that darkens undiscovered/distant rooms based on visibility.
+2026-03-19 GOD mode bypasses fog of war, showing all rooms at full brightness.
+2026-03-19 Implemented resource scarcity system: GlobalResourceLevels, ScarcityConfig, ScarcityEvent.
+2026-03-19 Added economy_phase with scarcity-based regeneration multipliers: critical=0.25x, scarce=0.5x, abundant=1.5x.
+2026-03-19 Enhanced diplomacy with AI decisions: ai_diplomacy_decisions system for alliance proposals and war declarations.
+2026-03-19 Added DiplomacyConfig for tuning diplomacy behavior: power ratios, enemy thresholds, proposal chances.
+2026-03-19 Enhanced victory system with faction elimination tracking and last-faction-standing victory.
+2026-03-19 Added eliminated_factions and active_factions tracking to VictoryState for elimination monitoring.
+2026-03-19 Fixed ResourcesPlugin registration in app.rs - was missing from plugin list causing economy_phase panic.
+2026-03-19 Game verified working: 32 factions, 1024 rooms, 2569 mines, Vulkan renderer on RTX 5090.
+2026-03-19 Added resource scarcity indicator UI showing global resource levels and scarcity status.
+2026-03-19 Added victory screen overlay with winner announcement, stats, and restart button.
+2026-03-19 Enhanced diplomacy UI panel with proper visual display of alliances, wars, and faction relations.
+2026-03-19 Added AI cooperation system - allied factions share enemy intelligence and coordinate war efforts.
+2026-03-19 Enhanced economy Lua API with scarcity status functions: get_scarcity_status, is_resource_critical, is_resource_scarce.
+2026-03-19 Updated AI script (ai_00) with scarcity-aware resource prioritization.
+2026-03-20 Cleaned up 50+ unused import warnings across codebase, reducing from 86 to 38 warnings.
+
+2026-03-20 Added combat visualization: floating damage numbers when creeps attack.
+2026-03-20 Added DamageEvent and damage number rendering system with float-up animation.
+2026-03-20 Enhanced minimap with territory color system and faction color generation.
+2026-03-20 Added get_faction_color function with HSL to RGB conversion for 32 unique faction colors.
+2026-03-20 Added room border rendering system with G key toggle for grid lines between rooms.
+2026-03-20 Added creep trail visualization system with V key toggle for movement tracking.
+2026-03-20 Added resource transfer animation system for visual feedback during resource exchanges.
+2026-03-20 Added construction progress bar rendering for building sites showing completion percentage.
+

@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use bevy::prelude::*;
 
 use super::{Faction, FactionId, FactionMemory};
-use crate::config::AiConfig;
 use crate::resources::Stockpile;
 
 #[derive(Resource, Debug, Default)]

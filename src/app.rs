@@ -25,6 +25,7 @@ use crate::performance::PerformancePlugin;
 use crate::quality_of_life::QualityOfLifePlugin;
 use crate::render::RenderPlugin;
 use crate::reputation::ReputationPlugin;
+use crate::resources::ResourcesPlugin;
 use crate::research::ResearchPlugin;
 use crate::save::SavePlugin;
 use crate::sim::SimPlugin;
@@ -54,7 +55,6 @@ impl Plugin for GameAppPlugin {
         // Set clear color (dark background)
         app.insert_resource(ClearColor(Color::srgb(0.05, 0.05, 0.1)));
 
-        // Add game plugins
         app.add_plugins((
             GameConfigPlugin,
             CorePlugin,
@@ -64,6 +64,7 @@ impl Plugin for GameAppPlugin {
             WorldgenPlugin,
             BuildingsPlugin,
             PathPlugin,
+            ResourcesPlugin,
         ));
         app.add_plugins((
             ResearchPlugin,

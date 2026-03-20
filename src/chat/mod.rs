@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 
-use crate::factions::FactionId;
 
 /// Chat message
 #[derive(Debug, Clone, Serialize, Deserialize)]

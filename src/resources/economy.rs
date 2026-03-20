@@ -1,7 +1,4 @@
-use bevy::prelude::*;
-
 use super::{ResourceType, Stockpile};
-use crate::factions::FactionId;
 
 pub struct EconomySystem;
 

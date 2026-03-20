@@ -1,6 +1,5 @@
-use bevy::prelude::*;
 
-use super::{Room, RoomCoord, WorldMap};
+use super::{Room, WorldMap};
 use crate::worldgen::GeneratedWorld;
 
 pub struct WorldBuilder;

@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use bevy::prelude::*;
 
-use crate::creeps::CreepAction;
 use crate::factions::FactionId;
 use crate::resources::ResourceType;
 use crate::world::WorldPos;

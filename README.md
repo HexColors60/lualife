@@ -25,11 +25,20 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 | Scroll | Zoom in/out |
 | Click | Select unit |
 | ESC | Deselect |
+| Space | Pause/Resume |
+| -/+ | Decrease/Increase speed |
 | M | Toggle minimap |
+| G | Toggle room grid borders |
+| V | Toggle creep movement trails |
 | F3 | Toggle debug overlay |
 | F4 | Toggle performance display |
 | F5 | Quick save |
+| F6 | Path visualization |
+| F7 | Tower range visualization |
 | F9 | Quick load |
+| T | Tech tree UI |
+| K | Market UI |
+| Shift+D | Diplomacy UI |
 
 ## Building
 

@@ -11,8 +11,6 @@ pub use worldgen_config::*;
 use bevy::prelude::*;
 use std::path::Path;
 
-use crate::consts::*;
-use crate::error::GameResult;
 
 pub struct GameConfigPlugin;
 

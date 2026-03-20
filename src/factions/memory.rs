@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use bevy::prelude::*;
 
 use super::FactionId;
 

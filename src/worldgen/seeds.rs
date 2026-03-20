@@ -1,5 +1,3 @@
-use rand::Rng;
-
 pub fn derive_seed(base_seed: u64, modifier: &str) -> u64 {
     use std::collections::hash_map::DefaultHasher;
     use std::hash::{Hash, Hasher};

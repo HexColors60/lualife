@@ -1,7 +1,7 @@
 use crate::config::WorldgenConfig;
-use crate::consts::{ROOM_GRID_X, ROOM_GRID_Y, ROOM_TILE_SIZE};
+use crate::consts::ROOM_TILE_SIZE;
 use crate::core::GameRng;
-use crate::world::{Room, RoomCoord, TerrainType, Tile};
+use crate::world::{RoomCoord, TerrainType, Tile};
 
 pub struct RoomLayoutGenerator;
 

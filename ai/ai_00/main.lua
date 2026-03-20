@@ -1,5 +1,5 @@
 -- Advanced AI script for faction ai_00
--- Demonstrates autonomous behavior with survival loop
+-- Demonstrates autonomous behavior with survival loop and scarcity awareness
 
 -- Initialize memory if not exists
 if not memory then
@@ -9,6 +9,8 @@ if not memory then
         last_log_tick = 0,
         targets = {}, -- unit_id -> target info
         base_pos = nil,
+        scarcity_check_tick = 0,
+        priority_resources = nil,
     }
 end
 
@@ -21,6 +23,12 @@ end
 -- Called every tick
 function on_tick()
     memory.tick_count = memory.tick_count + 1
+
+    -- Update scarcity-aware priorities periodically
+    if memory.tick_count - memory.scarcity_check_tick >= 100 then
+        memory.scarcity_check_tick = memory.tick_count
+        update_resource_priorities()
+    end
 
     -- Get owned units
     local owned_units = units.list_owned()
@@ -40,6 +48,42 @@ function on_tick()
     if memory.tick_count - memory.last_log_tick >= 500 then
         memory.last_log_tick = memory.tick_count
         log.info(string.format("AI 00: Tick %d, Units: %d", memory.tick_count, #owned_units))
+    end
+end
+
+-- Update resource priorities based on scarcity
+function update_resource_priorities()
+    -- Check scarcity status for each resource
+    local resources = { "power", "iron", "copper", "silicon", "crystal", "carbon" }
+    local priorities = {}
+    
+    for _, res in ipairs(resources) do
+        local status = economy.get_scarcity_status(res)
+        local priority = 1 -- normal priority
+        
+        if status == "critical" then
+            priority = 3 -- highest priority
+        elseif status == "scarce" then
+            priority = 2 -- high priority
+        elseif status == "abundant" then
+            priority = 0 -- low priority, we have plenty
+        end
+        
+        priorities[res] = priority
+    end
+    
+    -- Sort resources by priority
+    memory.priority_resources = {}
+    for _, res in ipairs(resources) do
+        table.insert(memory.priority_resources, { resource = res, priority = priorities[res] })
+    end
+    table.sort(memory.priority_resources, function(a, b) return a.priority > b.priority end)
+    
+    -- Log critical resources
+    for _, item in ipairs(memory.priority_resources) do
+        if item.priority >= 2 then
+            log.info(string.format("AI 00: Resource %s is scarce (priority %d)", item.resource, item.priority))
+        end
     end
 end
 
@@ -65,12 +109,33 @@ function process_unit(unit_id, unit)
     local has_build = has_part(unit, "build")
     local has_work = has_part(unit, "work")
 
-    -- Priority 1: Mine power if we can
+    -- Priority 1: Mine based on scarcity-aware priorities
     if has_mine then
-        local mine = find_nearest_mine(unit, "power")
-        if mine then
-            units.mine(unit_id, mine.id)
-            return
+        -- Always check power first for survival
+        if economy.is_resource_critical("power") or economy.is_resource_scarce("power") then
+            local mine = find_nearest_mine(unit, "power")
+            if mine then
+                units.mine(unit_id, mine.id)
+                return
+            end
+        end
+        
+        -- Mine based on priority list
+        if memory.priority_resources then
+            for _, item in ipairs(memory.priority_resources) do
+                local mine = find_nearest_mine(unit, item.resource)
+                if mine then
+                    units.mine(unit_id, mine.id)
+                    return
+                end
+            end
+        else
+            -- Fallback: mine power
+            local mine = find_nearest_mine(unit, "power")
+            if mine then
+                units.mine(unit_id, mine.id)
+                return
+            end
         end
     end
 
@@ -143,51 +208,37 @@ function find_construction_site(unit)
     return nearest
 end
 
--- Calculate distance between two points
-function distance(x1, y1, x2, y2)
-    local dx = x1 - x2
-    local dy = y1 - y2
-    return math.sqrt(dx * dx + dy * dy)
-end
-
--- Check if a creep has a specific body part
-function has_part(unit, part_type)
-    if not unit.body then
+-- Helper: check if unit has a specific body part
+function has_part(unit, part_name)
+    if not unit.body_parts then
         return false
     end
-    for _, part in ipairs(unit.body) do
-        if part == part_type then
+    for _, part in ipairs(unit.body_parts) do
+        if part == part_name then
             return true
         end
     end
     return false
 end
 
+-- Helper: calculate distance between two points
+function distance(x1, y1, x2, y2)
+    local dx = x2 - x1
+    local dy = y2 - y1
+    return math.sqrt(dx * dx + dy * dy)
+end
+
 -- Explore behavior
 function explore(unit_id, unit)
-    -- Move towards unexplored areas
-    local dx = math.random(-2, 2)
-    local dy = math.random(-2, 2)
-    local target_x = math.max(0, math.min(255, unit.x + dx))
-    local target_y = math.max(0, math.min(255, unit.y + dy))
+    -- Random exploration
+    local dx = math.random(-5, 5)
+    local dy = math.random(-5, 5)
+    local target_x = unit.x + dx
+    local target_y = unit.y + dy
+    
+    -- Clamp to world bounds
+    target_x = math.max(0, math.min(255, target_x))
+    target_y = math.max(0, math.min(255, target_y))
+    
     units.move_to(unit_id, target_x, target_y)
-end
-
--- Called when a unit is spawned
-function on_unit_spawned(unit_id)
-    log.info("Unit spawned: " .. tostring(unit_id))
-end
-
--- Called when a unit dies
-function on_unit_died(unit_id)
-    log.warn("Unit died: " .. tostring(unit_id))
-    -- Clear from memory
-    if memory.targets then
-        memory.targets[unit_id] = nil
-    end
-end
-
--- Called when a building is completed
-function on_building_completed(building_id, building_type)
-    log.info("Building completed: " .. tostring(building_type))
 end
