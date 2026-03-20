@@ -93,6 +93,42 @@ impl TooltipState {
             },
         );
 
+        tooltips.insert(
+            "time_control".to_string(),
+            TooltipInfo {
+                title: "Time Control".to_string(),
+                description: "Pause, resume, and adjust simulation speed.".to_string(),
+                shortcut: Some("Space / -/+".to_string()),
+            },
+        );
+
+        tooltips.insert(
+            "scarcity_indicator".to_string(),
+            TooltipInfo {
+                title: "Global Resources".to_string(),
+                description: "Shows global resource scarcity levels. CRITICAL means resources are nearly depleted.".to_string(),
+                shortcut: None,
+            },
+        );
+
+        tooltips.insert(
+            "room_borders".to_string(),
+            TooltipInfo {
+                title: "Room Grid".to_string(),
+                description: "Toggle room boundary lines for better visibility.".to_string(),
+                shortcut: Some("G".to_string()),
+            },
+        );
+
+        tooltips.insert(
+            "creep_trails".to_string(),
+            TooltipInfo {
+                title: "Movement Trails".to_string(),
+                description: "Toggle creep movement trail visualization.".to_string(),
+                shortcut: Some("V".to_string()),
+            },
+        );
+
         Self {
             visible: false,
             current_tooltip: None,

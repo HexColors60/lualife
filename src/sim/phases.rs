@@ -116,15 +116,16 @@ pub fn movement_phase(
 
 /// Mining phase system - handles resource extraction
 pub fn mining_phase(
-    mut creeps: Query<&mut Creep>,
+    mut creeps: Query<(&mut Creep, &Transform)>,
     mut mines: Query<&mut MineNode>,
     game_state: Res<GameState>,
+    mut transfer_events: EventWriter<crate::render::ResourceTransferEvent>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
 
-    for mut creep in creeps.iter_mut() {
+    for (mut creep, transform) in creeps.iter_mut() {
         if let Some(ref action) = creep.current_action {
             if let CreepAction::Mine { mine_id } = action.action {
                 // Find the mine and extract resources
@@ -138,6 +139,14 @@ pub fn mining_phase(
                             // Add to creep inventory
                             let resource_type = mine.resource_type();
                             creep.inventory.add(resource_type, extracted);
+
+                            // Send visual feedback event
+                            transfer_events.send(crate::render::ResourceTransferEvent {
+                                position: transform.translation,
+                                resource_type,
+                                amount: extracted,
+                                is_deposit: true,
+                            });
                         }
                         break;
                     }

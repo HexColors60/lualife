@@ -109,4 +109,7 @@
 2026-03-20 Added creep trail visualization system with V key toggle for movement tracking.
 2026-03-20 Added resource transfer animation system for visual feedback during resource exchanges.
 2026-03-20 Added construction progress bar rendering for building sites showing completion percentage.
+2026-03-20 Added tooltips for new UI elements: time control, scarcity indicator, room borders, creep trails.
+2026-03-20 Integrated resource transfer events into mining phase for visual feedback.
+
 
