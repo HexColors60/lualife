@@ -1,6 +1,7 @@
 mod ai_status;
 mod creep_customization;
 mod diplomacy_ui;
+mod faction_leaderboard;
 mod layout;
 mod log_panel;
 mod map_view;
@@ -18,6 +19,7 @@ mod widgets;
 pub use ai_status::*;
 pub use creep_customization::*;
 pub use diplomacy_ui::*;
+pub use faction_leaderboard::*;
 pub use layout::*;
 pub use log_panel::*;
 pub use map_view::*;
@@ -32,7 +34,6 @@ pub use unit_panel::*;
 pub use victory_screen::*;
 pub use widgets::*;
 
-
 use bevy::prelude::*;
 
 pub struct UiPlugin;
@@ -45,6 +46,7 @@ impl Plugin for UiPlugin {
             .add_plugins(SelectionPlugin)
             .add_plugins(TimeControlPlugin)
             .add_plugins(DiplomacyUIPlugin)
+            .add_plugins(FactionLeaderboardPlugin)
             .add_systems(
                 Startup,
                 (

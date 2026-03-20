@@ -119,4 +119,7 @@
 2026-03-20 Added faction identity system with 32 unique leader names, titles, mottos, and personalities.
 2026-03-20 Added day/night cycle system with dawn, day, dusk, night phases and lighting effects.
 2026-03-20 Added controls: T (territory overlay), N (day/night pause), [/] (time speed), Shift+1-4 (skip time).
+2026-03-20 Added faction leaderboard UI (F key) showing top factions by territory and creeps.
+2026-03-20 Added AI behavior config initialization from faction identities and personalities.
+
 

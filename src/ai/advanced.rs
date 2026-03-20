@@ -296,6 +296,67 @@ impl Plugin for AdvancedAiPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<AiBehaviorConfig>()
             .init_resource::<AiLearningData>()
-            .init_resource::<AiCoordinator>();
+            .init_resource::<AiCoordinator>()
+            .add_systems(Startup, initialize_ai_behavior_configs);
+    }
+}
+
+/// Initialize AI behavior configs from faction identities
+fn initialize_ai_behavior_configs(
+    mut behavior_config: ResMut<AiBehaviorConfig>,
+    identities: Res<crate::factions::FactionIdentities>,
+    registry: Res<crate::factions::FactionRegistry>,
+) {
+    for faction in registry.all() {
+        let config = if let Some(identity) = identities.get(faction.id) {
+            FactionAiConfig {
+                faction_id: faction.id,
+                difficulty: identity.difficulty,
+                personality: identity.personality,
+                retreat_threshold: get_retreat_threshold(identity.personality),
+                surrender_threshold: get_surrender_threshold(identity.personality),
+                expansion_desire: get_expansion_desire(identity.personality),
+            }
+        } else {
+            FactionAiConfig::default()
+        };
+        
+        behavior_config.faction_configs.insert(faction.id, config);
+    }
+}
+
+/// Get retreat threshold based on personality
+fn get_retreat_threshold(personality: AiPersonality) -> f32 {
+    match personality {
+        AiPersonality::Aggressive => 0.1,  // Retreat only when nearly dead
+        AiPersonality::Defensive => 0.4,   // Retreat earlier to preserve forces
+        AiPersonality::Economic => 0.25,
+        AiPersonality::Scientific => 0.3,
+        AiPersonality::Diplomatic => 0.35,
+        AiPersonality::Balanced => 0.2,
+    }
+}
+
+/// Get surrender threshold based on personality
+fn get_surrender_threshold(personality: AiPersonality) -> f32 {
+    match personality {
+        AiPersonality::Aggressive => 0.0,  // Never surrender
+        AiPersonality::Defensive => 0.15,
+        AiPersonality::Economic => 0.2,
+        AiPersonality::Scientific => 0.1,
+        AiPersonality::Diplomatic => 0.25, // More willing to negotiate
+        AiPersonality::Balanced => 0.1,
+    }
+}
+
+/// Get expansion desire based on personality
+fn get_expansion_desire(personality: AiPersonality) -> f32 {
+    match personality {
+        AiPersonality::Aggressive => 0.9,  // Very expansionist
+        AiPersonality::Defensive => 0.3,
+        AiPersonality::Economic => 0.6,
+        AiPersonality::Scientific => 0.4,
+        AiPersonality::Diplomatic => 0.5,
+        AiPersonality::Balanced => 0.5,
     }
 }

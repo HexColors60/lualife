@@ -31,6 +31,7 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 | G | Toggle room grid borders |
 | V | Toggle creep movement trails |
 | T | Toggle territory overlay |
+| F | Toggle faction leaderboard |
 | N | Pause day/night cycle |
 | [/] | Slow/Speed up day/night |
 | Shift+1-4 | Skip to Dawn/Noon/Dusk/Midnight |
