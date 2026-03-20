@@ -9,10 +9,12 @@ mod debug_render;
 mod healthbars;
 mod map_render;
 mod mine_render;
+mod particles;
 mod path_visualization;
 mod resource_transfer;
 mod room_borders;
 mod room_overlay;
+mod screen_shake;
 mod tower_visualization;
 
 pub use building_render::*;
@@ -25,10 +27,12 @@ pub use damage_numbers::*;
 pub use healthbars::*;
 pub use map_render::*;
 pub use mine_render::*;
+pub use particles::*;
 pub use path_visualization::*;
 pub use resource_transfer::*;
 pub use room_borders::*;
 pub use room_overlay::*;
+pub use screen_shake::*;
 pub use tower_visualization::*;
 
 
@@ -48,6 +52,8 @@ impl Plugin for RenderPlugin {
             .add_plugins(CreepTrailPlugin)
             .add_plugins(ResourceTransferPlugin)
             .add_plugins(ConstructionProgressPlugin)
+            .add_plugins(ParticlePlugin)
+            .add_plugins(ScreenShakePlugin)
             .add_systems(Startup, (setup_render, setup_debug_overlays))
             .add_systems(
                 Update,

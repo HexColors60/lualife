@@ -111,5 +111,9 @@
 2026-03-20 Added construction progress bar rendering for building sites showing completion percentage.
 2026-03-20 Added tooltips for new UI elements: time control, scarcity indicator, room borders, creep trails.
 2026-03-20 Integrated resource transfer events into mining phase for visual feedback.
+2026-03-20 Added particle system for explosions, smoke, sparks, and resource pickup effects.
+2026-03-20 Added screen shake system with intensity levels (Light, Medium, Heavy, Impact).
+2026-03-20 Added ParticleEvent and ScreenShakeEvent for triggering visual feedback.
+
 
 
