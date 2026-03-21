@@ -37,6 +37,7 @@ use crate::trade::TradePlugin;
 use crate::tutorial::TutorialPlugin;
 use crate::ui::UiPlugin;
 use crate::quests::{QuestPlugin, QuestUIPlugin};
+use crate::editor::{EditorPlugin, EditorUIPlugin, EditorSystemsPlugin};
 use crate::victory::VictoryPlugin;
 use crate::weather::WeatherPlugin;
 use crate::world::WorldPlugin;
@@ -109,6 +110,9 @@ impl Plugin for GameAppPlugin {
             RenderPlugin,
             UiPlugin,
             DiscordPlugin,
+            EditorPlugin,
+            EditorUIPlugin,
+            EditorSystemsPlugin,
         ));
         app.add_plugins((DebugPlugin, LuaPlugin));
     }

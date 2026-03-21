@@ -11,9 +11,10 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 - **Dynamic Weather**: Rain, snow, fog, storms, and heatwaves with gameplay effects
 - **Seasonal Cycles**: Spring, summer, autumn, winter with weather probabilities
 - **Hero System**: 6 hero types with unique abilities, leveling, and progression
-- **Quest System**: Dynamic objectives with rewards, difficulty scaling, and time limits
-- **Save/Load**: Quick save (F5) and quick load (F9) support
-## World
+- **Quest System": Dynamic objectives with rewards, difficulty scaling, and time limits
+- **Map Editor": In-game terrain painting, mine/building placement (F8)
+- **Save/Load": Quick save (F5) and quick load (F9) support
+
 
 - **Size**: 256x256 tiles
 - **Rooms**: 32x32 room grid (8x8 tiles per room)
@@ -47,6 +48,7 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 | K | Market UI |
 | P | Toggle quest panel |
 | Shift+D | Diplomacy UI |
+| F8 | Toggle map editor |
 
 ## Building
 
