@@ -3,14 +3,13 @@
 //! Handles targeting, effects, and visual feedback for abilities.
 
 use bevy::prelude::*;
-use rand::Rng;
 
 use crate::core::TickNumber;
 use crate::creeps::Creep;
 use crate::factions::FactionId;
 use crate::world::WorldPos;
 
-use super::{AbilityExecutedEvent, AbilityType, Hero, HeroType};
+use super::{AbilityExecutedEvent, AbilityType, Hero};
 
 /// Active ability effect
 #[derive(Component)]

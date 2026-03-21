@@ -4,7 +4,7 @@
 
 use bevy::prelude::*;
 
-use super::{AbilityType, Hero, HeroRegistry, HeroType};
+use super::{Hero, HeroRegistry};
 
 /// Marker for hero panel
 #[derive(Component)]

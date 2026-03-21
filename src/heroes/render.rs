@@ -5,7 +5,6 @@
 use bevy::prelude::*;
 
 use crate::factions::FactionRegistry;
-use crate::world::WorldPos;
 
 use super::{Hero, HeroType};
 

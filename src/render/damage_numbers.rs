@@ -2,7 +2,6 @@
 
 use bevy::prelude::*;
 
-use crate::creeps::Creep;
 use crate::factions::FactionId;
 
 /// Component for floating damage text

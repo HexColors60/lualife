@@ -5,7 +5,6 @@
 use bevy::prelude::*;
 
 use crate::world::{WorldMap, TerrainType};
-use crate::core::TickNumber;
 
 use super::{EditorMode, EditorState, EditorTool, EditorAction, EditorActionEvent};
 

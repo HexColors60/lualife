@@ -4,7 +4,7 @@
 
 use bevy::prelude::*;
 
-use super::{Quest, QuestRegistry, QuestObjectiveType};
+use super::{QuestRegistry, QuestObjectiveType};
 
 /// Marker for quest panel
 #[derive(Component)]
