@@ -7,11 +7,12 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 - **32 AI Factions**: Each faction runs its own Lua script to control units
 - **Autonomous Simulation**: Units mine resources, build structures, and survive
 - **Lua Scripting**: Full Lua API for AI development
-- **Real-time Rendering**: Visual representation of the world with Bevy
+- **Real-time Rendering": Visual representation of the world with Bevy
 - **Dynamic Weather**: Rain, snow, fog, storms, and heatwaves with gameplay effects
 - **Seasonal Cycles**: Spring, summer, autumn, winter with weather probabilities
+- **Hero System**: 6 hero types with unique abilities, leveling, and progression
+- **Quest System**: Dynamic objectives with rewards, difficulty scaling, and time limits
 - **Save/Load**: Quick save (F5) and quick load (F9) support
-
 ## World
 
 - **Size**: 256x256 tiles
@@ -44,6 +45,7 @@ A Screeps-like autonomous simulation game where 32 AI factions run Lua scripts t
 | F7 | Tower range visualization |
 | F9 | Quick load |
 | K | Market UI |
+| P | Toggle quest panel |
 | Shift+D | Diplomacy UI |
 
 ## Building

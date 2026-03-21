@@ -36,6 +36,7 @@ use crate::territory::TerritoryPlugin;
 use crate::trade::TradePlugin;
 use crate::tutorial::TutorialPlugin;
 use crate::ui::UiPlugin;
+use crate::quests::{QuestPlugin, QuestUIPlugin};
 use crate::victory::VictoryPlugin;
 use crate::weather::WeatherPlugin;
 use crate::world::WorldPlugin;
@@ -92,6 +93,8 @@ impl Plugin for GameAppPlugin {
             AICoordinationPlugin,
             WorldEventsPlugin,
             WeatherPlugin,
+            QuestPlugin,
+            QuestUIPlugin,
             AchievementsPlugin,
             ModdingPlugin,
         ));
