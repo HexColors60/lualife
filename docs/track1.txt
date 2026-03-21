@@ -123,3 +123,4 @@
 2026-03-20 Added AI behavior config initialization from faction identities and personalities.
 
 
+2026-03-21 Implemented weather system: WeatherType enum (Clear, Cloudy, Rain, Storm, Snow, Fog, Heatwave), WeatherState resource, weather transition system, gameplay effects (movement, mining, combat, power modifiers), visual effects (rain, snow, fog, lightning), and UI indicator.

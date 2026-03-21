@@ -18,6 +18,7 @@ mod room_overlay;
 mod screen_shake;
 mod territory_overlay;
 mod tower_visualization;
+mod weather_effects;
 
 pub use building_render::*;
 pub use camera::*;
@@ -38,6 +39,7 @@ pub use room_overlay::*;
 pub use screen_shake::*;
 pub use territory_overlay::*;
 pub use tower_visualization::*;
+pub use weather_effects::*;
 
 
 use crate::debug::GodMode;
@@ -60,6 +62,7 @@ impl Plugin for RenderPlugin {
             .add_plugins(ScreenShakePlugin)
             .add_plugins(TerritoryOverlayPlugin)
             .add_plugins(DayNightPlugin)
+            .add_plugins(WeatherEffectsPlugin)
             .add_systems(Startup, (setup_render, setup_debug_overlays))
             .add_systems(
                 Update,

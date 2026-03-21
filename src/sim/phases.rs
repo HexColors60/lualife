@@ -4,8 +4,8 @@ use crate::core::GameState;
 use crate::creeps::{Creep, CreepAction};
 use crate::mines::MineNode;
 use crate::path::{AStar, PathCache};
+use crate::weather::WeatherState;
 use crate::world::WorldMap;
-
 /// Simulation phase ordering
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SimPhase {
@@ -46,22 +46,28 @@ impl SimPhase {
     }
 }
 
-/// Movement phase system - handles creep movement with pathfinding
+/// Movement phase system - handles creep movement with pathfinding and weather effects
 pub fn movement_phase(
     mut creeps: Query<&mut Creep>,
     world_map: Res<WorldMap>,
     mut path_cache: ResMut<PathCache>,
     game_state: Res<GameState>,
+    weather: Res<WeatherState>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
 
+    // Get weather movement modifier
+    let weather_mod = weather.current_weather.movement_modifier();
+
     for mut creep in creeps.iter_mut() {
         // Check if creep has a move action
         if let Some(ref action) = creep.current_action {
             if let CreepAction::MoveTo { target } = action.action {
-                let speed = creep.body.speed();
+                let base_speed = creep.body.speed();
+                // Apply weather modifier to speed
+                let speed = base_speed * weather_mod;
                 if speed <= 0.0 {
                     continue;
                 }
@@ -114,16 +120,20 @@ pub fn movement_phase(
     }
 }
 
-/// Mining phase system - handles resource extraction
+/// Mining phase system - handles resource extraction with weather effects
 pub fn mining_phase(
     mut creeps: Query<(&mut Creep, &Transform)>,
     mut mines: Query<&mut MineNode>,
     game_state: Res<GameState>,
     mut transfer_events: EventWriter<crate::render::ResourceTransferEvent>,
+    weather: Res<WeatherState>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
+
+    // Get weather mining efficiency modifier
+    let weather_mod = weather.current_weather.mining_modifier();
 
     for (mut creep, transform) in creeps.iter_mut() {
         if let Some(ref action) = creep.current_action {
@@ -131,7 +141,9 @@ pub fn mining_phase(
                 // Find the mine and extract resources
                 for mut mine in mines.iter_mut() {
                     if mine.id == mine_id && mine.current_amount > 0 {
-                        let efficiency = creep.body.mining_efficiency();
+                        let base_efficiency = creep.body.mining_efficiency();
+                        // Apply weather modifier
+                        let efficiency = base_efficiency * weather_mod;
                         let extracted = (efficiency * 5.0).min(mine.current_amount as f32) as u32;
 
                         if extracted > 0 {
@@ -156,15 +168,19 @@ pub fn mining_phase(
     }
 }
 
-/// Combat phase system - handles creep vs creep combat
+/// Combat phase system - handles creep vs creep combat with weather effects
 pub fn combat_phase(
     mut creeps: Query<(Entity, &mut Creep, &Transform)>,
     game_state: Res<GameState>,
     mut damage_events: EventWriter<crate::render::DamageEvent>,
+    weather: Res<WeatherState>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
+
+    // Get weather combat modifier
+    let weather_mod = weather.current_weather.combat_modifier();
 
     // Simple combat: creeps with Fight action attack target
     let mut damage_to_apply: Vec<(Entity, f32, Vec3)> = Vec::new();
@@ -180,8 +196,9 @@ pub fn combat_phase(
                 for (target_entity, target_faction) in &creep_data {
                     // Check if different faction
                     if *target_faction != creep.faction_id {
-                        // Simple: attack the first enemy found
-                        let damage = creep.body.attack_power();
+                        // Apply weather modifier to damage
+                        let base_damage = creep.body.attack_power();
+                        let damage = base_damage * weather_mod;
                         damage_to_apply.push((*target_entity, damage, transform.translation));
                         break;
                     }
@@ -207,19 +224,24 @@ pub fn combat_phase(
     }
 }
 
-/// Upkeep phase system - handles power consumption
+/// Upkeep phase system - handles power consumption with weather effects
 pub fn upkeep_phase(
     mut creeps: Query<&mut Creep>,
     game_state: Res<GameState>,
     mut game_log: ResMut<crate::ui::GameLog>,
+    weather: Res<WeatherState>,
 ) {
     if *game_state != GameState::Running {
         return;
     }
 
+    // Get weather power consumption modifier
+    let weather_mod = weather.current_weather.power_consumption_modifier();
+
     for mut creep in creeps.iter_mut() {
-        // Consume power each tick
-        let consumption = crate::consts::CREEP_POWER_CONSUMPTION;
+        // Consume power each tick, modified by weather
+        let base_consumption = crate::consts::CREEP_POWER_CONSUMPTION;
+        let consumption = base_consumption * weather_mod;
         creep.consume_power(consumption);
 
         // Check for starvation

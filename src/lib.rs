@@ -39,5 +39,6 @@ pub mod trade;
 pub mod tutorial;
 pub mod ui;
 pub mod victory;
+pub mod weather;
 pub mod world;
 pub mod worldgen;

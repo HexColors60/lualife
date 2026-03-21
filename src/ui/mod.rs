@@ -14,6 +14,7 @@ mod tech_ui;
 mod time_control;
 mod unit_panel;
 mod victory_screen;
+mod weather_indicator;
 mod widgets;
 
 pub use ai_status::*;
@@ -32,6 +33,7 @@ pub use tech_ui::*;
 pub use time_control::*;
 pub use unit_panel::*;
 pub use victory_screen::*;
+pub use weather_indicator::*;
 pub use widgets::*;
 
 use bevy::prelude::*;
@@ -47,6 +49,7 @@ impl Plugin for UiPlugin {
             .add_plugins(TimeControlPlugin)
             .add_plugins(DiplomacyUIPlugin)
             .add_plugins(FactionLeaderboardPlugin)
+            .add_plugins(WeatherIndicatorPlugin)
             .add_systems(
                 Startup,
                 (
