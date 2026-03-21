@@ -16,6 +16,7 @@ use crate::discord::DiscordPlugin;
 use crate::events::EventsPlugin;
 use crate::events_world::WorldEventsPlugin;
 use crate::factions::FactionsPlugin;
+use crate::heroes::{HeroPlugin, HeroRenderPlugin, AbilityPlugin, HeroUIPlugin};
 use crate::localization::LocalizationPlugin;
 use crate::lua::LuaPlugin;
 use crate::market::MarketPlugin;
@@ -77,6 +78,10 @@ impl Plugin for GameAppPlugin {
             TerritoryPlugin,
             TradePlugin,
             VictoryPlugin,
+            HeroPlugin,
+            AbilityPlugin,
+            HeroRenderPlugin,
+            HeroUIPlugin,
         ));
         app.add_plugins((
             NetworkPlugin,
